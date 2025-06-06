@@ -3,9 +3,10 @@ import "../global.css";
 
 export default function RootLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="(tabs)" />
+    <Stack >
+      <Stack.Screen name="index" options={{headerShown: false}}/>
+      <Stack.Screen name="detail"/>
+      <Stack.Screen name="(tabs)" options={{headerShown: false}} />
     </Stack>
   );
 }

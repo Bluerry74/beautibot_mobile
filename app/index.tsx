@@ -5,27 +5,18 @@ import { Eye, EyeOff } from "lucide-react-native";
 
 export default function Index() {
   return (
-    <View style={{ flex: 1, marginTop: 30, backgroundColor: "#fbf1eb" }}>
+    <View style={{ flex: 1, backgroundColor: "#fbf1eb" }}>
       <View className="h-3/5 relative justify-end">
         <Image
-          source={
-            "https://www.theskinnyconfidential.com/wp-content/uploads/2019/11/Sephora-x-The-Skinny-Confidential-3.jpg"
-          }
-          className="w-full h-full"
+          source={require("../assets/images/banner_login.jpg")}
           contentFit="cover"
           style={{ borderRadius: 10, width: "100%", height: "100%" }}
         />
         <View className="absolute inset-0 justify-center items-center px-4">
-          <Text
-            className="text-4xl font-bold"
-            style={{ color: "#fff", textAlign: "center" }}
-          >
+          <Text className="text-4xl font-bold text-white text-center">
             Let’s get you Login!
           </Text>
-          <Text
-            className="text-lg font-semibold mt-2"
-            style={{ color: "#fff", textAlign: "center" }}
-          >
+          <Text className="text-lg font-semibold mt-2 text-white text-center">
             Enter your information below.
           </Text>
         </View>
@@ -83,21 +74,20 @@ export default function Index() {
             marginRight: 20,
           }}
         >
-          <Text
-            style={{ color: "#fff", textAlign: "center" }}
-            className="text-lg text-bold"
-          >
+          <Text className="text-lg text-bold text-white text-center">
             Login
           </Text>
         </TouchableOpacity>
         <Text className="text-center text-base text-gray-600 mt-4">
           Don’t have an account?{" "}
-          <Text
-            className="text-[#5D2C1D] font-semibold"
-            style={{ color: "#ff9c86" }}
-          >
-            Register Now
-          </Text>
+          <TouchableOpacity>
+            <Text
+              className="text-[#5D2C1D] font-semibold"
+              style={{ color: "#ff9c86" }}
+            >
+              Register Now
+            </Text>
+          </TouchableOpacity>
         </Text>
       </View>
     </View>
