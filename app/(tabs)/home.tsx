@@ -1,9 +1,8 @@
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router, useNavigation } from "expo-router";
-import { AlignLeft } from "lucide-react-native";
+import { AlignLeft, ShoppingCart } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-// import { Image } from "expo-image";
 import {
   Image,
   ScrollView,
@@ -64,16 +63,15 @@ const nearArtist = [
   },
 ];
 
-function home() {
+function Home() {
   return (
     <ScrollView className="bg-[#FFF3EC] flex-1 px-4 pt-12">
       <View className="flex-row justify-between items-center mb-6">
         <AlignLeft />
-        <Text className="text-xl font-semibold text-brown-800">Hi There</Text>
-        <Image
-          source={require("../../assets/images/banner_login.jpg")}
-          className="w-12 h-12 rounded-full"
-        />
+        <Text className="text-xl font-semibold" style={{ color: "#ff9c86" }}>
+          Hi There
+        </Text>
+        <ShoppingCart />
       </View>
 
       <View className="flex-row items-center bg-white px-4 py-2 rounded-xl mb-6">
@@ -87,7 +85,7 @@ function home() {
         </TouchableOpacity>
       </View>
 
-      <Text className="text-xl font-semibold text-brown-800 mb-4">
+      <Text className="text-xl font-semibold mb-4" style={{ color: "#ff9c86" }}>
         Top Services
       </Text>
       <ScrollView
@@ -111,7 +109,9 @@ function home() {
       </ScrollView>
 
       <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-xl font-semibold text-brown-800">Top Artist</Text>
+        <Text className="text-xl font-semibold" style={{ color: "#ff9c86" }}>
+          Top Artist
+        </Text>
         <TouchableOpacity>
           <Text className="text-lg text-brown-500">View all</Text>
         </TouchableOpacity>
@@ -149,7 +149,7 @@ function home() {
       </ScrollView>
 
       <View className="flex-row justify-between items-center mb-4 mt-8">
-        <Text className="text-xl font-semibold text-brown-800">
+        <Text className="text-xl font-semibold" style={{ color: "#ff9c86" }}>
           Best Artist Near You
         </Text>
         <TouchableOpacity>
@@ -181,4 +181,4 @@ function home() {
   );
 }
 
-export default home;
+export default Home;
