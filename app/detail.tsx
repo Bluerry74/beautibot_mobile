@@ -1,29 +1,99 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams, useNavigation } from "expo-router";
+import { Heart } from "lucide-react-native";
 import React from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 const Detail = () => {
   const navigation = useNavigation();
   const { id } = useLocalSearchParams();
 
   return (
-    <ScrollView style={{ flex: 1, padding: 20 }}>
+    <ScrollView className="flex-1 bg-white px-4 py-2" style={{  backgroundColor: "#fbf1eb" }}>
       <Stack.Screen
         options={{
-          title: "Detail Product",
+          title: "Product Detail",
           headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={{ marginLeft: 10 }}
-            >
-              <Ionicons name="arrow-back" size={24} color="black" />
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Ionicons name="arrow-back" size={20} color="black" />
             </TouchableOpacity>
           ),
-        }}
-      />
-      <View style={{ alignItems: "center", marginVertical: 20 }}>
-        <Text> Detail ????? {id}</Text>
+        }}/>
+        <Heart />
+      <View className="items-center my-6 h-110">
+        <Image
+          source={{
+            uri: "https://th.bing.com/th/id/OIP.ZId6kYZXYoG2WwB_JQq7jAHaIK?r=0&rs=1&pid=ImgDetMain",
+          }}
+          className="w-80 h-80"
+          resizeMode="contain"
+        />
+      </View>
+      <View className="space-y-3 mt-4 bg-white ">
+        <View className="flex-row justify-between items-center">
+          <Text className="text-3xl font-semibold">
+            Texturizing Sea Salt Spray  
+          </Text>
+          <Text className="bg-orange-100 text-orange-700 px-2 py-1 rounded text-sm font-bold">
+            20% Off
+          </Text>
+        </View>
+
+        <View className="flex-row items-center space-x-1">
+          <Text className="text-purple-600 mr-2">★★★★☆</Text>
+          <Text className="text-lg mr-4">4.55</Text>
+          <Text className="text-lg text-gray-500">230 reviews</Text>
+        </View>
+
+        <View className="flex-row space-x-3 items-center mt-2">
+          <Text className="text-4xl font-bold text-black">$25.00</Text>
+          <Text className="text-lg line-through text-gray-400">$31.25</Text>
+        </View>
+
+        <View className="flex-row justify-between items-center bg-gray-100 p-3 rounded-lg mt-4">
+          <View>
+            <Text className="text-lg text-gray-500">On your formula</Text>
+            <Text className="text-xl font-medium">3 product alternatives</Text>
+          </View>
+          <View className="flex-row space-x-4">
+            <Image
+              className="w-16 h-16 rounded-md mr-2"
+              source={{ uri: "https://th.bing.com/th/id/OIP.ZId6kYZXYoG2WwB_JQq7jAHaIK?r=0&rs=1&pid=ImgDetMain" }}
+            />
+            <Image
+              className="w-16 h-16 rounded-md mr-2"
+              source={{ uri: "https://th.bing.com/th/id/OIP.ZId6kYZXYoG2WwB_JQq7jAHaIK?r=0&rs=1&pid=ImgDetMain" }}
+            />
+            <Image
+              className="w-16 h-16 rounded-md"
+              source={{ uri: "https://th.bing.com/th/id/OIP.ZId6kYZXYoG2WwB_JQq7jAHaIK?r=0&rs=1&pid=ImgDetMain" }}
+            />
+          </View>
+        </View>
+
+        <Text className="font-medium mt-4 text-xl">Size variations</Text>
+        <View className="flex-row space-x-2 mt-2">
+          <TouchableOpacity className="border border-pink-600 rounded-full px-4 py-1 mr-2">
+            <Text className="text-pink-600 text-lg">60 ml</Text>
+          </TouchableOpacity>
+          <TouchableOpacity className="border border-gray-300 rounded-full px-4 py-1 mr-2">
+            <Text className="text-lg">150 ml</Text>
+          </TouchableOpacity>
+          <TouchableOpacity className="border border-gray-300 rounded-full px-4 py-1">
+            <Text className="text-lg">250 ml</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View className="mt-8 space-y-4">
+        <View className="flex-row space-x-3">
+          <TouchableOpacity className="flex-1 border border-black py-3 rounded-full items-center">
+            <Text className="text-xl text-[#5D2C1D]">Add to cart</Text>
+          </TouchableOpacity>
+          <TouchableOpacity className="flex-1 bg-black py-3 rounded-full items-center">
+            <Text className="text-white text-xl">Buy now</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );

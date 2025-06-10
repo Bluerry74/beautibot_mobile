@@ -1,10 +1,10 @@
 import React from 'react'
 import { Text } from 'react-native'
 
-function profile() {
+function Profile() {
   return (
-    <Text>profile</Text>
+    <Text className='mt-8'>profile</Text>
   )
 }
 
-export default profile
+export default Profile
