@@ -1,9 +1,12 @@
+import { View, Text } from 'react-native'
 import React from 'react'
-import { Text } from 'react-native'
+import { Scan } from 'lucide-react-native'
 
-function Scanface() {
+const Scanface = () => {
   return (
-    <Text>scanface</Text>
+    <View>
+      <Text>Scanface page</Text>
+    </View>
   )
 }
 
