@@ -63,10 +63,10 @@ const nearArtist = [
   },
 ];
 
-function Home() {
+const Home = () => {
   return (
-    <ScrollView className="bg-[#FFF3EC] flex-1 px-4 pt-12">
-      <View className="flex-row justify-between items-center mb-6">
+    <ScrollView className="bg-[#FFF3EC] flex-1 px-4 pt-8 ">
+      <View className="flex-row justify-between items-center mb-6 mt-8">
         <AlignLeft />
         <Text className="text-xl font-semibold" style={{ color: "#ff9c86" }}>
           Hi There
@@ -74,7 +74,7 @@ function Home() {
         <ShoppingCart />
       </View>
 
-      <View className="flex-row items-center bg-white px-4 py-2 rounded-xl mb-6">
+      <View className="flex-row items-center bg-white px-4 py-2 rounded-xl mb-4">
         <Ionicons name="search" size={20} color="gray" />
         <TextInput
           placeholder="What are you looking for?"
@@ -91,7 +91,7 @@ function Home() {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        className="mb-6"
+        className="mb-4"
       >
         {topService.map((service, index) => (
           <View key={index} className="items-center mr-6">
@@ -148,7 +148,7 @@ function Home() {
         ))}
       </ScrollView>
 
-      <View className="flex-row justify-between items-center mb-4 mt-8">
+      <View className="flex-row justify-between items-center mb-4 mt-6">
         <Text className="text-xl font-semibold" style={{ color: "#ff9c86" }}>
           Best Artist Near You
         </Text>
