@@ -1,12 +1,12 @@
 import { Tabs } from "expo-router";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { Heart, ScanFace, Squirrel, UserRound } from "lucide-react-native";
+import { Heart, ListOrdered, ScanFace, SquareChartGantt, Squirrel, UserRound } from "lucide-react-native";
 
 function TabLayout() {
   return (
     <Tabs screenOptions={{ headerShown: false, tabBarActiveTintColor: "#ff9c86" }}>
-      <Tabs.Screen
+      <Tabs.Screen 
         name="home"
         options={{
           title: "Home",
@@ -30,6 +30,15 @@ function TabLayout() {
           title: "Scan Face",
           tabBarIcon: () => (
             <ScanFace size={24} color={"#ff9c86"} />
+          ),
+        }}
+      ></Tabs.Screen>
+      <Tabs.Screen
+        name="routine"
+        options={{
+          title: "Routine",
+          tabBarIcon: () => (
+            <SquareChartGantt size={24} color={"#ff9c86"} />
           ),
         }}
       ></Tabs.Screen>
