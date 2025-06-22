@@ -2,8 +2,11 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { Eye, EyeOff } from "lucide-react-native";
+import React, { useState } from "react";
 
 export default function Index() {
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
   return (
     <View style={{ flex: 1, backgroundColor: "#fbf1eb" }}>
       <View className="h-3/5 relative justify-end">
@@ -33,9 +36,11 @@ export default function Index() {
             Email Address
           </Text>
           <TextInput
-            placeholder="hoainguyenky532003@gmail.com"
+            placeholder="Enter your email"
             className="border border-gray-300 rounded-xl px-4 py-3 text-lg"
             keyboardType="email-address"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
             style={{ color: "#ff9c86" }}
           />
         </View>
@@ -48,8 +53,10 @@ export default function Index() {
           </Text>
           <View className="flex-row items-center border border-gray-300 rounded-xl px-4">
             <TextInput
-              placeholder="********"
+              placeholder="Enter your password"
               className="flex-1 py-3 text-lg"
+              value={password}
+              onChangeText={(text) => setPassword(text)}
               secureTextEntry={true}
             />
             <EyeOff size={20} color="#999" />
