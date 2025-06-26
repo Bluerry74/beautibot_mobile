@@ -1,38 +1,17 @@
-import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
-import { Scan } from 'lucide-react-native'
+import { View, Text, TouchableOpacity, Button, StyleSheet,Alert  } from 'react-native'
+import React, { useState } from 'react'
 import { Camera, CameraType, CameraView, useCameraPermissions } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
 
 const Scanface = () => {
-  //  const [hasPermission, setHasPermission] = useState(null);
-  // const cameraRef = useRef(null);
-
-  // useEffect(() => {
-  //   (async () => {
-  //     const { status } = await Camera.requestCameraPermissionsAsync();
-  //     setHasPermission(status === 'granted');
-  //   })();
-  // }, []);
-
-  // const takePhoto = async () => {
-  //   if (cameraRef.current) {
-  //     const photo = await cameraRef.current.takePictureAsync();
-  //     console.log('Ảnh chụp:', photo.uri);
-  //   }
-  // };
-
-  // if (hasPermission === null) return <View />;
-  // if (hasPermission === false) return <Text>Không có quyền truy cập camera</Text>;
-const [facing, setFacing] = useState<CameraType>('back');
+ const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
 
   if (!permission) {
-    // Camera permissions are still loading.
     return <View />;
   }
 
   if (!permission.granted) {
-    // Camera permissions are not granted yet.
     return (
       <View style={styles.container}>
         <Text style={styles.message}>We need your permission to show the camera</Text>
@@ -41,19 +20,51 @@ const [facing, setFacing] = useState<CameraType>('back');
     );
   }
 
-  function toggleCameraFacing() {
-    setFacing(current => (current === 'back' ? 'front' : 'back'));
-  }
+    const toggleCameraFacing = () => {
+    setFacing((current) => (current === 'back' ? 'front' : 'back'));
+  };
+
+  const handlePickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      Alert.alert('Ảnh đã chọn', result.assets[0].uri);
+    }
+  };
+  const handleCapture = () => {
+    Alert.alert('Chụp ảnh', 'Tính năng chụp ảnh chưa triển khai.');
+
+  };
+
 
   return (
-    <View style={styles.container}>
-      <CameraView style={styles.camera} facing={facing}>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-            <Text style={styles.text}>Flip Camera</Text>
-          </TouchableOpacity>
-        </View>
-      </CameraView>
+    <View className="flex-1">
+      <CameraView style={styles.camera} facing={facing} />
+
+      <View className="absolute bottom-10 w-full flex-row justify-around px-6">
+        <TouchableOpacity
+          className="bg-white px-4 py-2 rounded"
+          onPress={handlePickImage}
+        >
+          <Text className="text-black font-semibold">Upload ảnh</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="bg-white px-4 py-2 rounded"
+          onPress={handleCapture}
+        >
+          <Text className="text-black font-semibold">Chụp ảnh</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className="bg-white px-4 py-2 rounded"
+          onPress={toggleCameraFacing}
+        >
+          <Text className="text-black font-semibold">Flip</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   )
 }
