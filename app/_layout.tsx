@@ -10,6 +10,9 @@ export default function RootLayout() {
       <Stack.Screen name="pages/cart" />
       <Stack.Screen name="pages/register" options={{headerShown: false}}/>
       <Stack.Screen name="pages/forgot_pw" />
+      <Stack.Screen name="detail/[id]" />
+
+
     </Stack>
   );
 }

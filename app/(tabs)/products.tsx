@@ -1,10 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, ActivityIndicator } from "react-native";
+import { Product, Sku } from "@/app/types/product";
+import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
+import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+
 
 const Products = () => {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigation = useNavigation();
+  const router = useRouter();
 
   useEffect(() => {
     axios
@@ -12,54 +25,53 @@ const Products = () => {
       .then((res) => {
         console.log("Data fetched:", res.data);
         setProducts(res.data.data);
+        setLoading(false);
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
   }, []);
 
-  const renderItem = ({ item }) => (
-    <View className="bg-white rounded-lg mb-4 p-6 shadow-md">
-      <Text className="text-pink-300">{item.name}</Text>
-      <Text>{item.brand}</Text>
-      <Text>Skus:</Text>
-      {item.skus.map((sku, index) => (
-        <View key={index}>
-          <Text key={sku._id || index}>{sku.variantName}</Text>
-          <Text> Price: {sku.price.toLocaleString()} VND</Text>
-          {/* <Text>
-            {" "}
-            {sku.discount
-              ? `Discount: ${sku.discount.toLocaleString()} %`
-              : "No Discount"}
-          </Text> */}
-          {/* <Text>
-            {" "}
-            Dimensions:{" "}
-            {sku.dimensions
-              ? `${sku.dimensions.length} x ${sku.dimensions.width} x ${sku.dimensions.height} cm`
-              : "N/A"}
-          </Text> */}
-        </View>
-      ))}
-    </View>
+
+
+  const renderItem = ({ item }: { item: Product }) => (
+    <TouchableOpacity
+    onPress={() => {
+      console.log("👀 Going to:", item._id);
+      router.push(`/detail/${item._id}`);
+
+    }}
+    >
+      <View className="bg-white rounded-lg mb-4 p-6 shadow-md">
+        <Text className="text-pink-300 text-xl font-semibold">{item.name}</Text>
+        <Text className="text-gray-700 mb-2">{item.brand}</Text>
+        <Text className="text-gray-500 mb-1">Skus:</Text>
+        {item.skus.map((sku: Sku, index: number) => (
+          <View key={sku._id || index} className="mb-1">
+            <Text className="font-medium">{sku.variantName}</Text>
+            <Text>Price: {sku.price.toLocaleString()} VND</Text>
+          </View>
+        ))}
+      </View>
+    </TouchableOpacity>
   );
 
-  // if (loading) {
-  //   return (
-  //     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-  //       <ActivityIndicator size="large" color="#0000ff" />
-  //     </View>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <View className="flex-1 justify-center items-center bg-white">
+        <ActivityIndicator size="large" color="#ff9c86" />
+      </View>
+    );
+  }
 
   return (
-    <View className="justify-between bg-[#FFF3EC]">
-      <View className="mt-12">
-        <Text className="text-2xl font-bold mb-4 text-center">Products List</Text>
-      </View>
+    <View className="flex-1 bg-[#FFF3EC] px-4 pt-10">
+      <Text className="text-2xl font-bold mb-4 text-center">Products List</Text>
       <FlatList
         showsVerticalScrollIndicator={false}
         data={products}
-        keyExtractor={(item, index) => item._id || index.toString()}
+        keyExtractor={(item) => item._id}
         renderItem={renderItem}
       />
     </View>
