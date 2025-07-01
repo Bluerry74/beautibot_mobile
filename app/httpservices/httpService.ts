@@ -1,8 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { API_BASE_URL } from '@env';
 
 const http = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL:  process.env.EXPO_PUBLIC_API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
