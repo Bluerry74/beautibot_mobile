@@ -15,6 +15,7 @@ export default function RootLayout() {
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen name="pages/forgot_pw" />
+                <Stack.Screen name="detail/[id]" />
             </Stack>
         </AuthProvider>
     );
