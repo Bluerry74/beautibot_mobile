@@ -1,34 +1,31 @@
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { router, useNavigation } from "expo-router";
+import { router, useNavigation, useRouter } from "expo-router";
 import { AlignLeft, ShoppingCart } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import {
-  Image,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Image,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { IProduct } from "../types/products";
-import { get } from "../httpservices/httpService";
+import { get } from "@/httpservices/httpService";
 
 const nearArtist = [
-  {
-    name: "Amber Heard",
-    rating: 3.6,
-    price: "$27.00/hr",
-    image:
-      "https://th.bing.com/th/id/OIP.ZId6kYZXYoG2WwB_JQq7jAHaIK?r=0&rs=1&pid=ImgDetMain",
-  },
-  {
-    name: "Nguyen Ky ",
-    rating: 4.5,
-    price: "$25.00/hr",
-    image:
-      "https://th.bing.com/th/id/OIP.ZId6kYZXYoG2WwB_JQq7jAHaIK?r=0&rs=1&pid=ImgDetMain",
-  },
+    {
+        name: "Amber Heard",
+        rating: 3.6,
+        price: "$27.00/hr",
+        image: "https://th.bing.com/th/id/OIP.ZId6kYZXYoG2WwB_JQq7jAHaIK?r=0&rs=1&pid=ImgDetMain",
+    },
+    {
+        name: "Nguyen Ky ",
+        rating: 4.5,
+        price: "$25.00/hr",
+        image: "https://th.bing.com/th/id/OIP.ZId6kYZXYoG2WwB_JQq7jAHaIK?r=0&rs=1&pid=ImgDetMain",
+    },
 ];
 
 const Home = () => {
@@ -63,16 +60,16 @@ const Home = () => {
         <ShoppingCart />
       </View>
 
-      <View className="flex-row items-center bg-white px-4 py-2 rounded-xl mb-4">
-        <Ionicons name="search" size={20} color="gray" />
-        <TextInput
-          placeholder="What are you looking for?"
-          className="ml-2 flex-1 text-sm"
-        />
-        <TouchableOpacity className="p-2 bg-brown-700 rounded-md ml-2">
-          <MaterialIcons name="tune" size={18} color="white" />
-        </TouchableOpacity>
-      </View>
+            <View className="flex-row items-center bg-white px-4 py-2 rounded-xl mb-4">
+                <Ionicons name="search" size={20} color="gray" />
+                <TextInput
+                    placeholder="What are you looking for?"
+                    className="ml-2 flex-1 text-sm"
+                />
+                <TouchableOpacity className="p-2 bg-brown-700 rounded-md ml-2">
+                    <MaterialIcons name="tune" size={18} color="white" />
+                </TouchableOpacity>
+            </View>
 
       <Text className="text-xl font-semibold mb-4" style={{ color: "#ff9c86" }}>
         Top Brands
