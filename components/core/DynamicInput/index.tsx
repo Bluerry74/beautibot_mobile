@@ -1,7 +1,7 @@
-import { FormInputType } from "@/app/types/formInput";
+import { FormInputType } from "@/types/formInput";
+import { Picker } from "@react-native-picker/picker";
 import React from "react";
 import { TextInput, View } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 
 export interface DynamicInputProps {
     fieldType: FormInputType;

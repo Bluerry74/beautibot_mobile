@@ -1,5 +1,5 @@
-import { get } from "@/app/httpservices/httpService";
-import { IProductDetail, IProductResponse } from "@/app/types/product";
+import { get } from "@/httpservices/httpService";
+import { IProductDetail, IProductResponse } from "@/types/product";
 
 export const getAllProducts = async (filters = {}) => {
     const res = await get<IProductResponse>("product", {

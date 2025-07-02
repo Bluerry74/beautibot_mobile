@@ -10,7 +10,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import { routesConfig } from "../config/route";
+import { routesConfig } from "../../config/route";
 
 const topService = [
     {

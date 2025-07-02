@@ -1,18 +1,11 @@
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import {
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from "react-native";
-import { Eye, EyeOff } from "lucide-react-native";
-import AppForm from "./component/core/AppForm";
-import { FormInputType } from "./types/formInput";
-import { loginSystem } from "./service/auth/login";
-import { useAuth } from "./component/context/AuthContext";
-import { getMe } from "./service/auth/getMe";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useAuth } from "../components/context/AuthContext";
+import { getMe } from "../services/auth/getMe";
+import { loginSystem } from "../services/auth/login";
+import { FormInputType } from "../types/formInput";
+import AppForm from "@/components/core/AppForm";
 const fields = [
     {
         name: "email",
@@ -36,12 +29,19 @@ export default function Index() {
     const handleLogin = async (data: any) => {
         try {
             console.log("data:", data);
-
+            
             const res = await loginSystem(data.email, data.password);
             console.log("response", res);
-
-            const me = await getMe();
+            if (!res) throw new Error("Login failed");
+            const me = await getMe({
+                accessToken: res.accessToken,
+            });
             console.log("User data", me);
+            login({
+                user: me,
+                accessToken: res.accessToken,
+                refreshToken: res.refreshToken,
+            })
         } catch (err: any) {
             console.log(
                 "Login failed",

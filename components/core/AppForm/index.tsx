@@ -47,7 +47,6 @@ const AppForm = ({ items, onSubmit, btnText = "Submit" }: AppFormType) => {
 
             <TouchableOpacity
                 onPress={handleSubmit((data) => {
-                    console.log("Pressed Login with data", data);
                     onSubmit(data);
                 })}
                 style={styles.button}
