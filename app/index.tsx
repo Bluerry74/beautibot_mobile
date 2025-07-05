@@ -29,7 +29,7 @@ export default function Index() {
     const handleLogin = async (data: any) => {
         try {
             console.log("data:", data);
-            
+           
             const res = await loginSystem(data.email, data.password);
             console.log("response", res);
             if (!res) throw new Error("Login failed");
@@ -42,6 +42,7 @@ export default function Index() {
                 accessToken: res.accessToken,
                 refreshToken: res.refreshToken,
             })
+            router.push("/home");
         } catch (err: any) {
             console.log(
                 "Login failed",

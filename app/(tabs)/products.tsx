@@ -1,4 +1,5 @@
-import { Product, Sku } from "@/app/types/product";
+
+import { IProductDetail, ISku } from "@/types/product";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { useRouter } from "expo-router";
@@ -14,7 +15,7 @@ import {
 
 
 const Products = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<IProductDetail[]>([]);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
   const router = useRouter();
@@ -35,7 +36,7 @@ const Products = () => {
 
 
 
-  const renderItem = ({ item }: { item: Product }) => (
+  const renderItem = ({ item }: { item: IProductDetail }) => (
     <TouchableOpacity
     onPress={() => {
       console.log("👀 Going to:", item._id);
@@ -47,7 +48,7 @@ const Products = () => {
         <Text className="text-pink-300 text-xl font-semibold">{item.name}</Text>
         <Text className="text-gray-700 mb-2">{item.brand}</Text>
         <Text className="text-gray-500 mb-1">Skus:</Text>
-        {item.skus.map((sku: Sku, index: number) => (
+        {item.skus.map((sku: ISku, index: number) => (
           <View key={sku._id || index} className="mb-1">
             <Text className="font-medium">{sku.variantName}</Text>
             <Text>Price: {sku.price.toLocaleString()} VND</Text>

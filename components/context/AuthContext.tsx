@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AuthContext = createContext<any>(null);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -38,8 +39,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setAccessToken(accessToken);
         setRefreshToken(refreshToken);
         setUser(user);
+        // Save to AsyncStorage
+        AsyncStorage.setItem("accessToken", accessToken);
+        AsyncStorage.setItem("refreshToken", refreshToken);
+        AsyncStorage.setItem("user", JSON.stringify(user));
     };
 
+ const getInformation = async () => {
+        try {   
+            const storedAccessToken = await AsyncStorage.getItem("accessToken");
+            const storedRefreshToken = await AsyncStorage.getItem("refreshToken");
+            const storedUser = await AsyncStorage.getItem("user");
+            if (storedAccessToken && storedUser) {
+                setAccessToken(storedAccessToken);
+                setRefreshToken(storedRefreshToken);
+                setUser(JSON.parse(storedUser));
+            }
+        } catch (err) {
+            console.log("Failed to load auth from storage", err);
+        }
     return (
         <AuthContext.Provider
             value={{
@@ -51,11 +69,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 refreshToken,
                 setRefreshToken,
                 clearAuth,
+                getInformation,
             }}
         >
             {children}
         </AuthContext.Provider>
     );
 };
-
+}
 export const useAuth = () => useContext(AuthContext);

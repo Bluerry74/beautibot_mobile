@@ -10,8 +10,9 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import { IProduct } from "../types/products";
 import { get } from "@/httpservices/httpService";
+import { IProduct } from "@/types/product";
+// import { useAuth } from "@/components/context/AuthContext";
 
 const nearArtist = [
     {
@@ -31,7 +32,7 @@ const nearArtist = [
 const Home = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
-
+//  const {getInformation} = useAuth();
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -114,7 +115,7 @@ const Home = () => {
           product.skus.map((sku) => (
             <TouchableOpacity
               key={sku._id}
-              onPress={() => router.push(`/detail?id=${product._id}`)}
+              onPress={() => router.push(`/detail/${product._id}`)}
             >
               <View className="w-52 h-72 bg-white rounded-xl mr-4 p-2">
                 <Image
