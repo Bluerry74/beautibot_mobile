@@ -1,11 +1,10 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { API_BASE_URL } from '@env';
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 const http = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+    baseURL: process.env.EXPO_PUBLIC_API_URL,
+    headers: {
+        "Content-Type": "application/json",
+    },
 });
 export default http;
 
@@ -22,8 +21,21 @@ export const post = async <T = unknown>(
     data: unknown = {},
     option: AxiosRequestConfig = {}
 ): Promise<AxiosResponse<T>> => {
-    const res: AxiosResponse<T> = await http.post(url, data, option);
-    return res;
+    const fullUrl = http.defaults.baseURL
+        ? `${http.defaults.baseURL.replace(/\/$/, "")}/${url.replace(
+              /^\//,
+              ""
+          )}`
+        : url;
+
+    console.log("POST request to:", fullUrl, "with data:", data);
+    try {
+        const res: AxiosResponse<T> = await http.post(url, data, option);
+        return res;
+    } catch (err) {
+        console.error("Error in post()", err);
+        throw err;
+    }
 };
 
 export const put = async <T = unknown>(
