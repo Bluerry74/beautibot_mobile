@@ -1,8 +1,8 @@
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { router, useNavigation } from "expo-router";
+import axios from "axios";
+import { router } from "expo-router";
 import { AlignLeft, ShoppingCart } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import {
   Image,
   ScrollView,
@@ -11,7 +11,24 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
+const [cartCount, setCartCount] = useState(0);
+useEffect(() => {
+  axios
+    .get("https://be-wdp.onrender.com/cart", {
+      headers: {
+        Authorization: `Bearer YOUR_ACCESS_TOKEN`, // hoặc bỏ nếu không dùng
+      },
+    })
+    .then((res) => {
+      const items = res.data?.items || [];
+      const total = items.reduce((acc: number, item: any) => acc + item.quantity, 0);
+      setCartCount(total);
+    })
+    .catch((err) => {
+      console.error("❌ Lỗi lấy giỏ hàng:", err.message);
+      setCartCount(0);
+    });
+}, []);
 const topService = [
   {
     name: "Manicures",
@@ -71,7 +88,14 @@ const Home = () => {
         <Text className="text-xl font-semibold" style={{ color: "#ff9c86" }}>
           Hi There
         </Text>
-        <ShoppingCart />
+        <TouchableOpacity onPress={() => router.push("/pages/cart")} className="relative">
+  <ShoppingCart color="#ff9c86" size={24} />
+  {cartCount > 0 && (
+    <View className="absolute -top-1 -right-1 bg-red-500 rounded-full w-4 h-4 items-center justify-center">
+      <Text className="text-white text-xs font-bold">{cartCount}</Text>
+    </View>
+  )}
+</TouchableOpacity>
       </View>
 
       <View className="flex-row items-center bg-white px-4 py-2 rounded-xl mb-4">

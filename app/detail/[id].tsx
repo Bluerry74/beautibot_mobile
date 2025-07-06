@@ -1,8 +1,10 @@
+import CartButton from "@/app/component/cartButton";
 import { Product, Sku } from "@/app/types/product";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { Stack, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
+
 import {
   ActivityIndicator,
   Image,
@@ -57,7 +59,6 @@ const Detail = () => {
   }
 
 
-
   const discountPrice = selectedSku.price * (1 - (selectedSku.discount || 0) / 100);
 
   return (
@@ -79,14 +80,14 @@ const Detail = () => {
       />
 
       <View className="items-center my-2">
-        <Image
-          source={{ uri: selectedSku.image }}
-          className="w-72 h-72"
-          resizeMode="contain"
-        />
       </View>
 
       <View className="space-y-3 mt-2 bg-white p-4 rounded-lg shadow-md">
+      <Image
+          source={{ uri: selectedSku.images?.[0]}}
+          className="w-96 h-96"
+          resizeMode="cover"
+        />
         <View className="flex-row justify-between items-center">
           <Text className="text-3xl font-semibold">{product.name}</Text>
           {selectedSku.discount > 0 && (
@@ -138,15 +139,12 @@ const Detail = () => {
 
       {/* CTA Buttons */}
       <View className="mt-8 space-y-4">
-        <View className="flex-row space-x-3">
-          <TouchableOpacity className="flex-1 border border-black py-3 rounded-full items-center">
-            <Text className="text-xl text-[#5D2C1D]">Add to cart</Text>
-          </TouchableOpacity>
-          <TouchableOpacity className="flex-1 bg-black py-3 rounded-full items-center">
-            <Text className="text-white text-xl">Buy now</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+  <View className="flex-row space-x-3">
+    <View className="flex-1">
+    <CartButton sku={selectedSku} />
+    </View>
+  </View>
+</View>
     </ScrollView>
   );
 };

@@ -1,7 +1,7 @@
 import { Image } from "expo-image";
 import { router } from "expo-router";
+import { EyeOff } from "lucide-react-native";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { Eye, EyeOff } from "lucide-react-native";
 
 export default function Index() {
   return (
