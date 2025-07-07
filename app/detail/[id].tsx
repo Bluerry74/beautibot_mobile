@@ -1,5 +1,5 @@
-import CartButton from "@/app/component/cartButton";
 import { Product, Sku } from "@/app/types/product";
+import CartButton from "@/components/core/FlatList/cartButton";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { Stack, useLocalSearchParams, useNavigation, useRouter } from "expo-router";

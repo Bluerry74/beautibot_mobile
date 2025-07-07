@@ -20,11 +20,11 @@ export default function CartButton({ sku }: Props) {
   const handleAdd = async () => {
     setLoading(true);
     try {
-      await addToCart(sku);
-      console.log("✅ Đã thêm vào giỏ hàng");
-      // TODO: nếu cần bạn có thể gọi getCart() ở đây để refetch
-    } catch (error) {
-      console.error("❌ Thêm giỏ hàng thất bại", error);
+      const data = await addToCart(sku);
+      console.log("✅ Đã thêm vào giỏ hàng", data);
+    } catch (err: any) {
+      // In chi tiết lỗi trả về từ server
+      console.error("❌ Thêm giỏ hàng thất bại", err.response?.data || err.message);
     } finally {
       setLoading(false);
     }
