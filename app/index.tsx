@@ -1,3 +1,4 @@
+import AppForm from "@/components/core/AppForm";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -5,7 +6,6 @@ import { useAuth } from "../components/context/AuthContext";
 import { getMe } from "../services/auth/getMe";
 import { loginSystem } from "../services/auth/login";
 import { FormInputType } from "../types/formInput";
-import AppForm from "@/components/core/AppForm";
 const fields = [
     {
         name: "email",
@@ -75,7 +75,10 @@ export default function Index() {
                 <Text style={styles.bottomText}>
                     Don’t have an account?{" "}
                     <TouchableOpacity
-                        onPress={() => router.push("/pages/register")}
+                        onPress={() => {
+                            console.log("Register");
+                            router.push("/pages/register");
+                        }}
                     >
                         <Text style={styles.registerText}>Register Now</Text>
                     </TouchableOpacity>

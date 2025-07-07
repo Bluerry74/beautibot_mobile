@@ -1,6 +1,5 @@
 import { FormInputType } from "@/types/formInput";
 import { Picker } from "@react-native-picker/picker";
-import React from "react";
 import { TextInput, View } from "react-native";
 
 export interface DynamicInputProps {
@@ -11,7 +10,7 @@ export interface DynamicInputProps {
     options?: { label: string; value: string }[];
     name?: string;
     [x: string]: any;
-}
+}   
 
 const DynamicInput = ({
     fieldType,
