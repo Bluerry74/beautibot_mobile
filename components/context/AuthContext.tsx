@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [accessToken, setAccessToken] = useState<string | null>(null);
     const [refreshToken, setRefreshToken] = useState<string | null>(null);
     const [user, setUser] = useState<any>(null);
-      const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
       useEffect(() => {
         (async () => {
           try {

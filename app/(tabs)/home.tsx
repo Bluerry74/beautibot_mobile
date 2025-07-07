@@ -15,24 +15,7 @@ import {
 } from "react-native";
 import { IProduct } from "../types/products";
 
-const [cartCount, setCartCount] = useState(0);
-useEffect(() => {
-  axios
-    .get("https://be-wdp.onrender.com/cart", {
-      headers: {
-        Authorization: `Bearer YOUR_ACCESS_TOKEN`, // hoặc bỏ nếu không dùng
-      },
-    })
-    .then((res) => {
-      const items = res.data?.items || [];
-      const total = items.reduce((acc: number, item: any) => acc + item.quantity, 0);
-      setCartCount(total);
-    })
-    .catch((err) => {
-      console.error("❌ Lỗi lấy giỏ hàng:", err.message);
-      setCartCount(0);
-    });
-}, []);
+
 const topService = [
   {
     name: "Manicures",
@@ -85,7 +68,24 @@ const nearArtist = [
 const Home = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
-
+  const [cartCount, setCartCount] = useState(0);
+  useEffect(() => {
+    axios
+      .get("https://be-wdp.onrender.com/cart", {
+        headers: {
+          Authorization: `Bearer YOUR_ACCESS_TOKEN`, // hoặc bỏ nếu không dùng
+        },
+      })
+      .then((res) => {
+        const items = res.data?.items || [];
+        const total = items.reduce((acc: number, item: any) => acc + item.quantity, 0);
+        setCartCount(total);
+      })
+      .catch((err) => {
+        console.error("❌ Lỗi lấy giỏ hàng:", err.message);
+        setCartCount(0);
+      });
+  }, []);
   useEffect(() => {
     const fetchProducts = async () => {
       try {
