@@ -1,8 +1,8 @@
-import { Product, Sku } from "@/app/types/product";
+import { Product, Sku } from "@/types/product";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { Stack, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,

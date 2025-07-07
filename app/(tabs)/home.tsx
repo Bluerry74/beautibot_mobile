@@ -1,17 +1,17 @@
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { router, useNavigation, useRouter } from "expo-router";
-import { AlignLeft, ShoppingCart } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
-import {
-    Image,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from "react-native";
-import { IProduct } from "../types/products";
 import { get } from "@/httpservices/httpService";
+import { IProduct } from "@/types/product";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { AlignLeft, ShoppingCart } from "lucide-react-native";
+import { useEffect, useState } from "react";
+import {
+  Image,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 const nearArtist = [
     {

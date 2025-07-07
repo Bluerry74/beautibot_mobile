@@ -1,8 +1,8 @@
-import { Product, Sku } from "@/app/types/product";
+import { Product, Sku } from "@/types/product";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
