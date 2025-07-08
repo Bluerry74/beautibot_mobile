@@ -1,4 +1,4 @@
 export const routesConfig = {
-  home: "/",
+  home: "/(tabs)/home",
   cart: "/pages/cart",
 } as const;

@@ -1,7 +1,7 @@
-import { View, Text, TouchableOpacity, Button, StyleSheet,Alert  } from 'react-native'
-import React, { useState } from 'react'
-import { Camera, CameraType, CameraView, useCameraPermissions } from 'expo-camera';
+import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
+import { useState } from 'react';
+import { Alert, Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const Scanface = () => {
  const [facing, setFacing] = useState<CameraType>('back');
