@@ -9,13 +9,17 @@
     },
     "jsx": "react-jsx",
     "allowJs": true,
-    "types": ["react"]
+    "types": [
+      "react"
+    ]
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
-    "nativewind-env.d.ts"
+    "nativewind-env.d.ts",
+    "app/**/*",
+    "components/**/*"
   ]
 }
