@@ -1,8 +1,8 @@
-import { Product, Sku } from "@/app/types/product";
+import { IProduct, ISku } from "@/types/product";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
-import { Stack, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -12,11 +12,10 @@ import {
   View,
 } from "react-native";
 const Detail = () => {
-  const navigation = useNavigation();
   const params = useLocalSearchParams();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
-  const [product, setProduct] = useState<Product | null>(null);
-  const [selectedSku, setSelectedSku] = useState<Sku | null>(null);
+  const [product, setProduct] = useState<IProduct | null>(null);
+  const [selectedSku, setSelectedSku] = useState<ISku | null>(null);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   console.log("✅ Received ID:", id);
@@ -66,7 +65,7 @@ const Detail = () => {
         options={{
           title: "Product Detail",
           headerLeft: () => (
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity onPress={() => router.back()}>
               <Ionicons name="arrow-back" size={20} color="black" />
             </TouchableOpacity>
           ),
@@ -109,19 +108,19 @@ const Detail = () => {
 
         <Text className="text-base text-gray-500 mt-1">Brand: {product.brand}</Text>
         <Text className="text-base text-gray-500 mt-1">
-          Ingredients: {product.ingredients.join(", ")}
+          Ingredients: {product.ingredients?.join(", ")}
         </Text>
         <Text className="text-base text-gray-500 mt-1">
-          Skin Concerns: {product.skinConcerns.join(", ")}
+          Skin Concerns: {product.skinConcerns?.join(", ")}
         </Text>
         <Text className="text-base text-gray-500 mt-1">
-          Skin Type: {product.suitableForSkinTypes.join(", ")}
+          Skin Type: {product.suitableForSkinTypes?.join(", ")}
         </Text>
 
         {/* Size Variants */}
         <Text className="font-medium mt-4 text-xl">Size Variations</Text>
         <View className="flex-row flex-wrap gap-2 mt-2">
-        {product.skus.map((sku) => (
+        {product.skus?.map((sku: ISku) => (
   <TouchableOpacity
     key={sku._id}
     className={`border px-4 py-1 mr-2 rounded-full ${

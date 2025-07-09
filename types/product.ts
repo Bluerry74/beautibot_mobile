@@ -1,28 +1,12 @@
+// Dimensions for SKU
 export interface IDimensions {
     length: number;
     width: number;
     height: number;
-}
-
-export interface IProduct {
-    _id?: string;
-    name?: string;
-    code?: string;
-    rating?: number;
-    isActive?: boolean;
-    isDeleted?: boolean;
-    createdAt?: string;
-    updatedAt?: string;
-    suitableForSkinTypes?: string[];
-    skinConcerns?: string[];
-    ingredients?: string[];
-    brand?: string;
-    description?: string;
-    quantity?: number;
-    image?: any;
-    skus?: ISku[] | any;
-}
-export interface ISku {
+  }
+  
+  // SKU Structure
+  export interface ISku {
     _id: string;
     productId: string;
     variantName: string;
@@ -40,17 +24,35 @@ export interface ISku {
     discount: number;
     image: string;
     weight: number;
-    dimensions: {
-        length: number;
-        width: number;
-        height: number;
-    };
+    dimensions: IDimensions;
     internalNotes?: string;
     createdAt: string;
     updatedAt: string;
-}
-
-export interface IProductDetail {
+    __v?: number;
+  }
+  
+  // Basic product (used for list, form, etc.)
+  export interface IProduct {
+    _id?: string;
+    name?: string;
+    code?: string;
+    brand?: string;
+    description?: string;
+    rating?: number;
+    isActive?: boolean;
+    isDeleted?: boolean;
+    createdAt?: string;
+    updatedAt?: string;
+    quantity?: number;
+    image?: string | any;
+    suitableForSkinTypes?: string[];
+    skinConcerns?: string[];
+    ingredients?: string[];
+    skus?: ISku[];
+  }
+  
+  // Full detail product (used for detail page)
+  export interface IProductDetail {
     _id: string;
     name: string;
     brand: string;
@@ -62,30 +64,34 @@ export interface IProductDetail {
     isDeleted: boolean;
     createdAt: string;
     updatedAt: string;
-    skus: ISku[]; // Multiple SKUs for the product
-    image: string; // Main image URL
-    rating?: number; // Optional, if the product has a rating
-    vendor?: string; // Vendor name for the product (optional)
-    oldPrice?: number; // Optional, if there's an old price (for discount calculation)
-    availability?: string; // Optional, status like "In Stock", "Out of Stock", etc.
-    size?: string; // Optional, size of the product (e.g. 100ml, 50g)
-}
-
-export interface IProductResponse {
+    skus: ISku[];
+    image: string;
+    rating?: number;
+    vendor?: string;
+    oldPrice?: number;
+    availability?: string;
+    size?: string;
+  }
+  
+  // API response for product list
+  export interface IProductResponse {
     data: {
-        data: IProduct[];
-        metadata: {
-            totalItems?: number;
-            totalPages?: number;
-            currentPage?: number;
-            limit?: number;
-        };
+      data: IProduct[];
+      metadata: {
+        totalItems?: number;
+        totalPages?: number;
+        currentPage?: number;
+        limit?: number;
+      };
     };
-}
-export interface ProductCardTypes {
-    items?: any[];
+  }
+  
+  // Product card UI props
+  export interface ProductCardTypes {
+    items?: IProduct[];
     fields?: any;
     loading?: boolean;
     col?: number;
     path?: string;
-}
+  }
+  

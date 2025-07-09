@@ -1,111 +1,184 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useAuth } from "../components/context/AuthContext";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Button, Provider as PaperProvider } from "react-native-paper";
+import * as yup from "yup";
 import { getMe } from "../services/auth/getMe";
 import { loginSystem } from "../services/auth/login";
-import { FormInputType } from "../types/formInput";
-import AppForm from "@/components/core/AppForm";
-const fields = [
-    {
-        name: "email",
-        placeholder: "Enter your email",
-        fieldType: FormInputType.TEXT,
-        defaultValue: "",
-        rules: { required: "Email is required" },
-        label: "Email Address",
-    },
-    {
-        name: "password",
-        placeholder: "Enter your password",
-        fieldType: FormInputType.PASSWORD,
-        defaultValue: "",
-        rules: { required: "Password is required" },
-        label: "Password",
-    },
-];
+import { useAuthStore } from "../store/auth";
+
+const { width } = Dimensions.get("window");
+
+const schema = yup.object().shape({
+  email: yup.string().email("Email không hợp lệ!").required("Vui lòng nhập email!"),
+  password: yup.string().min(6, "Mật khẩu tối thiểu 6 ký tự!").required("Vui lòng nhập mật khẩu!"),
+});
+
 export default function Index() {
-    const { login } = useAuth();
-    const handleLogin = async (data: any) => {
-        try {
-            console.log("data:", data);
-           
-            const res = await loginSystem(data.email, data.password);
-            console.log("response", res);
-            if (!res) throw new Error("Login failed");
-            const me = await getMe({
-                accessToken: res.accessToken,
-            });
-            console.log("User data", me);
-            login({
-                user: me,
-                accessToken: res.accessToken,
-                refreshToken: res.refreshToken,
-            })
-            router.push("/home");
-        } catch (err: any) {
-            console.log(
-                "Login failed",
-                err?.response?.data || err.message || err
-            );
-        }
-    };
-    return (
-        <View style={{ flex: 1, backgroundColor: "#fbf1eb" }}>
-            <View className="h-3/5 relative justify-end">
-                <Image
-                    source={require("../assets/images/banner_login.jpg")}
-                    contentFit="cover"
-                    style={{ borderRadius: 10, width: "100%", height: "100%" }}
-                />
-                <View className="absolute inset-0 justify-center items-center px-4">
-                    <Text className="text-4xl font-bold text-white text-center">
-                        Let’s get you Login!
-                    </Text>
-                    <Text className="text-lg font-semibold mt-2 text-white text-center">
-                        Enter your information below.
-                    </Text>
-                </View>
+  const { setTokens, setUser } = useAuthStore();
+  const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+    resolver: yupResolver(schema),
+  });
+  const [showPassword, setShowPassword] = useState(false);
+
+  const onSubmit = async (data: any) => {
+    try {
+      const res = await loginSystem(data.email, data.password);
+      console.log("Login response:", res);
+      if (!res) throw new Error("Login failed");
+      const me = await getMe({ accessToken: res.accessToken });
+      setTokens({
+        accessToken: res.accessToken,
+        refreshToken: res.refreshToken,
+      });
+      setUser({
+        email: me.email || "",
+        fullname: me.fullname || "",
+        role: me.role || "",
+        avatar: me.avatar || "",
+      });
+      router.push("/(tabs)/home");
+    } catch (err: any) {
+      console.log("Login error:", err);
+    }
+  };
+
+  return (
+    <PaperProvider>
+      <View style={{ flex: 1, backgroundColor: "#fbf1eb" }}>
+        <Image
+          source={require("../assets/images/banner_login.jpg")}
+          contentFit="cover"
+          style={StyleSheet.absoluteFillObject}
+          blurRadius={2}
+        />
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <View style={{
+            borderRadius: 20,
+            backgroundColor: "#fff",
+            padding: 20,
+            width: width * 0.9,
+            elevation: 5,
+          }}>
+            <Text style={{ fontSize: 28, fontWeight: "bold", color: "#c2185b", textAlign: "center" }}>
+              Đăng nhập tài khoản
+            </Text>
+            <Text style={{ fontSize: 16, fontWeight: "600", marginTop: 8, color: "#f06292", textAlign: "center" }}>
+              Nhập thông tin để đăng nhập.
+            </Text>
+            <View style={{ marginBottom: 16, marginTop: 16 }}>
+              <Controller
+                control={control}
+                name="email"
+                render={({ field: { onChange, value } }: { field: { onChange: (value: string) => void; value: string } }) => (
+                  <TextInput
+                    placeholder="Nhập email của bạn"
+                    value={value}
+                    onChangeText={onChange}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    style={styles.input}
+                  />
+                )}
+              />
+              {errors.email && <Text style={{ color: "red" }}>{errors.email.message}</Text>}
             </View>
-            <View style={styles.container}>
-                <AppForm
-                    items={fields}
-                    onSubmit={handleLogin}
-                    btnText="Login"
-                />
-                <Text style={styles.bottomText}>
-                    Don’t have an account?{" "}
+            <View style={{ marginBottom: 16 }}>
+              <Controller
+                control={control}
+                name="password"
+                render={({ field: { onChange, value } }: { field: { onChange: (value: string) => void; value: string } }) => (
+                  <View style={{ position: "relative" }}>
+                    <TextInput
+                      placeholder="Nhập mật khẩu"
+                      value={value}
+                      onChangeText={onChange}
+                      secureTextEntry={!showPassword}
+                      style={styles.input}
+                    />
                     <TouchableOpacity
-                        onPress={() => router.push("/pages/register")}
+                      style={styles.eyeButton}
+                      onPress={() => setShowPassword((v: boolean) => !v)}
                     >
-                        <Text style={styles.registerText}>Register Now</Text>
+                      <Text style={{ color: "#999", fontSize: 16 }}>
+                        {showPassword ? "🙈" : "👁️"}
+                      </Text>
                     </TouchableOpacity>
-                </Text>
+                  </View>
+                )}
+              />
+              {errors.password && <Text style={{ color: "red" }}>{errors.password.message}</Text>}
             </View>
+            <Button
+              mode="contained"
+              onPress={handleSubmit(onSubmit)}
+              loading={isSubmitting}
+              disabled={isSubmitting}
+              style={{
+                backgroundColor: "#ff9c86",
+                borderRadius: 20,
+                marginTop: 10,
+                marginLeft: 20,
+                marginRight: 20,
+              }}
+              labelStyle={{ fontSize: 18, fontWeight: "bold", color: "#fff" }}
+              contentStyle={{ paddingVertical: 8 }}
+            >
+              Đăng nhập
+            </Button>
+            <View style={styles.bottomTextRow}>
+              <Text style={styles.bottomText}>Chưa có tài khoản? </Text>
+              <Text
+                style={styles.registerText}
+                onPress={() => {
+                  router.push("/pages/register");
+                }}
+              >
+                Đăng ký ngay
+              </Text>
+            </View>
+          </View>
         </View>
-    );
+      </View>
+    </PaperProvider>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        borderRadius: 20,
-        backgroundColor: "#fff",
-        padding: 10,
-        marginHorizontal: 16,
-        marginTop: 350,
-        height: 350,
-        position: "absolute",
-        left: 0,
-        right: 0,
-    },
-    bottomText: {
-        textAlign: "center",
-        fontSize: 16,
-        color: "#666",
-        marginTop: 12,
-    },
-    registerText: {
-        fontWeight: "600",
-        color: "#ff9c86",
-    },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 16,
+    color: "#333",
+    backgroundColor: "#fff",
+    marginBottom: 4,
+  },
+  eyeButton: {
+    position: "absolute",
+    right: 10,
+    top: 12,
+    padding: 4,
+    zIndex: 1,
+  },
+  bottomText: {
+    textAlign: "center",
+    fontSize: 16,
+    color: "#666",
+  },
+  registerText: {
+    fontWeight: "600",
+    color: "#ff9c86",
+  },
+  bottomTextRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 12,
+  },
 });
