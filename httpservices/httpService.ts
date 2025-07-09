@@ -1,12 +1,6 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import http from "@/httpservices/interceptors";
+import { AxiosRequestConfig, AxiosResponse } from "axios";
 
-const http = axios.create({
-    baseURL: process.env.EXPO_PUBLIC_API_URL,
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
-export default http;
 
 export const get = async <T = unknown>(
     url: string,
@@ -19,7 +13,7 @@ export const get = async <T = unknown>(
 export const post = async <T = unknown>(
     url: string,
     data: unknown = {},
-    option: AxiosRequestConfig = {}
+    option: AxiosRequestConfig = {} 
 ): Promise<AxiosResponse<T>> => {
     const fullUrl = http.defaults.baseURL
         ? `${http.defaults.baseURL.replace(/\/$/, "")}/${url.replace(

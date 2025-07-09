@@ -20,3 +20,9 @@ export interface AuthState {
     setUser: (user: User) => void;
     clearAuth: () => void;
 }
+
+
+export interface RegisterTypes {
+    email: string;
+    password: string;
+}
