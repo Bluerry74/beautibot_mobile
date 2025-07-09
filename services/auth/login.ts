@@ -24,16 +24,11 @@ export const loginSystem = async (
             avatar: user.avatar || "",
         });
         return res.data;
-    } catch (e: any) {
-        console.log("LoginSystem error", {
-            message: e.message,
-            response: e.response?.data,
-            status: e.response?.status,
-            isAxiosError: e.isAxiosError,
-        });
+    } catch (err: any) {
+        console.log("Login error:", err?.response?.data || err.message || err);
         let message = "Lỗi đăng nhập";
-        if (e?.response?.data?.message) {
-            message = e.response.data.message;
+        if (err?.response?.data?.message) {
+            message = err.response.data.message;
             console.log(message);   
         }
         Toast.show({
@@ -41,6 +36,7 @@ export const loginSystem = async (
             text1: "Lỗi đăng nhập",
             text2: "Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản hoặc mật khẩu!",
         });
+        throw err;
     }
 };
 
