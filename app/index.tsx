@@ -9,6 +9,7 @@ import * as yup from "yup";
 import { getMe } from "../services/auth/getMe";
 import { loginSystem } from "../services/auth/login";
 import { useAuthStore } from "../store/auth";
+import { routesConfig } from "@/config/route";
 
 const { width } = Dimensions.get("window");
 
@@ -40,7 +41,19 @@ export default function Index() {
         role: me.role || "",
         avatar: me.avatar || "",
       });
-      router.push("/(tabs)/home");
+      if (me.role === "admin") {
+        router.push(routesConfig.admin.dashboard);
+        return
+      }
+      if (me.role === "delivery") {
+        router.push(routesConfig.delivery.tracking);
+        return
+      }
+      if (me.role === "user") {
+        router.push(routesConfig.home);
+        return
+      }
+      
     } catch (err: any) {
       console.log("Login error:", err);
     }
