@@ -11,6 +11,7 @@
     "lint": "expo lint"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^1.3.23",
     "@expo/vector-icons": "^14.1.0",
     "@hookform/resolvers": "^5.1.1",
     "@react-native-async-storage/async-storage": "^2.1.2",
@@ -19,14 +20,17 @@
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
     "@tanstack/react-query": "^5.81.5",
+    "ai": "^4.3.17",
     "axios": "^1.10.0",
     "expo": "~53.0.9",
     "expo-blur": "~14.1.4",
-    "expo-camera": "~16.1.8",
+    "expo-camera": "~16.1.10",
     "expo-constants": "~17.1.6",
+    "expo-face-detector": "^13.0.2",
     "expo-font": "~13.3.1",
     "expo-haptics": "~14.1.4",
     "expo-image": "~2.3.2",
+    "expo-image-manipulator": "~13.1.7",
     "expo-image-picker": "~16.1.4",
     "expo-linking": "~7.1.5",
     "expo-router": "~5.1.3",
@@ -42,6 +46,7 @@
     "react-dom": "19.0.0",
     "react-hook-form": "^7.59.0",
     "react-native": "0.79.2",
+    "react-native-camera": "^4.2.1",
     "react-native-dotenv": "^3.4.11",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-paper": "^5.14.5",
@@ -54,6 +59,7 @@
     "react-native-webview": "13.13.5",
     "tailwindcss": "^3.4.17",
     "yup": "^1.6.1",
+    "zod": "^3.25.76",
     "zustand": "^5.0.6"
   },
   "devDependencies": {

@@ -42,7 +42,7 @@ const Scanface = ({ onScanComplete }: { onScanComplete: (result: FaceResult) => 
     if (analyzeFaceMutation.isSuccess && analyzeFaceMutation.data) {
       onScanComplete(analyzeFaceMutation.data);
     }
-  }, [analyzeFaceMutation.isSuccess, analyzeFaceMutation.data]);
+  }, [analyzeFaceMutation.isSuccess, analyzeFaceMutation.data, onScanComplete]);
 
   if (!permission?.granted) {
     return (
@@ -165,12 +165,6 @@ const Scanface = ({ onScanComplete }: { onScanComplete: (result: FaceResult) => 
               </TouchableOpacity>
             </View>
           )}
-          {analyzeFaceMutation.isError && (
-            <Text style={{ color: 'red', textAlign: 'center' }}>Gửi ảnh thất bại!</Text>
-          )}
-          {analyzeFaceMutation.isSuccess && (
-            <Text style={{ color: 'green', textAlign: 'center' }}>Gửi thành công!</Text>
-          )}
         </>
       ) : (
         <View style={styles.container}>
@@ -187,7 +181,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center', 
+    alignItems: 'center',
     backgroundColor: '#FFF3EC',
     padding: 20,
   },
@@ -195,7 +189,7 @@ const styles = StyleSheet.create({
     color: '#000',
     paddingBottom: 10,
     fontSize: 16,
-    textAlign: 'center', 
+    textAlign: 'center',
   },
   camera: {
     flex: 1,
