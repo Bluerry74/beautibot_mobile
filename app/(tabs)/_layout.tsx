@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
-import { ScanFace, SquareChartGantt, Squirrel, UserRound } from "lucide-react-native";
+import { Bot, SquareChartGantt, Squirrel, UserRound } from "lucide-react-native";
 
 function TabLayout() {
   return (
@@ -24,11 +24,11 @@ function TabLayout() {
         }}
       ></Tabs.Screen>
        <Tabs.Screen
-        name="scanface"
+        name="ai"
         options={{
-          title: "Scan Face",
+          title: "AI",
           tabBarIcon: () => (
-            <ScanFace size={24} color={"#ff9c86"} />
+            <Bot size={24} color={"#ff9c86"} />
           ),
         }}
       ></Tabs.Screen>

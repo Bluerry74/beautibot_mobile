@@ -31,7 +31,7 @@ const nearArtist = [
 const Home = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
-
+//  const {getInformation} = useAuth();
   useEffect(() => {
     const fetchProducts = async () => {
       try {

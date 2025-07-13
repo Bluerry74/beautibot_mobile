@@ -1,6 +1,9 @@
 const color = {
   primary: "#ff9c86",
   secondary: "#5D2C1D",
+  teritary: "#ffdbd3",
+  quaternary: "#ff876d",
+  chatBackground: "#ffdbd3",
   background: "#f8f4f4",
   text: "#333",
   border: "#ccc",

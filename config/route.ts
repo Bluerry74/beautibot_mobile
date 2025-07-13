@@ -1,4 +1,11 @@
 export const routesConfig = {
   home: "/(tabs)/home",
   cart: "/pages/cart",
+  tracking: "/pages/trackinginfor",
+  delivery: {
+    tracking: "/(delivery)/tracking",
+  },
+  admin: {
+    dashboard: "/(admin)/dashboard",
+  },
 } as const;
