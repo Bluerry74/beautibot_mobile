@@ -1,34 +1,52 @@
-// app/components/CartButton.tsx
 import { Sku } from "@/app/types/product";
 import { useCartActions } from "@/hooks/useCartActions";
-import React, { useState } from "react";
+import { useAuthStore } from "@/store/auth";
+import { ISku } from "@/types/product";
+import { useState } from "react";
 import {
   ActivityIndicator,
   StyleSheet,
   Text,
   TouchableOpacity,
 } from "react-native";
+import Toast from "react-native-toast-message";
 
 interface Props {
-  sku: Sku;
+  sku: ISku;
 }
 
 export default function CartButton({ sku }: Props) {
+  const token = useAuthStore((state) => state.accessToken); // ✅ lấy token từ store
   const { addToCart } = useCartActions();
   const [loading, setLoading] = useState(false);
 
   const handleAdd = async () => {
     setLoading(true);
     try {
-      const data = await addToCart(sku);
+      if (!token) {
+        console.warn("❌ Không tìm thấy token, vui lòng đăng nhập");
+        return;
+      }
+      const data = await addToCart(sku as Sku);
       console.log("✅ Đã thêm vào giỏ hàng", data);
+      
+      Toast.show({
+        type: "success",
+        text1: "Thành công",
+        text2: "Đã thêm sản phẩm vào giỏ hàng 🎉",
+      });
     } catch (err: any) {
-      // In chi tiết lỗi trả về từ server
       console.error("❌ Thêm giỏ hàng thất bại", err.response?.data || err.message);
+      Toast.show({
+        type: "error",
+        text1: "Lỗi",
+        text2: "Không thể thêm sản phẩm vào giỏ hàng 😢",
+      });
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <TouchableOpacity

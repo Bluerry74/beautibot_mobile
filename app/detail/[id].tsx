@@ -1,3 +1,4 @@
+import CartButton from "@/components/core/FlatList/cartButton";
 import { IProduct, ISku } from "@/types/product";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";

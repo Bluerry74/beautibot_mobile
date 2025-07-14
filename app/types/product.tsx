@@ -20,7 +20,7 @@ export interface Dimensions {
     returnCount: number;
     status: string;
     discount: number;
-    images: string;
+    image: string;
     weight: number;
     dimensions: Dimensions;
     internalNotes: string;
@@ -66,4 +66,8 @@ export interface Dimensions {
     isDefault?: boolean;
     createdAt?: string;
     updatedAt?: string;
+  }
+  export interface CheckoutResponse {
+    url: string;
+    message?: string;
   }

@@ -1,23 +1,24 @@
 // app/cart.tsx
 import { CartItem, IAddress } from "@/app/types/product";
 import { useCartActions } from "@/hooks/useCartActions";
+import { useAuthStore } from "@/store/auth";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
   Button,
   FlatList,
-  Image,
-  StyleSheet,
+  Image, Linking, StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View
 } from "react-native";
-
+import { SafeAreaView } from "react-native-safe-area-context";
 export default function CartPage() {
+  const token = useAuthStore((s) => s.accessToken);
   const {
     getCart,
     removeFromCart,
@@ -76,9 +77,14 @@ export default function CartPage() {
       await fetchCart();
     }
   };
-  const onRemove = async (skuId: string) => {
-    await removeFromCart(skuId);
-    fetchCart();
+  const onRemove = async (skuId: string, productId: any) => {
+    try {
+      await removeFromCart(skuId, String(productId)); // Ép kiểu ở đây
+      fetchCart();
+    } catch (err: any) {
+      console.error("❌ Xóa giỏ hàng thất bại:", err.response?.data || err.message);
+      Alert.alert("Lỗi", "Không xóa được sản phẩm khỏi giỏ hàng");
+    }
   };
   const onToggle = (skuId: string) =>
     setCartItems(prev =>
@@ -115,13 +121,19 @@ export default function CartPage() {
       return Alert.alert("Chưa chọn địa chỉ", "Vui lòng chọn địa chỉ");
     }
     try {
-      await checkout(selectedAddressId);
-      Alert.alert("Thành công", "Đặt hàng thành công!");
-      router.replace("/");
+      const response = await checkout(selectedAddressId); // thêm return ở useCartActions
+      if (response?.url) {
+        // điều hướng sang trang Stripe
+        Linking.openURL(response.url);
+      } else {
+        Alert.alert("Thành công", "Đặt hàng thành công!");
+        router.replace("/"); // fallback nếu không có url
+      }
     } catch {
       Alert.alert("Lỗi", "Không đặt hàng được");
     }
   };
+  
 
   if (loadingCart) {
     return (
@@ -132,6 +144,7 @@ export default function CartPage() {
   }
 
   return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFF" }}>
     <View style={styles.container}>
       <FlatList
         data={cartItems}
@@ -160,7 +173,7 @@ export default function CartPage() {
 
             <View style={styles.right}>
               <Text style={styles.price}>{(item.priceSnapshot * item.quantity).toLocaleString()}₫</Text>
-              <TouchableOpacity onPress={() => onRemove(item.skuId)}><Text style={styles.remove}>×</Text></TouchableOpacity>
+              <TouchableOpacity onPress={() => onRemove(item.skuId, item.productId)}><Text style={styles.remove}>×</Text></TouchableOpacity>
             </View>
           </View>
         )}
@@ -209,6 +222,7 @@ export default function CartPage() {
         <Button title={isBuy ? "Đặt hàng" : "Mua hàng"} onPress={isBuy ? handleCheckout : () => setIsBuy(true)}/>
       </View>
     </View>
+    </SafeAreaView>
   );
 }
 
