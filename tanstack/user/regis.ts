@@ -1,5 +1,6 @@
 import { registerSystem } from '@/services/auth/regis';
-import { useMutation } from '@tanstack/react-query';
+import { getAllUser } from '@/services/user';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import Toast from 'react-native-toast-message';
 
@@ -25,4 +26,9 @@ export function useRegisterMutation() {
   });
 }
 
-
+export const useAllUser = (params: Record<string, any> = {}) => {
+    return useQuery({
+        queryKey: ["allUser", params],
+        queryFn: () => getAllUser(params),
+    });
+};
