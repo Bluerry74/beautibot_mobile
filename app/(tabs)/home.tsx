@@ -13,6 +13,42 @@ import {
   View,
 } from "react-native";
 
+
+
+const topService = [
+  {
+    name: "Manicures",
+    image: require("../../assets/images/banner_login.jpg"),
+  },
+  { name: "Facial", image: require("../../assets/images/banner_login.jpg") },
+  { name: "Haircut", image: require("../../assets/images/banner_login.jpg") },
+  { name: "Waxing", image: require("../../assets/images/banner_login.jpg") },
+  { name: "Haircut", image: require("../../assets/images/banner_login.jpg") },
+  { name: "Haircut", image: require("../../assets/images/banner_login.jpg") },
+];
+const BestArtist = [
+  {
+    id: 1,
+    name: "Alaina Tisha",
+    rating: 4.8,
+    price: "$39.00/hr",
+    image: require("../../assets/images/banner_login.jpg"),
+  },
+  {
+    id: 2,
+    name: "Amber Heard",
+    rating: 3.6,
+    price: "$27.00/hr",
+    image: require("../../assets/images/banner_login.jpg"),
+  },
+  {
+    id: 3,
+    name: "Nguyen Ky ",
+    rating: 4.5,
+    price: "$25.00/hr",
+    image: require("../../assets/images/banner_login.jpg"),
+  },
+];
 const nearArtist = [
   {
     name: "Amber Heard",
@@ -31,7 +67,6 @@ const nearArtist = [
 const Home = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
-//  const {getInformation} = useAuth();
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -57,7 +92,9 @@ const Home = () => {
         <Text className="text-xl font-semibold" style={{ color: "#ff9c86" }}>
           Hi There
         </Text>
-        <ShoppingCart />
+        <TouchableOpacity onPress={() => router.push("/pages/cart")} className="relative">
+  <ShoppingCart color="#ff9c86" size={24} />
+</TouchableOpacity>
       </View>
 
       <View className="flex-row items-center bg-white px-4 py-2 rounded-xl mb-4">

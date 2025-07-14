@@ -16,20 +16,23 @@ const Products = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-
   useEffect(() => {
-    axios
-      .get("https://be-wdp.onrender.com/product")
-      .then((res) => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get("https://be-wdp.onrender.com/product", {
+          timeout: 10000, // giới hạn tối đa 10s
+        });
         console.log("Data fetched:", res.data);
         setProducts(res.data.data);
+      
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
+      }
+    };
+  
+    fetchData();
   }, []);
+  
 
 
 
