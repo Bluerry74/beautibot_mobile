@@ -1,6 +1,6 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
-import React, { useState } from "react";
-import { Droplets, Moon, Settings, Sun, Zap } from "lucide-react-native"
+import { Droplets, Moon, Settings, Sun, Zap } from "lucide-react-native";
+import React from "react";
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 const routine = {
   morning: [
@@ -65,7 +65,7 @@ export default function Routine() {
 
       <ScrollView className="px-4">
         {tab !== "weekly" ? (
-          routine[tab].map((item) => (
+          routine[tab as keyof typeof routine].map((item: any) => (
             <View key={item.step} className="bg-white rounded-xl mb-3 p-4 border-l-4 border-orange-400">
               <View className="flex-row justify-between items-start">
                 <View className="flex-row gap-3 items-center">

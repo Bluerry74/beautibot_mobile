@@ -1,8 +1,16 @@
-import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native'
-import React from 'react'
+import { routesConfig } from '@/config/route'
+import { useAuthStore } from '@/store/auth'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
+import { useRouter, } from 'expo-router'
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 
 const Profile = () => {
+  const logout = () => {  
+    useAuthStore.getState().logout();
+    router.push("/");
+  }
+ const router = useRouter()
+
   return (
     <ScrollView className="flex-1 bg-white px-6 pt-10 ">
      <Text className="text-xl font-bold text-center mb-4 mt-5">Profile Settings</Text>
@@ -19,18 +27,26 @@ const Profile = () => {
         <Text className="text-gray-500">Albertstevano@gmail.com</Text>
       </View>
       <View className="border-t border-gray-200 mt-2">
-        {[
-          { label: "Personal Data", icon: "person-outline" },
-          { label: "Settings", icon: "settings-outline" },
-          { label: "Extra Card", icon: "card-outline" },
-        ].map((item, i) => (
-          <TouchableOpacity key={i} className="flex-row items-center py-4 border-b border-gray-200">
-            <Ionicons name={item.icon} size={20} className="mr-4 text-gray-700" />
-            <Text className="flex-1 text-base">{item.label}</Text>
-            <Ionicons name="chevron-forward" size={20} color="gray" />
-          </TouchableOpacity>
-        ))}
-      </View>
+  {[
+    { label: 'Tracking', icon: 'person-outline', route: routesConfig.tracking },
+    { label: 'Settings', icon: 'settings-outline' },
+    { label: 'Extra Card', icon: 'card-outline' },
+  ].map((item, i) => (
+    <TouchableOpacity
+      key={i}
+      className="flex-row items-center py-4 border-b border-gray-200"
+      onPress={() => {
+        if (item.route) {
+          router.push(item.route);
+        } 
+      }}
+    >
+      <Ionicons name={item.icon as any} size={20} color="gray" className="mr-4" />
+      <Text className="flex-1 text-base text-gray-800">{item.label}</Text>
+      <Ionicons name="chevron-forward" size={20} color="gray" />
+    </TouchableOpacity>
+  ))}
+</View>
        <View className="border-t border-gray-200 mt-4">
         {[
           { label: "Help Center", icon: "information-circle-outline" },
@@ -38,13 +54,13 @@ const Profile = () => {
           { label: "Add another account", icon: "person-add-outline" },
         ].map((item, i) => (
           <TouchableOpacity key={i} className="flex-row items-center py-4 border-b border-gray-200">
-            <Ionicons name={item.icon} size={20} className="mr-4 text-gray-700" />
+            <Ionicons name={item.icon as any} size={20} className="mr-4 text-gray-700" />
             <Text className="flex-1 text-base">{item.label}</Text>
             <Ionicons name="chevron-forward" size={20} color="gray" />
           </TouchableOpacity>
         ))}
       </View>
-      <TouchableOpacity className="mt-6 border border-red-400 rounded-full py-3 flex-row items-center justify-center">
+      <TouchableOpacity className="mt-6 border border-red-400 rounded-full py-3 flex-row items-center justify-center" onPress={logout}>
         <MaterialIcons name="logout" size={20} color="red" />
         <Text className="text-red-500 ml-2 font-semibold">Sign Out</Text>
       </TouchableOpacity>

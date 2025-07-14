@@ -6,7 +6,12 @@
       "@/*": [
         "./*"
       ]
-    }
+    },
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "types": [
+      "react"
+    ]
   },
   "include": [
     "**/*.ts",

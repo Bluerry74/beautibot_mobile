@@ -1,11 +1,10 @@
-import { Tabs } from "expo-router";
-import React from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { Heart, ListOrdered, ScanFace, SquareChartGantt, Squirrel, UserRound } from "lucide-react-native";
+import { Tabs } from "expo-router";
+import { Bot, SquareChartGantt, Squirrel, UserRound } from "lucide-react-native";
 
 function TabLayout() {
   return (
-    <Tabs screenOptions={{ headerShown: false, tabBarActiveTintColor: "#ff9c86" }}>
+    <Tabs screenOptions={{ headerShown: false, tabBarActiveTintColor: "#ff9c86" }}>      
       <Tabs.Screen 
         name="home"
         options={{
@@ -25,11 +24,11 @@ function TabLayout() {
         }}
       ></Tabs.Screen>
        <Tabs.Screen
-        name="scanface"
+        name="ai"
         options={{
-          title: "Scan Face",
+          title: "AI",
           tabBarIcon: () => (
-            <ScanFace size={24} color={"#ff9c86"} />
+            <Bot size={24} color={"#ff9c86"} />
           ),
         }}
       ></Tabs.Screen>

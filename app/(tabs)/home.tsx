@@ -1,10 +1,12 @@
+import { get } from "@/httpservices/httpService";
+import { IProduct, IProductResponse, ISku } from "@/types/product";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
 import { router } from "expo-router";
 
 import { get } from "@/httpservices/httpService";
 import { AlignLeft, ShoppingCart } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Image,
   ScrollView,
@@ -51,18 +53,18 @@ const BestArtist = [
   },
 ];
 const nearArtist = [
-    {
-        name: "Amber Heard",
-        rating: 3.6,
-        price: "$27.00/hr",
-        image: "https://th.bing.com/th/id/OIP.ZId6kYZXYoG2WwB_JQq7jAHaIK?r=0&rs=1&pid=ImgDetMain",
-    },
-    {
-        name: "Nguyen Ky ",
-        rating: 4.5,
-        price: "$25.00/hr",
-        image: "https://th.bing.com/th/id/OIP.ZId6kYZXYoG2WwB_JQq7jAHaIK?r=0&rs=1&pid=ImgDetMain",
-    },
+  {
+    name: "Amber Heard",
+    rating: 3.6,
+    price: "$27.00/hr",
+    image: "https://th.bing.com/th/id/OIP.ZId6kYZXYoG2WwB_JQq7jAHaIK?r=0&rs=1&pid=ImgDetMain",
+  },
+  {
+    name: "Nguyen Ky ",
+    rating: 4.5,
+    price: "$25.00/hr",
+    image: "https://th.bing.com/th/id/OIP.ZId6kYZXYoG2WwB_JQq7jAHaIK?r=0&rs=1&pid=ImgDetMain",
+  },
 ];
 
 const Home = () => {
@@ -89,10 +91,10 @@ const Home = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await get<IProduct[]>("/product");
+        const response = await get<IProductResponse>("/product");
 
-        setProducts(response.data.data);
-        console.log("Products fetched successfully:", response.data);
+        setProducts(response.data.data as unknown as IProduct[]);
+        console.log("Products fetched successfully:", response);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -102,7 +104,7 @@ const Home = () => {
   }, []);
 
   const filteredProducts = selectedBrand
-    ? products.filter((p) => p.brand === selectedBrand)
+    ? products.filter((p: IProduct) => p.brand === selectedBrand)
     : products;
   return (
     <ScrollView className="bg-[#FFF3EC] flex-1 px-4 pt-8 ">
@@ -121,16 +123,16 @@ const Home = () => {
 </TouchableOpacity>
       </View>
 
-            <View className="flex-row items-center bg-white px-4 py-2 rounded-xl mb-4">
-                <Ionicons name="search" size={20} color="gray" />
-                <TextInput
-                    placeholder="What are you looking for?"
-                    className="ml-2 flex-1 text-sm"
-                />
-                <TouchableOpacity className="p-2 bg-brown-700 rounded-md ml-2">
-                    <MaterialIcons name="tune" size={18} color="white" />
-                </TouchableOpacity>
-            </View>
+      <View className="flex-row items-center bg-white px-4 py-2 rounded-xl mb-4">
+        <Ionicons name="search" size={20} color="gray" />
+        <TextInput
+          placeholder="What are you looking for?"
+          className="ml-2 flex-1 text-sm"
+        />
+        <TouchableOpacity className="p-2 bg-brown-700 rounded-md ml-2">
+          <MaterialIcons name="tune" size={18} color="white" />
+        </TouchableOpacity>
+      </View>
 
       <Text className="text-xl font-semibold mb-4" style={{ color: "#ff9c86" }}>
         Top Brands
@@ -140,7 +142,7 @@ const Home = () => {
         showsHorizontalScrollIndicator={false}
         className="mb-4"
       >
-        {products.map((product) => (
+        {products.map((product: IProduct) => (
           <View key={product._id} className="items-center mr-6">
             <View className="w-16 h-16 bg-white rounded-full justify-center items-center mb-2">
               <TouchableOpacity
@@ -149,7 +151,7 @@ const Home = () => {
                 }}
               >
                 <Image
-                  source={product.skus[0]?.image}
+                  source={{ uri: product.skus?.[0]?.image ?? "" }}
                   className="w-16 h-16 rounded-full"
                 />
               </TouchableOpacity>
@@ -171,12 +173,11 @@ const Home = () => {
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {filteredProducts.map((product) =>
-          product.skus.map((sku) => (
+        {filteredProducts.map((product: IProduct) =>
+          product.skus?.map((sku: ISku) => (
             <TouchableOpacity
               key={sku._id}
-              onPress={() => router.push(`/detail?id=${product._id}`)}
-            >
+              onPress={() => router.push(`/detail/${product._id}`)}            >
               <View className="w-52 h-72 bg-white rounded-xl mr-4 p-2">
                 <Image
                   source={{ uri: sku.image }}
