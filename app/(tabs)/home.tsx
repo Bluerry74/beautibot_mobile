@@ -3,8 +3,6 @@ import { IProduct, IProductResponse, ISku } from "@/types/product";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
 import { router } from "expo-router";
-
-import { get } from "@/httpservices/httpService";
 import { AlignLeft, ShoppingCart } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
@@ -15,7 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { IProduct } from "../types/products";
+
 
 
 const topService = [

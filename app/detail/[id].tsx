@@ -81,7 +81,7 @@ const Detail = () => {
 
       <View className="space-y-3 mt-2 bg-white p-4 rounded-lg shadow-md">
       <Image
-          source={{ uri: selectedSku.images?.[0]}}
+          source={{ uri: selectedSku.image?.[0]}}
           className="w-96 h-96"
           resizeMode="cover"
         />
