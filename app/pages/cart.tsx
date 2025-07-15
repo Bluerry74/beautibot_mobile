@@ -1,7 +1,6 @@
 // app/cart.tsx
 import { CartItem, IAddress } from "@/app/types/product";
 import { useCartActions } from "@/hooks/useCartActions";
-import { useAuthStore } from "@/store/auth";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
@@ -18,7 +17,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 export default function CartPage() {
-  const token = useAuthStore((s) => s.accessToken);
   const {
     getCart,
     removeFromCart,
@@ -26,8 +24,10 @@ export default function CartPage() {
     getAddresses,
     addAddress,
     checkout,
+    getMyCoupons
   } = useCartActions();
-
+  const [coupons, setCoupons] = useState<string[]>([]);
+  const [couponCode, setCouponCode] = useState<string>("");
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loadingCart, setLoadingCart] = useState(true);
   const [addresses, setAddresses] = useState<IAddress[]>([]);
@@ -37,7 +37,21 @@ export default function CartPage() {
   const [newAddr, setNewAddr] = useState<Partial<Omit<IAddress, "_id">>>({});
   const [addingAddr, setAddingAddr] = useState(false);
   const router = useRouter();
-
+  
+  useEffect(() => {
+    if (isBuy) {
+      fetchCoupons();
+    }
+  }, [isBuy]);
+  
+  const fetchCoupons = async () => {
+    try {
+      const codes = await getMyCoupons();
+      setCoupons(codes);
+    } catch {
+      Alert.alert("Lỗi", "Không lấy được mã giảm giá");
+    }
+  };
   useEffect(() => {
     fetchCart();
     fetchAddresses();
@@ -196,7 +210,9 @@ export default function CartPage() {
                 ))}
               </View>
             )
+            
             : (
+              
               <View style={styles.addrForm}>
                 {["fullName","phone","street","city","postalCode","country"].map(k => (
                   <TextInput
@@ -216,6 +232,37 @@ export default function CartPage() {
           </TouchableOpacity>
         )
       }
+<View style={{ marginVertical: 12 }}>
+  <TextInput
+    placeholder="Nhập mã giảm giá"
+    value={couponCode}
+    onChangeText={setCouponCode}
+    style={styles.input}
+  />
+  {coupons.length > 0 ? (
+    <View style={{ marginTop: 8 }}>
+      <Text style={{ fontWeight: "500", marginBottom: 4 }}>Chọn mã:</Text>
+      {coupons.map((c, idx) => (
+        <TouchableOpacity
+          key={idx}
+          onPress={() => setCouponCode(c)}
+          style={{
+            backgroundColor: "#FFEBEE",
+            padding: 8,
+            marginBottom: 4,
+            borderRadius: 6,
+          }}
+        >
+          <Text style={{ color: "tomato", fontWeight: "500" }}>{c}</Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  ) : (
+    <Text style={{ color: "#888", marginTop: 8 }}>
+      Bạn chưa có mã giảm giá nào.
+    </Text>
+  )}
+</View>
 
       <View style={styles.footer}>
         <Text style={styles.total}>Tổng cộng: <Text style={{color:"tomato"}}>{total.toLocaleString()}₫</Text></Text>

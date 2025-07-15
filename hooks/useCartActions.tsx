@@ -66,7 +66,11 @@ export const useCartActions = () => {
     const res = await axios.post(`${API}/checkout`, { addressId, couponCode }, authHeader);
     return res.data;
   };
-
+  const getMyCoupons = async (): Promise<string[]> => {
+    const res = await axios.get(`${API}/coupon/my-coupons`, authHeader);
+    return res.data?.data?.map((c: any) => c.code) || [];
+  };
+  
   return {
     addToCart,
     removeFromCart,
@@ -75,5 +79,6 @@ export const useCartActions = () => {
     getAddresses,
     addAddress,
     checkout,
+    getMyCoupons
   };
 };
