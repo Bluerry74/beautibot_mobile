@@ -21,14 +21,21 @@ export default function ShipperDashboard() {
   }, [])
 
   const getStatusText = (status: string) => {
-    switch (status) {
+   switch (status) {
+      case "processing":
+        return "Đang xử lý đơn hàng";
+      case "assigned":
+        return "Đã sắp xếp người giao hàng";
+      case "out_for_delivery":
+        return "Đang trên đường giao hàng";
       case "delivered":
-        return "Đã giao"
-      case "delivering":
-        return "Đang giao"
-      case "pending":
+        return "Đã giao";
+      case "cancelled":
+        return "Đã huỷ";
+      case "failed":
+        return "Giao hàng thất bại";
       default:
-        return "Chờ xác nhận"
+        return "Chờ xác nhận";
     }
   }
 

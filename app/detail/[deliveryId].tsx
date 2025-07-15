@@ -259,19 +259,19 @@ export default function TrackingDetail() {
             </TouchableOpacity>
           </View>
         </View>
-        
+
         {delivery.status === "assigned" && (
-            <TouchableOpacity
-              className="flex-1 px-3 py-2 rounded items-center mx-4 mt-4"
-              style={{ backgroundColor: "#ff9c86" }}
-              onPress={() => handleStatusChange("out_for_delivery")}
-              disabled={isUpdatingStatus}
-            >
-              <Text className="text-white">
-                {isUpdatingStatus ? "Đang cập nhật..." : "Bắt đầu giao hàng"}
-              </Text>
-            </TouchableOpacity>
-        )}   
+          <TouchableOpacity
+            className="flex-1 px-3 py-2 rounded items-center mx-4 mt-4"
+            style={{ backgroundColor: "#ff9c86" }}
+            onPress={() => handleStatusChange("out_for_delivery")}
+            disabled={isUpdatingStatus}
+          >
+            <Text className="text-white">
+              {isUpdatingStatus ? "Đang cập nhật..." : "Bắt đầu giao hàng"}
+            </Text>
+          </TouchableOpacity>
+        )}
         {delivery.status === "out_for_delivery" && (
           <View className="mx-4 mt-4 bg-white rounded-xl shadow-sm p-4">
             <Text className="text-lg font-semibold text-gray-900 mb-4">
@@ -370,6 +370,36 @@ export default function TrackingDetail() {
           </View>
         )}
         {delivery.status === "failed" && (
+          <View className="mx-4 mt-4 bg-white rounded-xl shadow-sm p-4">
+            <Text className="text-lg font-semibold text-gray-900 mb-4">
+              Lý do giao hàng thất bại
+            </Text>
+            <Text className="text-gray-600">
+              Khách hàng không có mặt tại địa chỉ giao hàng hoặc từ chối nhận
+              hàng.
+            </Text>
+            <View className="mt-4 flex-row justify-between space-x-4">
+              {selectedImage && (
+                <Image
+                  source={{ uri: selectedImage.uri }}
+                  className="w-full h-48 rounded-lg bg-gray-200"
+                />
+              )}
+              <TouchableOpacity
+                className={`flex-1 px-3 py-2 rounded items-center mr-3 ${
+                  isUpdatingStatus ? "bg-gray-400" : "bg-red-600"
+                }`}
+                onPress={() => handleStatusChange("cancelled")}
+                disabled={!selectedImage || isUpdatingStatus}
+              >
+                <Text className="text-white">
+                  {isUpdatingStatus ? "Đang cập nhật..." : "Hủy bỏ đơn hàng"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+        {delivery.status === "cancelled" && (
           <View className="mx-4 mt-4 bg-white rounded-xl shadow-sm p-4">
             <Text className="text-lg font-semibold text-gray-900 mb-4">
               Đơn hàng đã bị hủy
