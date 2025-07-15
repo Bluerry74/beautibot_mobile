@@ -66,6 +66,10 @@ const Dashboard = () => {
     const safeChartData = ordersChartData?.length
         ? ordersChartData
         : [{ date: "", orders: 0 }];
+    const safeData = ordersChartData.map((d) => ({
+        date: d.date,
+        orders: Number.isFinite(d.orders) ? d.orders : 0,
+    }));
     return (
         <View>
             <ScrollView contentContainerStyle={styles.container}>
@@ -81,8 +85,8 @@ const Dashboard = () => {
             </ScrollView>
             <LineChart
                 data={{
-                    labels: safeChartData.map((d) => d.date),
-                    datasets: [{ data: safeChartData.map((d) => d.orders) }],
+                    labels: safeData.map((d) => d.date),
+                    datasets: [{ data: safeData.map((d) => d.orders) }],
                 }}
                 width={screenWidth - 32}
                 height={220}
