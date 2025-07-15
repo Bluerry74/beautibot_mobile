@@ -78,8 +78,18 @@ const Dashboard = () => {
             </ScrollView>
             <LineChart
                 data={{
-                    labels: ordersChartData.map((d) => d.date),
-                    datasets: [{ data: ordersChartData.map((d) => d.orders) }],
+                    labels: ordersChartData.map((d) => d?.date || ""),
+                    datasets: [
+                        {
+                            data: ordersChartData.map((d) => {
+                                const value = d?.orders;
+                                return typeof value === "number" &&
+                                    !isNaN(value)
+                                    ? value
+                                    : 0;
+                            }),
+                        },
+                    ],
                 }}
                 width={screenWidth - 32}
                 height={220}
