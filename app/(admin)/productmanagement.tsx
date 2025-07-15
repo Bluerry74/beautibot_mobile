@@ -54,7 +54,6 @@ const styles = StyleSheet.create({
         padding: 16,
         paddingBottom: 40,
         backgroundColor: "#f9fafb",
-        marginTop: 50,
     },
     headerContainer: {
         flexDirection: "row",
@@ -69,6 +68,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 2,
+        marginTop: 50,
     },
     headerText: {
         fontSize: 20,
