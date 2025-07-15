@@ -34,10 +34,10 @@ export const useCreateProductMutation = () => {
                 text1: "Thành công",
                 text2: "Tạo sản phẩm thành công",
             });
-            queryClient.invalidateQueries({ queryKey: ["product"] });
+            queryClient.invalidateQueries({ queryKey: ["products"] });
         },
 
-        onError: (error) => {
+        onError: (error: any) => {
             console.error("🔴 Error creating product:", error);
             console.log("📦 Error response:", error?.response?.data);
             Toast.show({
