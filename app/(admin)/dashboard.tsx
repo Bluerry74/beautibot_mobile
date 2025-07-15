@@ -63,9 +63,6 @@ const Dashboard = () => {
             value: isLoadingProducts ? "..." : totalProducts,
         },
     ];
-    const safeChartData = ordersChartData?.length
-        ? ordersChartData
-        : [{ date: "", orders: 0 }];
     const safeData = ordersChartData.map((d) => ({
         date: d.date,
         orders: Number.isFinite(d.orders) ? d.orders : 0,
@@ -73,9 +70,9 @@ const Dashboard = () => {
     return (
         <View>
             <ScrollView contentContainerStyle={styles.container}>
-                <View style={styles.statsContainer}>
+                <View style={styles.statsRow}>
                     {stats.map((item, idx) => (
-                        <View key={idx} style={styles.statCard}>
+                        <View key={idx} style={styles.statCardHorizontal}>
                             <Text style={styles.statIcon}>👤</Text>
                             <Text style={styles.statValue}>{item.value}</Text>
                             <Text style={styles.statLabel}>{item.label}</Text>
@@ -96,6 +93,7 @@ const Dashboard = () => {
             <FlatList
                 data={recentOrders}
                 keyExtractor={(item) => item.id}
+                contentContainerStyle={{ paddingHorizontal: 16 }}
                 renderItem={({ item }) => (
                     <View style={styles.orderItem}>
                         <Text>{item.id.slice(-6)}</Text>
@@ -111,29 +109,40 @@ const Dashboard = () => {
 };
 const styles = StyleSheet.create({
     container: { padding: 16 },
-    statsContainer: {
+
+    statsRow: {
         flexDirection: "row",
-        flexWrap: "wrap",
         justifyContent: "space-between",
+        gap: 8,
+        marginBottom: 16,
     },
-    statCard: {
-        width: "48%",
-        padding: 16,
-        marginVertical: 8,
-        backgroundColor: "#f0f0f0",
-        borderRadius: 12,
+
+    statCardHorizontal: {
+        flex: 1,
+        paddingVertical: 12,
+        paddingHorizontal: 8,
+        backgroundColor: "#f8f9fa",
+        borderRadius: 16,
         alignItems: "center",
+        justifyContent: "center",
+        elevation: 2, // Android shadow
+        shadowColor: "#000", // iOS shadow
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     },
-    statIcon: { fontSize: 24 },
-    statValue: { fontSize: 22, fontWeight: "bold" },
-    statLabel: { fontSize: 14, color: "#666" },
+
+    statIcon: { fontSize: 20 },
+    statValue: { fontSize: 20, fontWeight: "bold", color: "#333" },
+    statLabel: { fontSize: 12, color: "#666", textAlign: "center" },
+
     orderItem: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        paddingVertical: 8,
+        paddingVertical: 10,
         borderBottomWidth: 1,
-        borderColor: "#ddd",
+        borderBottomColor: "#ccc",
+        paddingHorizontal: 16,
     },
+
     badge: {
         paddingHorizontal: 8,
         paddingVertical: 4,
