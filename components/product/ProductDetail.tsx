@@ -98,14 +98,14 @@ const ProductDetailDialog = ({ isOpen, onClose, product }: Props) => {
                     setForm((f: any) => ({ ...f, skus }));
                 }}
             />
-            <SkuImagesUpload
+            {/* <SkuImagesUpload
                 images={sku.images}
                 onChange={(updatedImages) => {
                     const skus = [...form.skus];
                     skus[index].images = updatedImages;
                     setForm((f: any) => ({ ...f, skus }));
                 }}
-            />
+            /> */}
 
             <TouchableOpacity
                 style={styles.deleteBtn}
