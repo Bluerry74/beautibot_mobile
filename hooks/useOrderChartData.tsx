@@ -1,5 +1,5 @@
 import { useAllOrder } from "@/tanstack/order";
-import dayjs from "dayjs";
+import moment from "moment";
 
 interface ChartPoint {
     date: string;
@@ -15,13 +15,13 @@ export const useOrderChartData = () => {
         const paidOrders = data.data.filter((order: any) => order.isPaid);
 
         for (const order of paidOrders) {
-            const day = dayjs(order.createdAt).format("ddd"); // Mon, Tue, ...
+            const day = moment(order.createdAt).format("ddd"); // e.g. "Mon"
 
             const existing = chartData.find((item) => item.date === day);
             if (existing) {
                 existing.orders += 1;
             } else {
-                chartData.push({ date: day, orders: Number(1) });
+                chartData.push({ date: day, orders: 1 });
             }
         }
     }
