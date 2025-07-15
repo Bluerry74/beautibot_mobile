@@ -39,7 +39,7 @@ export const useCreateProductMutation = () => {
 
         onError: (error) => {
             console.error("🔴 Error creating product:", error);
-            console.log("📦 Error response:", error);
+            console.log("📦 Error response:", error?.response?.data);
             Toast.show({
                 type: "error",
                 text1: "Thất bại",
