@@ -5,33 +5,34 @@ interface ChartPoint {
     date: string;
     orders: number;
 }
-
 export const useOrderChartData = () => {
     const { data, isLoading, error } = useAllOrder();
 
-    const chartData: ChartPoint[] = [];
+   
+    const tempMap: Record<string, number> = {};
 
     if (data?.data) {
         const paidOrders = data.data.filter((order: any) => order.isPaid);
 
         for (const order of paidOrders) {
-            const day = moment(order.createdAt).format("ddd"); // e.g. "Mon"
+            const day = moment(order.createdAt).format("ddd");
 
-            const existing = chartData.find((item) => item.date === day);
-            if (existing) {
-                existing.orders += 1;
-            } else {
-                chartData.push({ date: day, orders: 1 });
-            }
+            tempMap[day] = (tempMap[day] || 0) + 1;
         }
     }
 
-    return {
-        data: chartData.map((point) => ({
-            date: point.date,
-            orders: Number.isFinite(point.orders) ? point.orders : 0,
-        })),
-        isLoading,
-        error,
-    };
+   
+    const chartData: ChartPoint[] = Object.entries(tempMap).map(
+        ([date, rawCount]) => ({
+            date,
+            orders: Number.isFinite(rawCount) && rawCount >= 0 ? rawCount : 0,
+        })
+    );
+
+   
+    if (chartData.length === 0) {
+        chartData.push({ date: "", orders: 0 });
+    }
+
+    return { data: chartData, isLoading, error };
 };

@@ -63,6 +63,9 @@ const Dashboard = () => {
             value: isLoadingProducts ? "..." : totalProducts,
         },
     ];
+    const safeChartData = ordersChartData?.length
+        ? ordersChartData
+        : [{ date: "", orders: 0 }];
     return (
         <View>
             <ScrollView contentContainerStyle={styles.container}>
@@ -78,23 +81,14 @@ const Dashboard = () => {
             </ScrollView>
             <LineChart
                 data={{
-                    labels: ordersChartData.map((d) => d?.date || ""),
-                    datasets: [
-                        {
-                            data: ordersChartData.map((d) => {
-                                const value = d?.orders;
-                                return typeof value === "number" &&
-                                    !isNaN(value)
-                                    ? value
-                                    : 0;
-                            }),
-                        },
-                    ],
+                    labels: safeChartData.map((d) => d.date),
+                    datasets: [{ data: safeChartData.map((d) => d.orders) }],
                 }}
                 width={screenWidth - 32}
                 height={220}
                 chartConfig={chartConfig}
             />
+
             <FlatList
                 data={recentOrders}
                 keyExtractor={(item) => item.id}
