@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
         padding: 16,
         paddingBottom: 40,
         backgroundColor: "#f9fafb",
+        marginTop: 50,
     },
     headerContainer: {
         flexDirection: "row",

@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import CheckboxBadge from "../common/CheckBoxBadge";
 import EditDetailList from "../common/EditDetailList";
-import StatusToggleBadge from "../common/StatusToggleBadge";
 
 const skinTypeOptions = [
     { label: "Da thường", value: "normal" },
@@ -35,7 +34,6 @@ export default function ProductAddnewDialog({
         ingredients: string[];
         skinConcerns: string[];
         suitableForSkinTypes: string[];
-        isActive: boolean;
     }>({
         name: "",
         brand: "",
@@ -43,15 +41,13 @@ export default function ProductAddnewDialog({
         ingredients: [],
         skinConcerns: [],
         suitableForSkinTypes: [],
-        isActive: true,
     });
 
     const createProduct = useCreateProductMutation();
 
     const handleSave = () => {
-        console.log('form = ',form);
-        
-        createProduct.mutate(form);
+        console.log("form = ", form);
+        createProduct.mutate({ ...form });
         onClose();
     };
 
@@ -128,13 +124,6 @@ export default function ProductAddnewDialog({
                         />
                     ))}
                 </View>
-
-                <StatusToggleBadge
-                    value={form.isActive}
-                    onChange={(val) =>
-                        setForm((f) => ({ ...f, isActive: val }))
-                    }
-                />
 
                 <View style={styles.footer}>
                     <Button title="Hủy" onPress={onClose} />
