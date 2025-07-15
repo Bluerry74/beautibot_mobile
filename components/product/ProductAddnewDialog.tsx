@@ -49,6 +49,8 @@ export default function ProductAddnewDialog({
     const createProduct = useCreateProductMutation();
 
     const handleSave = () => {
+        console.log('form = ',form);
+        
         createProduct.mutate(form);
         onClose();
     };

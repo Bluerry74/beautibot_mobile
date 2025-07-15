@@ -22,7 +22,7 @@ const ProductManagement = () => {
 
     const productsData = productList?.data ?? [];
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.container}>
             <View style={styles.headerContainer}>
                 <Text style={styles.headerText}>Danh sách sản phẩm</Text>
                 <TouchableOpacity
@@ -46,7 +46,7 @@ const ProductManagement = () => {
                 visible={openAdd}
                 onClose={() => setOpenAdd(false)}
             />
-        </ScrollView>
+        </View>
     );
 };
 const styles = StyleSheet.create({

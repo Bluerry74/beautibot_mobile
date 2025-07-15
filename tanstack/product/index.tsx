@@ -26,7 +26,9 @@ export const useCreateProductMutation = () => {
 
     return useMutation({
         mutationFn: (payload: IProductCreatePayload) => createProduct(payload),
-        onSuccess: () => {
+
+        onSuccess: (data) => {
+            console.log("🟢 Create product result:", data);
             Toast.show({
                 type: "success",
                 text1: "Thành công",
@@ -34,7 +36,9 @@ export const useCreateProductMutation = () => {
             });
             queryClient.invalidateQueries({ queryKey: ["product"] });
         },
-        onError: () => {
+
+        onError: (error) => {
+            console.error("🔴 Error creating product:", error);
             Toast.show({
                 type: "error",
                 text1: "Thất bại",
