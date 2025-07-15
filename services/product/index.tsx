@@ -1,5 +1,9 @@
-import { get, post } from "@/httpservices/httpService";
-import { IProductCreatePayload, IProductDetail, IProductResponse } from "@/types/product";
+import { get, post, put, remove } from "@/httpservices/httpService";
+import {
+    IProductCreatePayload,
+    IProductDetail,
+    IProductResponse,
+} from "@/types/product";
 
 export const getAllProducts = async (filters = {}) => {
     const res = await get<IProductResponse>("product", {
@@ -14,5 +18,32 @@ export const getProductDetail = async (id: string) => {
 
 export const createProduct = async (payload: IProductCreatePayload) => {
     const res = await post(`/product`, payload);
+    return res.data;
+};
+
+export const updateProduct = async ({
+    id,
+    payload,
+}: {
+    id: string;
+    payload: any;
+}) => {
+    const res = await put(`/products/${id}`, payload);
+    return res.data;
+};
+
+export const updateSku = async ({
+    id,
+    payload,
+}: {
+    id: string;
+    payload: any;
+}) => {
+    const res = await put(`/skus/${id}`, payload);
+    return res.data;
+};
+
+export const deleteSku = async (id: string) => {
+    const res = await remove(`/skus/${id}`);
     return res.data;
 };
