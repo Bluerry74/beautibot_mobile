@@ -1,4 +1,4 @@
-import { get, post, put, remove } from "@/httpservices/httpService";
+import { get, patch, post, remove } from "@/httpservices/httpService";
 import {
     IProductCreatePayload,
     IProductDetail,
@@ -28,7 +28,7 @@ export const updateProduct = async ({
     id: string;
     payload: any;
 }) => {
-    const res = await put(`/products/${id}`, payload);
+    const res = await patch(`/products/${id}`, payload);
     return res.data;
 };
 
@@ -39,7 +39,7 @@ export const updateSku = async ({
     id: string;
     payload: any;
 }) => {
-    const res = await put(`/skus/${id}`, payload);
+    const res = await patch(`/skus/${id}`, payload);
     return res.data;
 };
 

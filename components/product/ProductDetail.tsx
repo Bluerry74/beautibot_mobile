@@ -18,7 +18,7 @@ import { useDeleteProductSkuMutation, useGetProductDetailMutation, useUpdateProd
 interface Props {
     isOpen: boolean;
     onClose: () => void;
-    product: IProduct | null;
+    product: IProduct | null | undefined;
 }
 
 const ProductDetailDialog = ({ isOpen, onClose, product }: Props) => {
