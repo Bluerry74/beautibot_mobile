@@ -52,7 +52,7 @@ export default function ShipperDashboard() {
         .map((item : any) => (
           <TouchableOpacity 
           key={item._id} 
-          onPress={() => router.push(`/detail/${item._id}`)}
+          onPress={() => router.push(`/detail/delivery-detail/${item._id}`)}
           className="p-4 bg-white rounded-lg shadow border space-y-2 mt-4">
             <Text className="text-lg font-semibold">{item.shippingAddress.fullName}</Text>
             <Text className="text-base text-gray-600">{item.shippingAddress.street}, {item.shippingAddress.city}, {item.shippingAddress.country}</Text>
