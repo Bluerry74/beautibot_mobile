@@ -1,3 +1,4 @@
+import { get } from "@/httpservices/httpService";
 import { getAllOrder } from "@/services/order";
 import { useQuery } from "@tanstack/react-query";
 
@@ -8,3 +9,12 @@ export const useAllOrder = (params: Record<string, any> = {}) => {
     });
 };
 
+export const useAnalytics = () => {
+    return useQuery<any>({
+        queryKey: ["order-analytics"],
+        queryFn: async () => {
+            const res = await get<any>("/order/admin/analytics");
+            return res.data;
+        },
+    });
+};

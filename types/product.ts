@@ -93,3 +93,14 @@ export interface ProductCardTypes {
   col?: number;
   path?: string;
 }
+
+export interface IProductCreatePayload {
+  name: string;
+  brand: string;
+  description: string;
+  ingredients: string[];
+  skinConcerns: string[];
+  isActive?: boolean;
+  suitableForSkinType?: any;
+  suitableForSkinTypes: string[];
+}

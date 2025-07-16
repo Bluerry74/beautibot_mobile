@@ -28,7 +28,6 @@ export default function Index() {
   const onSubmit = async (data: any) => {
     try {
       const res = await loginSystem(data.email, data.password);
-      console.log("Login response:", res);
       if (!res) throw new Error("Login failed");
       const me = await getMe({ accessToken: res.accessToken });
       setTokens({
