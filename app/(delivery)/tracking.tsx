@@ -12,7 +12,7 @@ export default function ShipperDashboard() {
         const response = await get("/delivery/personnel"); 
         const data = response.data.data;
         setDeliveryList(data);
-        console.log("Delivery data fetched successfully:", data);
+        // console.log("Delivery data fetched successfully:", data);
       } catch (error) {
         console.error("Error fetching delivery data:", error);
       }
