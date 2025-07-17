@@ -61,7 +61,9 @@ const Home = () => {
         <Text className="text-xl font-semibold" style={{ color: "#ff9c86" }}>
           Hi There
         </Text>
-        <ShoppingCart />
+        <TouchableOpacity onPress={() => router.push("/pages/cart")} className="relative">
+  <ShoppingCart color="#ff9c86" size={24} />
+</TouchableOpacity>
       </View>
 
       <View className="flex-row items-center bg-white px-4 py-2 rounded-xl mb-4">
