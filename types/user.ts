@@ -6,7 +6,20 @@ export interface User {
     avatar?: string;
     accessToken?: string;
     refreshToken?: string;
+    password?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    __v?: number;
+    coupons?: any[];
+    deviceTokens?: any[];
+    emailVerifiedAt?: string | null;
+    isBanned?: boolean;
+    isDeleted?: boolean;
+    isVerified?: boolean;
+    points?: number;
+    wishlist?: any[];
 }
+
 export interface LoginTypes {
     accessToken: string;
     refreshToken: string;
@@ -29,4 +42,12 @@ export interface UserResponse {
         currentPage?: number;
         limit?: number;
     };
+}
+
+export interface GetAllUserPagiParams {
+    page?: number;
+    limit?: number;
+    search?: string;
+    productId?: string;
+    role?: string;
 }
