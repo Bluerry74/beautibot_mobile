@@ -1,6 +1,6 @@
 import { get, patch, post } from "@/httpservices/httpService";
 import { ICreateDelivery } from "@/types/delivery";
-
+import { IDelivery } from "@/types/order";
 export const uploadProof = async (imageUri: string, deliveryId: string) => {
   const formData = new FormData();
   formData.append("file", {
@@ -41,4 +41,8 @@ export const createDelivery = async (data: ICreateDelivery) => {
 export const getDeliveryDetail = async (deliveryId: string) => {
   const res = await get(`delivery/${deliveryId}`);
   return res.data;
+};
+export const getDeliveriesByCustomer = async (): Promise<IDelivery[]> => {
+  const res = await get("/delivery/customer");
+  return res.data as IDelivery[];
 };

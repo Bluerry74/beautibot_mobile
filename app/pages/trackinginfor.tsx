@@ -1,142 +1,148 @@
-import React, { useState } from 'react'
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  Linking,
-} from 'react-native'
+import { deliverySteps } from '@/components/deliveryStatusMap'
+import { getAllTrackingData } from '@/services/tracking'
+import { useAuthStore } from '@/store/auth'
+import { ITrackingData } from '@/types/tracking'
 import * as Clipboard from 'expo-clipboard'
 import {
+  Check,
   CheckCircle,
   Clock,
   Copy,
-  Mail,
   MapPin,
-  Package,
-  Phone,
-  Search,
-  Truck,
-  Check,
+  Truck
 } from 'lucide-react-native'
-
+import React, { useEffect, useState } from 'react'
+import {
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native'
 const Tracking = () => {
-    const [trackingNumber, setTrackingNumber] = useState('')
-  const [isTracking, setIsTracking] = useState(false)
+  const user = useAuthStore(state => state.user)
+  const [trackingList, setTrackingList] = useState<ITrackingData[]>([])
+  const [selected, setSelected] = useState<ITrackingData | null>(null)
   const [copied, setCopied] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  const handleTrack = () => {
-    if (trackingNumber.trim()) {
-      setIsTracking(true)
+  const fetchTrackingList = async () => {
+    if (!user?.email) return
+    try {
+      setLoading(true)
+      const deliveries = await getAllTrackingData(user.email)
+      setTrackingList(deliveries)
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách tracking:', error)
+    } finally {
+      setLoading(false)
     }
   }
-   const copyTrackingNumber = async () => {
-    await Clipboard.setStringAsync('VN123456789')
+  
+
+  const copyTrackingNumber = async (trackingNumber: string) => {
+    await Clipboard.setStringAsync(trackingNumber)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
-  const trackingSteps = [
-    {
-      status: 'completed',
-      title: 'Đơn hàng đã được tạo',
-      description: 'Đơn hàng của bạn đã được xác nhận',
-      time: '10:30 - 15/01/2024',
-      location: 'Hồ Chí Minh',
-    },
-    {
-      status: 'completed',
-      title: 'Đã lấy hàng',
-      description: 'Shipper đã lấy hàng từ người gửi',
-      time: '14:20 - 15/01/2024',
-      location: 'Quận 1, TP.HCM',
-    },
-    {
-      status: 'completed',
-      title: 'Đang vận chuyển',
-      description: 'Hàng đang được vận chuyển đến kho phân loại',
-      time: '16:45 - 15/01/2024',
-      location: 'Kho Tân Sơn Nhất',
-    },
-    {
-      status: 'current',
-      title: 'Đang giao hàng',
-      description: 'Shipper đang trên đường giao hàng',
-      time: '09:15 - 16/01/2024',
-      location: 'Quận 7, TP.HCM',
-    },
-     {
-      status: 'pending',
-      title: 'Giao hàng thành công',
-      description: 'Dự kiến giao trong hôm nay',
-      time: 'Dự kiến 11:00 - 16/01/2024',
-      location: 'Địa chỉ nhận hàng',
-    },
-  ]
+
+  useEffect(() => {
+    fetchTrackingList()
+  }, [])
+  const getTrackingSteps = () => {
+    if (!selected) return []
+  
+    const currentStatus = selected.delivery.status
+    const currentIndex = deliverySteps.findIndex(step => step.key === currentStatus)
+  
+    return deliverySteps.map((step, index) => {
+      let status: 'completed' | 'current' | 'upcoming' = 'upcoming'
+      if (index < currentIndex) status = 'completed'
+      else if (index === currentIndex) status = 'current'
+  
+      return {
+        ...step,
+        status,
+        time: selected.delivery.updatedAt
+          ? new Date(selected.delivery.updatedAt).toLocaleTimeString('vi-VN')
+          : '',
+        location: selected.address.city || 'Không rõ địa điểm',
+      }
+    })
+  }
+  const trackingSteps = selected ? getTrackingSteps() : []
+  
   return (
-    <ScrollView className="bg-gray-100 flex-1 p-4 ">
+    <ScrollView className="bg-gray-100 flex-1 p-4">
       <Text className="text-xl font-bold text-center text-gray-800 mb-4 mt-8">
         Theo dõi đơn hàng
       </Text>
-      <View className="bg-white p-4 rounded-lg mb-4 shadow">
-        <View className="flex-row items-center gap-2">
-          <TextInput
-            className="flex-1 border border-gray-300 rounded-md px-3 py-2"
-            placeholder="Nhập mã vận đơn (VD: VN123456789)"
-            value={trackingNumber}
-            onChangeText={setTrackingNumber}
-          />
-          <TouchableOpacity
-            onPress={handleTrack}
-            className="p-2 rounded-md"
-            style={{ backgroundColor: '#ff9c86' }}
-          >
-            <Search size={20} color="white" />
-          </TouchableOpacity>
-        </View>
-        <Text className="text-sm text-gray-600 mt-2">
-          Nhập mã vận đơn để theo dõi tình trạng giao hàng
-        </Text>
-      </View>
 
-      {isTracking && (
+      {loading && (
+        <Text className="text-center text-gray-500 mb-4">Đang tải dữ liệu...</Text>
+      )}
+
+      {!loading && !selected && trackingList.map((item, idx) => (
+        <TouchableOpacity
+          key={item.delivery._id}
+          onPress={() => setSelected(item)}
+          className="bg-white p-4 rounded-lg mb-3 shadow"
+        >
+          <View className="flex-row justify-between">
+            <Text className="font-semibold">#{item.delivery.trackingNumber}</Text>
+            <Text className="text-green-700 bg-green-100 px-2 py-1 rounded-full text-xs">
+              {item.delivery.status}
+            </Text>
+          </View>
+          <Text className="text-sm text-gray-600 mt-1">
+            {item.address.fullName} - {item.address.city}
+          </Text>
+        </TouchableOpacity>
+      ))}
+
+      {/* Chi tiết đơn đã chọn */}
+      {selected && (
         <>
+          <TouchableOpacity onPress={() => setSelected(null)} className="mb-4">
+            <Text className="text-blue-500">← Quay lại danh sách</Text>
+          </TouchableOpacity>
+
           <View className="bg-white p-4 rounded-lg mb-4 shadow">
             <View className="flex-row justify-between items-center mb-3">
               <Text className="text-lg font-semibold">Thông tin đơn hàng</Text>
               <Text className="text-green-700 bg-green-100 px-2 py-1 rounded-full text-xs">
-                Đang giao hàng
+                {selected.delivery.status}
               </Text>
             </View>
+
             <View className="flex-row justify-between items-center mb-2">
               <Text className="text-sm text-gray-600">Mã vận đơn:</Text>
               <View className="flex-row items-center gap-2">
-                <Text className="font-mono text-sm">VN123456789</Text>
-                <TouchableOpacity onPress={copyTrackingNumber}>
-                  {copied ? (
-                    <Check size={16} color="green" />
-                  ) : (
-                    <Copy size={16} />
-                  )}
+                <Text className="font-mono text-sm">{selected.delivery.trackingNumber}</Text>
+                <TouchableOpacity onPress={() => copyTrackingNumber(selected.delivery.trackingNumber)}>
+                  {copied ? <Check size={16} color="green" /> : <Copy size={16} />}
                 </TouchableOpacity>
               </View>
             </View>
+
             <View className="border-t my-2" />
+
             <View className="flex-row justify-between mb-1">
               <Text className="text-gray-600">Người gửi:</Text>
-              <Text className="font-medium">Nguyễn Thi Thu Hoai</Text>
+              <Text className="font-medium">{selected.order.userId}</Text>
             </View>
             <View className="flex-row justify-between mb-1">
               <Text className="text-gray-600">Người nhận:</Text>
-              <Text className="font-medium">Nguyễn Hoài</Text>
+              <Text className="font-medium">{selected.address.fullName}</Text>
             </View>
             <View className="flex-row justify-between mb-1">
               <Text className="text-gray-600">Dịch vụ:</Text>
-              <Text className="font-medium">Giao hàng nhanh</Text>
+              <Text className="font-medium">{selected.order.paymentMethod}</Text>
             </View>
             <View className="flex-row justify-between">
-              <Text className="text-gray-600">Trọng lượng:</Text>
-              <Text className="font-medium">1.2 kg</Text>
+              <Text className="text-gray-600">Sản phẩm:</Text>
+              <Text className="font-medium">
+                {selected.order.items.length} sản phẩm
+              </Text>
             </View>
           </View>
           <View className="bg-white p-4 rounded-lg mb-4 shadow">
@@ -201,7 +207,7 @@ const Tracking = () => {
               </View>
             ))}
           </View>
-
+          {/* Thông tin giao hàng */}
           <View className="bg-white p-4 rounded-lg mb-4 shadow">
             <Text className="text-lg font-semibold mb-2">Thông tin giao hàng</Text>
             <View className="flex-row gap-2 mb-2">
@@ -209,7 +215,7 @@ const Tracking = () => {
               <View>
                 <Text className="font-medium">Địa chỉ giao hàng</Text>
                 <Text className="text-sm text-gray-600">
-                  43 Hoàng Hữu Nam, TP. Hồ Chí Minh
+                  {`${selected.address.street}, ${selected.address.city}`}
                 </Text>
               </View>
             </View>
@@ -218,51 +224,14 @@ const Tracking = () => {
               <View>
                 <Text className="font-medium">Thời gian giao hàng dự kiến</Text>
                 <Text className="text-sm text-gray-600">
-                  Hôm nay, 10:00 - 12:00
+                  {selected.delivery.estimatedDeliveryDate
+                    ? new Date(selected.delivery.estimatedDeliveryDate).toLocaleString('vi-VN')
+                    : 'Chưa xác định'}
                 </Text>
               </View>
             </View>
           </View>
-
-          <View className="bg-white p-4 rounded-lg mb-4 shadow">
-            <Text className="text-lg font-semibold mb-3">Hỗ trợ khách hàng</Text>
-            <TouchableOpacity
-              onPress={() => Linking.openURL('tel:1900123456')}
-              className="flex-row items-center gap-3 mb-3"
-            >
-              <Phone size={18} color="gray" />
-              <Text>Gọi hotline: 1900 123 456</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => Linking.openURL('mailto:support@shipping.com')}
-              className="flex-row items-center gap-3"
-            >
-              <Mail size={18} color="gray" />
-              <Text>Email: support@shipping.com</Text>
-            </TouchableOpacity>
-          </View>
         </>
-      )}
-
-  
-      {!isTracking && (
-        <View className="bg-white p-4 rounded-lg shadow">
-          <Text className="text-lg font-semibold mb-3">Tra cứu nhanh</Text>
-          <TouchableOpacity
-            onPress={() => {
-              setTrackingNumber('VN123456789')
-              setIsTracking(true)
-            }}
-            className="flex-row items-center gap-2 mb-3"
-          >
-            <Package size={20} />
-            <Text>Xem đơn hàng mẫu</Text>
-          </TouchableOpacity>
-          <TouchableOpacity className="flex-row items-center gap-2">
-            <Clock size={20} />
-            <Text>Lịch sử tra cứu</Text>
-          </TouchableOpacity>
-        </View>
       )}
     </ScrollView>
   )
