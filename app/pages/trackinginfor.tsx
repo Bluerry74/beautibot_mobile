@@ -88,7 +88,8 @@ const Tracking = () => {
           />
           <TouchableOpacity
             onPress={handleTrack}
-            className="bg-blue-600 p-2 rounded-md"
+            className="p-2 rounded-md"
+            style={{ backgroundColor: '#ff9c86' }}
           >
             <Search size={20} color="white" />
           </TouchableOpacity>
@@ -243,7 +244,7 @@ const Tracking = () => {
         </>
       )}
 
-      {/* Quick Actions */}
+  
       {!isTracking && (
         <View className="bg-white p-4 rounded-lg shadow">
           <Text className="text-lg font-semibold mb-3">Tra cứu nhanh</Text>
