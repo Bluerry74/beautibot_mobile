@@ -28,7 +28,6 @@ const Profile = () => {
     fetchProfile();
   }, []);
 
-
   const logout = () => {
     useAuthStore.getState().logout();
     router.push("/");
@@ -69,7 +68,7 @@ const Profile = () => {
 
       <View className="border-t border-gray-200 mt-2">
         {[
-          { label: 'Tracking', icon: 'person-outline', route: routesConfig.tracking },
+          { label: 'Đơn hàng của tôi', icon: 'person-outline', route: routesConfig.trackinginfor },
           { label: 'Settings', icon: 'settings-outline' },
           { label: 'Extra Card', icon: 'card-outline' },
         ].map((item, i) => (
@@ -89,9 +88,9 @@ const Profile = () => {
 
       <View className="border-t border-gray-200 mt-4">
         {[
-          { label: "Help Center", icon: "information-circle-outline" },
-          { label: "Request Account Deletion", icon: "trash-outline" },
-          { label: "Add another account", icon: "person-add-outline" },
+          { label: "Trung tâm hỗ trợ", icon: "information-circle-outline" },
+          { label: "Yêu cầu xóa tài khoản", icon: "trash-outline" },
+          { label: "Thêm một tài khoản khác", icon: "person-add-outline" },
         ].map((item, i) => (
           <TouchableOpacity key={i} className="flex-row items-center py-4 border-b border-gray-200">
             <Ionicons name={item.icon as any} size={20} className="mr-4 text-gray-700" />
@@ -120,7 +119,7 @@ const Profile = () => {
 
       <TouchableOpacity className="mt-6 border border-red-400 rounded-full py-3 flex-row items-center justify-center" onPress={logout}>
         <MaterialIcons name="logout" size={20} color="red" />
-        <Text className="text-red-500 ml-2 font-semibold">Sign Out</Text>
+        <Text className="text-red-500 ml-2 font-semibold">Đăng xuất</Text>
       </TouchableOpacity>
       
     </ScrollView>
@@ -128,3 +127,4 @@ const Profile = () => {
 }
 
 export default Profile
+

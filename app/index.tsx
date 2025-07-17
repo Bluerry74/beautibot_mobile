@@ -1,3 +1,4 @@
+import { routesConfig } from "@/config/route";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -9,7 +10,6 @@ import * as yup from "yup";
 import { getMe } from "../services/auth/getMe";
 import { loginSystem } from "../services/auth/login";
 import { useAuthStore } from "../store/auth";
-import { routesConfig } from "@/config/route";
 
 const { width } = Dimensions.get("window");
 
@@ -28,7 +28,6 @@ export default function Index() {
   const onSubmit = async (data: any) => {
     try {
       const res = await loginSystem(data.email, data.password);
-      console.log("Login response:", res);
       if (!res) throw new Error("Login failed");
       const me = await getMe({ accessToken: res.accessToken });
       setTokens({
@@ -53,7 +52,7 @@ export default function Index() {
         router.push(routesConfig.home);
         return
       }
-      
+
     } catch (err: any) {
       console.log("Login error:", err);
     }

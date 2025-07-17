@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router'
-import { Package, Clock, PackageCheck } from 'lucide-react-native'
+import { Package, Clock, PackageCheck, User } from 'lucide-react-native'
 
 export default function DeliveryLayout() {
   return (
@@ -19,13 +19,12 @@ export default function DeliveryLayout() {
         }}
       />
       <Tabs.Screen
-        name="history"
+        name="profile"
         options={{
-          title: "Lịch sử",
-          tabBarIcon: ({ color, size }) => <Clock color={color} size={size} />,
+          title: "Tài khoản",
+          tabBarIcon: ({ color, size }) => <User color={color} size={size} />,
         }}
       />
-      
     </Tabs>
   )
 }
