@@ -21,6 +21,7 @@ const Products = () => {
     const fetchProducts = async () => {
       try {
         const response = await get<IProductResponse>("/product");
+        console.log("Products fetched successfully:", response);
         setProducts(response.data.data as unknown as IProduct[]);
         setLoading(false);
       } catch (error) {
@@ -42,7 +43,7 @@ const Products = () => {
 
   return (
     <View className="flex-1 bg-[#FFF3EC] px-4 pt-10">
-      <Text className="text-2xl font-bold mb-4 text-center">Products List</Text>
+      <Text className="text-2xl font-bold mb-4 mt-2 text-center">Products List</Text>
       <FlatList
         data={products}
         numColumns={2}
@@ -60,7 +61,7 @@ const Products = () => {
             }}
             className="flex-1 mb-2"
           >
-            <View className="bg-white rounded-lg p-4 shadow-md m-2">
+            <View className="bg-white rounded-lg p-4 shadow-md m-2 h-80">
               <Image
                 source={{ uri: item.image }}
                 className="w-full h-40 rounded-lg mb-3"
@@ -69,12 +70,6 @@ const Products = () => {
                 {item.name}
               </Text>
               <Text className="text-gray-700 mb-1">{item.brand}</Text>
-              {/* {item.skus?.map((sku: ISku, index: number) => (
-                <View key={sku._id || index} className="mb-1">
-                  <Text className="font-medium">{sku.variantName}</Text>
-                  <Text>{sku.price.toLocaleString()} VND</Text>
-                </View>
-              ))} */}
               {item.skus?.[0] && (
                 <View className="mb-1">
                   <Text className="font-medium">

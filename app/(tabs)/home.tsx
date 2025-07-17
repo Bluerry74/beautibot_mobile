@@ -17,6 +17,7 @@ import {
 const Home = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -32,9 +33,17 @@ const Home = () => {
     fetchProducts();
   }, []);
 
-  const filteredProducts = selectedBrand
-    ? products.filter((p: IProduct) => p.brand === selectedBrand)
-    : products;
+
+  // const filteredProducts = selectedBrand
+  //   ? products.filter((p: IProduct) => p.brand === selectedBrand)
+  //   : products;
+    const filteredProducts = products.filter((product: IProduct) => {
+  const matchesBrand = selectedBrand ? product.brand === selectedBrand : true;
+  const matchesSearch = product.name
+    .toLowerCase()
+    .includes(searchQuery.toLowerCase());
+  return matchesBrand && matchesSearch;
+});
 
   const flatSkuList = filteredProducts.flatMap((product: IProduct) =>
     product.skus?.map((sku: ISku) => ({
@@ -60,6 +69,8 @@ const Home = () => {
         <TextInput
           placeholder="Bạn đang tìm kiếm gì??"
           className="ml-2 flex-1 text-sm"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
         />
         <TouchableOpacity className="p-2 bg-brown-700 rounded-md ml-2">
           <MaterialIcons name="tune" size={18} color="white" />
@@ -83,7 +94,7 @@ const Home = () => {
                 }}
               >
                 <Image
-                  source={{ uri: product.skus?.[0]?.image ?? "" }}
+                  source={{ uri: product.skus?.[0]?.image ?? "https://i.pinimg.com/originals/64/a9/8a/64a98ac18b9bc84fc0b61dc5a5989899.jpg" }}
                   className="w-16 h-16 rounded-full"
                 />
               </TouchableOpacity>
@@ -144,12 +155,11 @@ const Home = () => {
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => router.push(`/detail/${item.productId}`)}
-            // style={{ flex: 1, marginBottom: 16 }}
             className="flex-1 mb-4"
           >
             <View className="h-72 bg-white rounded-xl p-2 m-2 shadow-md">
               <Image
-                source={{ uri: item.image }}
+                source={{ uri: item.image || "https://i.pinimg.com/originals/64/a9/8a/64a98ac18b9bc84fc0b61dc5a5989899.jpg" }}
                 className="w-full h-40 rounded-lg mb-3"
               />
               <Text className="font-semibold text-pink-300 h-16">
