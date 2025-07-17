@@ -1,3 +1,4 @@
+import { translateSkinType } from '@/app/utils/translate';
 import EditProfileModal from '@/components/Modal/EditProfileModal'; // đường dẫn tuỳ bạn
 import { routesConfig } from '@/config/route';
 import { useProfileActions } from '@/hooks/useProfileActions';
@@ -7,7 +8,6 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useRouter, } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-
 const Profile = () => {
   const [profile, setProfile] = useState<IUserProfile | null>(null);
   const router = useRouter();
@@ -62,7 +62,7 @@ const Profile = () => {
           {profile?.phone || ""}
         </Text>
         <Text className="text-gray-500">
-          {profile?.skinType || ""}
+          {translateSkinType(profile?.skinType || "")}
         </Text>
 
       </View>

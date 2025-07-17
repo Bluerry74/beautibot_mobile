@@ -1,11 +1,11 @@
 // components/EditProfileModal.tsx
+import { translateSkinType } from '@/app/utils/translate';
 import { getAllSkinTypesFromProducts } from '@/services/product'; // Hàm fetch skin types từ product API
 import { IUserProfile } from '@/types/profile';
 import { Picker } from '@react-native-picker/picker'; // npm install @react-native-picker/picker
 import { useEffect, useState } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import Modal from 'react-native-modal';
-
 type Props = {
   isVisible: boolean;
   onClose: () => void;
@@ -18,6 +18,7 @@ export default function EditProfileModal({ isVisible, onClose, profile, onSave }
   const [phone, setPhone] = useState(profile?.phone || '');
   const [skinType, setSkinType] = useState(profile?.skinType || '');
   const [skinTypes, setSkinTypes] = useState<string[]>([]);
+
 
   useEffect(() => {
     setName(profile?.name || '');
@@ -54,8 +55,9 @@ export default function EditProfileModal({ isVisible, onClose, profile, onSave }
           <Picker selectedValue={skinType} onValueChange={setSkinType}>
             <Picker.Item label="Chọn loại da" value="" />
             {skinTypes.map((type) => (
-              <Picker.Item key={type} label={type} value={type} />
+            <Picker.Item key={type} label={translateSkinType(type)} value={type} />
             ))}
+
           </Picker>
         </View>
 
