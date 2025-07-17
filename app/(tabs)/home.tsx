@@ -33,17 +33,13 @@ const Home = () => {
     fetchProducts();
   }, []);
 
-
-  // const filteredProducts = selectedBrand
-  //   ? products.filter((p: IProduct) => p.brand === selectedBrand)
-  //   : products;
-    const filteredProducts = products.filter((product: IProduct) => {
-  const matchesBrand = selectedBrand ? product.brand === selectedBrand : true;
-  const matchesSearch = product.name
-    .toLowerCase()
-    .includes(searchQuery.toLowerCase());
-  return matchesBrand && matchesSearch;
-});
+  const filteredProducts = products.filter((product: IProduct) => {
+    const matchesBrand = selectedBrand ? product.brand === selectedBrand : true;
+    const matchesSearch = product.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    return matchesBrand && matchesSearch;
+  });
 
   const flatSkuList = filteredProducts.flatMap((product: IProduct) =>
     product.skus?.map((sku: ISku) => ({
@@ -61,9 +57,12 @@ const Home = () => {
         <Text className="text-xl font-semibold" style={{ color: "#ff9c86" }}>
           Hi There
         </Text>
-        <TouchableOpacity onPress={() => router.push("/pages/cart")} className="relative">
-  <ShoppingCart color="#ff9c86" size={24} />
-</TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => router.push("/pages/cart")}
+          className="relative"
+        >
+          <ShoppingCart color="#ff9c86" size={24} />
+        </TouchableOpacity>
       </View>
 
       <View className="flex-row items-center bg-white px-4 py-2 rounded-xl mb-4">
@@ -96,7 +95,11 @@ const Home = () => {
                 }}
               >
                 <Image
-                  source={{ uri: product.skus?.[0]?.image ?? "https://i.pinimg.com/originals/64/a9/8a/64a98ac18b9bc84fc0b61dc5a5989899.jpg" }}
+                  source={
+                    product.skus?.[0]?.image
+                      ? { uri: product.skus[0].image }
+                      : require("@/assets/images/large.png")
+                  }
                   className="w-16 h-16 rounded-full"
                 />
               </TouchableOpacity>
@@ -116,7 +119,7 @@ const Home = () => {
           <Text className="text-lg text-brown-500">Xem tất cả</Text>
         </TouchableOpacity>
       </View>
-               
+
       <FlatList
         data={flatSkuList}
         keyExtractor={(item) => item._id}
@@ -130,7 +133,11 @@ const Home = () => {
           >
             <View className="h-72 bg-white rounded-xl p-2 m-2 shadow-md">
               <Image
-                source={{ uri: item.image || "https://i.pinimg.com/originals/64/a9/8a/64a98ac18b9bc84fc0b61dc5a5989899.jpg" }}
+                source={
+                  item?.image?.trim()
+                    ? { uri: item.image }
+                    : require("@/assets/images/large.png")
+                }
                 className="w-full h-40 rounded-lg mb-3"
               />
               <Text className="font-semibold text-pink-300 h-10">
