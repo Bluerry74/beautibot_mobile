@@ -59,42 +59,42 @@ const ProductDetailDialog = ({ isOpen, onClose, product }: Props) => {
 
     const handleSave = async () => {
         if (!product?._id) return;
+        try {
+            await updateProductMutation.mutateAsync({
+                id: product._id,
+                payload: {
+                    name: form.name,
+                    brand: form.brand,
+                    description: form.description,
+                },
+            });
 
-        await updateProductMutation.mutateAsync({
-            id: product._id,
-            payload: {
-                name: form.name,
-                brand: form.brand,
-                description: form.description,
-            },
-        });
-
-        for (let sku of form.skus) {
-            if (sku._id) {
-                await updateSkuMutation.mutateAsync({
-                    id: sku._id,
-                    payload: sku,
-                });
-            } else {
-                await createSkuMutation.mutateAsync({
-                    ...sku,
-                    productId: product._id,
-                });
+            for (let sku of form.skus) {
+                if (sku._id) {
+                    await updateSkuMutation.mutateAsync({
+                        id: sku._id,
+                        payload: sku,
+                    });
+                } else {
+                    await createSkuMutation.mutateAsync({
+                        ...sku,
+                        productId: product._id,
+                    });
+                }
             }
+
+            Toast.show({
+                type: "success",
+                text1: "Đã cập nhật sản phẩm thành công!",
+            });
+            onClose();
+        } catch (err: any) {
+            Toast.show({
+                type: "error",
+                text1: "Lỗi khi lưu",
+                text2: err?.message,
+            });
         }
-
-        const refreshed = await getProductDetailMutation.mutateAsync(
-            product._id
-        );
-        setForm({
-            name: refreshed.name,
-            brand: refreshed.brand,
-            description: refreshed.description,
-            skus: refreshed.skus,
-        });
-
-        Toast.show({ type: "success", text1: "Đã lưu thành công" });
-        onClose();
     };
 
     const handleDeleteSku = async (skuId: string) => {
@@ -145,12 +145,37 @@ const ProductDetailDialog = ({ isOpen, onClose, product }: Props) => {
                     setForm((f: any) => ({ ...f, skus }));
                 }}
             />
-            <TouchableOpacity
-                style={styles.deleteBtn}
-                onPress={() => item._id && handleDeleteSku(item._id)}
-            >
-                <Text style={{ color: "#fff", textAlign: "center" }}>Xoá</Text>
-            </TouchableOpacity>
+            <View style={styles.skuActions}>
+                {item._id && (
+                    <TouchableOpacity
+                        style={styles.updateBtn}
+                        onPress={async () => {
+                            await updateSkuMutation.mutateAsync({
+                                id: item._id!,
+                                payload: item,
+                            });
+                            Toast.show({
+                                type: "success",
+                                text1: `Cập nhật SKU ${item.variantName} thành công`,
+                            });
+                        }}
+                    >
+                        <Text style={{ color: "#fff", textAlign: "center" }}>
+                            Cập nhật
+                        </Text>
+                    </TouchableOpacity>
+                )}
+                {item._id && (
+                    <TouchableOpacity
+                        style={styles.deleteBtn}
+                        onPress={() => handleDeleteSku(item._id!)}
+                    >
+                        <Text style={{ color: "#fff", textAlign: "center" }}>
+                            Xoá
+                        </Text>
+                    </TouchableOpacity>
+                )}
+            </View>
             <SkuImagesUpload
                 skuId={item._id}
                 images={item.images ?? []}
@@ -313,6 +338,18 @@ const styles = StyleSheet.create({
         padding: 12,
         borderRadius: 8,
         marginLeft: 8,
+    },
+    skuActions: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 10,
+        gap: 8,
+    },
+    updateBtn: {
+        flex: 1,
+        backgroundColor: "#f59e0b",
+        paddingVertical: 8,
+        borderRadius: 8,
     },
     footerText: { color: "#fff", textAlign: "center", fontWeight: "bold" },
 });
