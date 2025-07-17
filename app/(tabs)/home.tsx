@@ -114,38 +114,7 @@ const Home = () => {
           <Text className="text-lg text-brown-500">Xem tất cả</Text>
         </TouchableOpacity>
       </View>
-
-      {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {filteredProducts.map((product: IProduct) =>
-          product.skus?.map((sku: ISku) => (
-            <TouchableOpacity
-              key={sku._id}
-              onPress={() => router.push(`/detail/${product._id}`)}            >
-              <View className="w-52 h-72 bg-white rounded-xl mr-4 p-2">
-                <Image
-                  source={{ uri: sku.image }}
-                  className="w-full h-40 rounded-lg mb-3"
-                />
-                <Text className="font-semibold text-brown-800 h-16">
-                  {product.name}
-                </Text>
-                <Text className="text-xs text-brown-500 mb-2">
-                  {product.brand}
-                </Text>
-                <View className="flex-row items-center justify-between">
-                  <Text className="text-sm">{sku.price.toLocaleString()} VND</Text>
-                  <View className="flex-row items-center">
-                    <Ionicons name="star" size={14} color="#FFB400" />
-                    <Text className="ml-1 text-sm">
-                      {product.rating || "4.5"}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))
-        )}
-      </ScrollView> */}
+               
       <FlatList
         data={flatSkuList}
         keyExtractor={(item) => item._id}
@@ -162,7 +131,7 @@ const Home = () => {
                 source={{ uri: item.image || "https://i.pinimg.com/originals/64/a9/8a/64a98ac18b9bc84fc0b61dc5a5989899.jpg" }}
                 className="w-full h-40 rounded-lg mb-3"
               />
-              <Text className="font-semibold text-pink-300 h-16">
+              <Text className="font-semibold text-pink-300 h-10">
                 {item.productName}
               </Text>
               <Text className="text-xs text-brown-500 mb-2">

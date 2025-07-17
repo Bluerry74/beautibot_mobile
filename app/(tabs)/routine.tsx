@@ -3,25 +3,27 @@ import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 const routine = {
-  morning: [
-    { step: 1, product: "Gentle Cleanser", time: "1 min", description: "Cleanse with lukewarm water" },
-    { step: 2, product: "Vitamin C Serum", time: "2 min", description: "Apply 2-3 drops, pat gently" },
-    { step: 3, product: "Hyaluronic Acid", time: "1 min", description: "Apply to damp skin" },
-    { step: 4, product: "Moisturizer", time: "1 min", description: "Apply evenly to face and neck" },
-    { step: 5, product: "SPF 30+", time: "1 min", description: "Don't forget ears and neck" },
-  ],
-  evening: [
-    { step: 1, product: "Oil Cleanser", time: "2 min", description: "Remove makeup and sunscreen" },
-    { step: 2, product: "Water Cleanser", time: "1 min", description: "Double cleanse for deep clean" },
-    { step: 3, product: "Retinol Serum", time: "2 min", description: "Start with 2x per week" },
-    { step: 4, product: "Night Moisturizer", time: "1 min", description: "Rich formula for overnight repair" },
-    { step: 5, product: "Face Oil", time: "1 min", description: "Optional: for extra hydration" },
-  ],
-  weekly: [
-    { name: "Exfoliation", frequency: "2x/week", description: "BHA or AHA treatment", icon: <Zap size={20} /> },
-    { name: "Face Mask", frequency: "1x/week", description: "Hydrating or purifying mask", icon: <Droplets size={20} /> },
-    { name: "Deep Clean", frequency: "1x/week", description: "Clay mask or pore strips", icon: <Sun size={20} /> },
-  ],
+    morning: [
+      { step: 1, product: "Sữa rửa mặt dịu nhẹ", time: "1 phút", description: "Rửa mặt bằng nước ấm" },
+      { step: 2, product: "Serum Vitamin C", time: "2 phút", description: "Thoa 2-3 giọt, vỗ nhẹ lên da" },
+      { step: 3, product: "Hyaluronic Acid", time: "1 phút", description: "Thoa khi da còn ẩm" },
+      { step: 4, product: "Kem dưỡng ẩm", time: "1 phút", description: "Thoa đều lên mặt và cổ" },
+      { step: 5, product: "Kem chống nắng SPF 30+", time: "1 phút", description: "Nhớ thoa cả tai và cổ" },
+    ],
+
+    evening: [
+      { step: 1, product: "Dầu tẩy trang", time: "2 phút", description: "Tẩy lớp trang điểm và kem chống nắng" },
+      { step: 2, product: "Sữa rửa mặt", time: "1 phút", description: "Rửa lại để làm sạch sâu" },
+      { step: 3, product: "Serum Retinol", time: "2 phút", description: "Bắt đầu dùng 2 lần/tuần" },
+      { step: 4, product: "Kem dưỡng đêm", time: "1 phút", description: "Công thức đậm đặc giúp phục hồi ban đêm" },
+      { step: 5, product: "Dầu dưỡng da", time: "1 phút", description: "Tùy chọn: tăng cường độ ẩm" },
+    ],
+
+    weekly: [
+      { name: "Tẩy tế bào chết", frequency: "2 lần/tuần", description: "Dùng BHA hoặc AHA", icon: <Zap size={20} /> },
+      { name: "Đắp mặt nạ", frequency: "1 lần/tuần", description: "Mặt nạ cấp ẩm hoặc làm sạch", icon: <Droplets size={20} /> },
+      { name: "Làm sạch sâu", frequency: "1 lần/tuần", description: "Mặt nạ đất sét hoặc miếng lột mụn", icon: <Sun size={20} /> },
+    ],
 };
 
 
@@ -30,15 +32,11 @@ export default function Routine() {
 
   return (
     <View className="flex-1 bg-white p-4">
-      <View className="flex-row justify-between items-center px-4 py-3 bg-white border-b">
-        <View className="flex-row items-center gap-3">
-          {/* <Avatar className="w-8 h-8">
-            <AvatarImage src="/placeholder-user.jpg" alt="Profile" />
-            <AvatarFallback>SK</AvatarFallback>
-          </Avatar> */}
+      <View className="flex-row justify-between items-center px-4 py-3 bg-white border-b mt-8">
+        <View className="flex-row items-center gap-3">  
           <View>
-            <Text className="text-base font-semibold">My Skincare</Text>
-            <Text className="text-xs text-gray-500">Daily Routines</Text>
+            <Text className="text-base font-semibold">Chăm sóc da của tôi</Text>
+            <Text className="text-xs text-gray-500">Liệu trình hàng ngày</Text>
           </View>
         </View>
         <TouchableOpacity>
@@ -48,9 +46,9 @@ export default function Routine() {
 
       <View className="flex-row justify-around mt-4 mb-2">
         {[
-          { key: "morning", label: "Morning", icon: <Sun size={16} /> },
-          { key: "evening", label: "Evening", icon: <Moon size={16} /> },
-          { key: "weekly", label: "Weekly", icon: <Zap size={16} /> },
+          { key: "morning", label: "Buổi sáng", icon: <Sun size={16} /> },
+          { key: "evening", label: "Buổi tối", icon: <Moon size={16} /> },
+          { key: "weekly", label: "Hàng tuần", icon: <Zap size={16} /> },
         ].map((t) => (
           <TouchableOpacity
             key={t.key}
