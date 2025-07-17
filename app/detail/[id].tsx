@@ -2,16 +2,18 @@ import CartButton from "@/components/core/FlatList/cartButton";
 import { IProduct, ISku } from "@/types/product";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  FlatList,
   Image,
-  ScrollView,
+  Pressable,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 const Detail = () => {
   const params = useLocalSearchParams();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
@@ -19,9 +21,15 @@ const Detail = () => {
   const [selectedSku, setSelectedSku] = useState<ISku | null>(null);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   console.log("✅ Received ID:", id);
-
   useEffect(() => {
+    if (selectedSku?.images?.[0]) {
+      setSelectedImage(selectedSku.images[0]);
+    }
+  }, [selectedSku]);
+  useEffect(() => {
+    
     if (!id) return;
   
     axios.get(`https://be-wdp.onrender.com/product/${id}`)
@@ -58,93 +66,131 @@ const Detail = () => {
 
 
   const discountPrice = selectedSku.price * (1 - (selectedSku.discount || 0) / 100);
+  console.log("Ảnh của SKU:", selectedSku.images);
 
   return (
-    <ScrollView className="flex-1 bg-white px-4 py-2" style={{ backgroundColor: "#fbf1eb" }}>
-      <Stack.Screen
-        options={{
-          title: "Product Detail",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()}>
-              <Ionicons name="arrow-back" size={20} color="black" />
-            </TouchableOpacity>
-          ),
-          headerRight: () => (
-            <TouchableOpacity onPress={() => {}}>
-              <Ionicons name="heart-outline" size={24} style={{ marginRight: 10 }} />
-            </TouchableOpacity>
-          ),
-        }}
-      />
-
-      <View className="items-center my-2">
+    <SafeAreaView className="flex-1 bg-[#fbf1eb]">
+      {/* Header */}
+      <View className="flex-row items-center justify-between px-4 py-3">
+        <TouchableOpacity onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color="black" />
+        </TouchableOpacity>
+        <View style={{ width: 24 }} />
       </View>
-
-      <View className="space-y-3 mt-2 bg-white p-4 rounded-lg shadow-md">
-      <Image
-          source={{ uri: selectedSku.image?.[0]}}
-          className="w-96 h-96"
-          resizeMode="cover"
-        />
-        <View className="flex-row justify-between items-center">
-          <Text className="text-3xl font-semibold">{product.name}</Text>
-          {selectedSku.discount > 0 && (
-            <Text className="bg-orange-100 text-orange-700 px-2 py-1 rounded text-sm font-bold">
-              {selectedSku.discount}% Off
-            </Text>
+  
+      {/* Ảnh sản phẩm */}
+      <View className="items-center mt-4">
+        <View
+          style={{
+            borderWidth: 2,
+            borderColor: "#ccc",
+            padding: 6,
+            backgroundColor: "#fff",
+            elevation: 3,
+          }}
+        >
+          {selectedImage ? (
+            <Image
+              source={{ uri: encodeURI(selectedImage) }}
+              style={{ width: 350, height: 360, resizeMode: "cover" }}
+            />
+          ) : (
+            <View
+              style={{
+                width: 300,
+                height: 360,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text>No Image</Text>
+            </View>
           )}
         </View>
-
-        <View className="flex-row items-center mt-2">
-          <Text className="text-4xl font-bold text-black">
+      </View>
+  
+      {/* Thumbnails nếu có nhiều ảnh */}
+      {selectedSku.images?.length > 1 && (
+        <FlatList
+          data={selectedSku.images}
+          horizontal
+          keyExtractor={(_, idx) => `thumb-${idx}`}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ marginTop: 12, paddingHorizontal: 16 }}
+          renderItem={({ item }) => (
+            <Pressable onPress={() => setSelectedImage(item)}>
+              <Image
+                source={{ uri: encodeURI(item) }}
+                style={{
+                  width: 60,
+                  height: 60,
+                  borderRadius: 8,
+                  marginRight: 10,
+                  borderWidth: item === selectedImage ? 2 : 0,
+                  borderColor: "#000",
+                }}
+              />
+            </Pressable>
+          )}
+        />
+      )}
+  
+      {/* Variants */}
+      <View className="px-3 mt-2">
+        <View className="flex-row flex-wrap gap-2">
+          {product.skus?.map((sku: ISku) => (
+            <TouchableOpacity
+              key={sku._id}
+              className={`border px-4 py-1 rounded-full ${
+                selectedSku?._id === sku._id
+                  ? "border-black bg-gray-200"
+                  : "border-gray-300"
+              }`}
+              onPress={() => setSelectedSku(sku)}
+            >
+              <Text className="text-base">{sku.variantName}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+  
+      {/* Tên tranh, tác giả, mô tả ngắn */}
+      <View className="items-baseline mt-2 space-y-2 px-4">
+        <Text className="text-xl font-bold text-black text-center">
+          {product.name}
+        </Text>
+        <Text className="text-base text-gray-600 text-center uppercase tracking-wider">
+          {product.brand}
+        </Text>
+        <Text className="text-sm text-gray-500 text-center uppercase tracking-wider">
+          {product.description}
+        </Text>
+        <Text className="text-sm text-gray-500 text-center uppercase tracking-wider">
+        {String(product.ingredients || 'Đang cập nhật...')}
+        </Text>
+      </View>
+  
+      {/* Giá + Giảm giá */}
+      <View className="items-baseline px-4 mt-1">
+        <View className="flex-row items-end space-x-3">
+          <Text className="text-2xl font-bold text-red-600">
             {discountPrice.toLocaleString()} VND
           </Text>
           {selectedSku.discount > 0 && (
-            <Text className="text-lg line-through text-gray-400 ml-2">
+            <Text className="text-base text-gray-400 line-through">
               {selectedSku.price.toLocaleString()} VND
             </Text>
           )}
         </View>
-
-        <Text className="text-base text-gray-500 mt-1">Brand: {product.brand}</Text>
-        <Text className="text-base text-gray-500 mt-1">
-          Ingredients: {product.ingredients?.join(", ")}
-        </Text>
-        <Text className="text-base text-gray-500 mt-1">
-          Skin Concerns: {product.skinConcerns?.join(", ")}
-        </Text>
-        <Text className="text-base text-gray-500 mt-1">
-          Skin Type: {product.suitableForSkinTypes?.join(", ")}
-        </Text>
-
-        {/* Size Variants */}
-        <Text className="font-medium mt-4 text-xl">Size Variations</Text>
-        <View className="flex-row flex-wrap gap-2 mt-2">
-        {product.skus?.map((sku: ISku) => (
-  <TouchableOpacity
-    key={sku._id}
-    className={`border px-4 py-1 mr-2 rounded-full ${
-      selectedSku?._id === sku._id ? "border-black bg-gray-200" : "border-gray-300"
-    }`}
-    onPress={() => setSelectedSku(sku)}
-  >
-    <Text className="text-lg">{sku.variantName}</Text>
-  </TouchableOpacity>
-))}
-
-        </View>
       </View>
-
-      {/* CTA Buttons */}
-      <View className="mt-8 space-y-4">
-  <View className="flex-row space-x-3">
-    <View className="flex-1">
-    <CartButton sku={selectedSku} />
-    </View>
-  </View>
-</View>
-    </ScrollView>
+  
+      {/* Nút Add to Cart */}
+      <View className="mt-2 px-4 mb-10">
+        <CartButton sku={selectedSku} />
+      </View>
+    </SafeAreaView>
   );
+  
 };
 
 export default Detail;

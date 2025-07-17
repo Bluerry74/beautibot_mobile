@@ -22,7 +22,7 @@ export interface ISku {
   returnCount: number;
   status: string;
   discount: number;
-  image: string;
+  images: string;
   weight: number;
   dimensions: IDimensions;
   internalNotes?: string;
