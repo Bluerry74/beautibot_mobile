@@ -5,6 +5,7 @@ import { router } from "expo-router";
 import { AlignLeft, ShoppingCart } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
+  FlatList,
   Image,
   ScrollView,
   Text,
@@ -13,67 +14,16 @@ import {
   View,
 } from "react-native";
 
-
-
-const topService = [
-  {
-    name: "Manicures",
-    image: require("../../assets/images/banner_login.jpg"),
-  },
-  { name: "Facial", image: require("../../assets/images/banner_login.jpg") },
-  { name: "Haircut", image: require("../../assets/images/banner_login.jpg") },
-  { name: "Waxing", image: require("../../assets/images/banner_login.jpg") },
-  { name: "Haircut", image: require("../../assets/images/banner_login.jpg") },
-  { name: "Haircut", image: require("../../assets/images/banner_login.jpg") },
-];
-const BestArtist = [
-  {
-    id: 1,
-    name: "Alaina Tisha",
-    rating: 4.8,
-    price: "$39.00/hr",
-    image: require("../../assets/images/banner_login.jpg"),
-  },
-  {
-    id: 2,
-    name: "Amber Heard",
-    rating: 3.6,
-    price: "$27.00/hr",
-    image: require("../../assets/images/banner_login.jpg"),
-  },
-  {
-    id: 3,
-    name: "Nguyen Ky ",
-    rating: 4.5,
-    price: "$25.00/hr",
-    image: require("../../assets/images/banner_login.jpg"),
-  },
-];
-const nearArtist = [
-  {
-    name: "Amber Heard",
-    rating: 3.6,
-    price: "$27.00/hr",
-    image: "https://th.bing.com/th/id/OIP.ZId6kYZXYoG2WwB_JQq7jAHaIK?r=0&rs=1&pid=ImgDetMain",
-  },
-  {
-    name: "Nguyen Ky ",
-    rating: 4.5,
-    price: "$25.00/hr",
-    image: "https://th.bing.com/th/id/OIP.ZId6kYZXYoG2WwB_JQq7jAHaIK?r=0&rs=1&pid=ImgDetMain",
-  },
-];
-
 const Home = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await get<IProductResponse>("/product");
 
         setProducts(response.data.data as unknown as IProduct[]);
-        console.log("Products fetched successfully:", response);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -85,6 +35,16 @@ const Home = () => {
   const filteredProducts = selectedBrand
     ? products.filter((p: IProduct) => p.brand === selectedBrand)
     : products;
+
+  const flatSkuList = filteredProducts.flatMap((product: IProduct) =>
+    product.skus?.map((sku: ISku) => ({
+      ...sku,
+      productId: product._id,
+      productName: product.name,
+      productBrand: product.brand,
+      productRating: product.rating || "4.5",
+    }))
+  );
   return (
     <ScrollView className="bg-[#FFF3EC] flex-1 px-4 pt-8 ">
       <View className="flex-row justify-between items-center mb-6 mt-8">
@@ -100,7 +60,7 @@ const Home = () => {
       <View className="flex-row items-center bg-white px-4 py-2 rounded-xl mb-4">
         <Ionicons name="search" size={20} color="gray" />
         <TextInput
-          placeholder="What are you looking for?"
+          placeholder="Bạn đang tìm kiếm gì??"
           className="ml-2 flex-1 text-sm"
         />
         <TouchableOpacity className="p-2 bg-brown-700 rounded-md ml-2">
@@ -109,7 +69,7 @@ const Home = () => {
       </View>
 
       <Text className="text-xl font-semibold mb-4" style={{ color: "#ff9c86" }}>
-        Top Brands
+        Thương Hiệu Nổi Bật
       </Text>
       <ScrollView
         horizontal
@@ -139,14 +99,14 @@ const Home = () => {
 
       <View className="flex-row justify-between items-center mb-4">
         <Text className="text-xl font-semibold" style={{ color: "#ff9c86" }}>
-          {selectedBrand || "Top Products"}
+          {selectedBrand || "Sản phẩm hàng đầu"}
         </Text>
         <TouchableOpacity onPress={() => setSelectedBrand(null)}>
-          <Text className="text-lg text-brown-500">View all</Text>
+          <Text className="text-lg text-brown-500">Xem tất cả</Text>
         </TouchableOpacity>
       </View>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {filteredProducts.map((product: IProduct) =>
           product.skus?.map((sku: ISku) => (
             <TouchableOpacity
@@ -176,37 +136,43 @@ const Home = () => {
             </TouchableOpacity>
           ))
         )}
-      </ScrollView>
-
-      <View className="flex-row justify-between items-center mb-4 mt-6">
-        <Text className="text-xl font-semibold" style={{ color: "#ff9c86" }}>
-          Best Artist Near You
-        </Text>
-        <TouchableOpacity>
-          <Text className="text-lg text-brown-500">View all</Text>
-        </TouchableOpacity>
-      </View>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {nearArtist.map((artist, idx) => (
-          <View key={idx} className="w-52 bg-white rounded-xl mr-4 p-2">
-            <Image
-              source={{ uri: artist.image }}
-              className="w-full h-40 rounded-lg mb-3"
-            />
-            <Text className="font-semibold text-brown-800">{artist.name}</Text>
-            <Text className="text-xs text-brown-500 mb-2">
-              Best Artist near you
-            </Text>
-            <View className="flex-row items-center justify-between">
-              <Text className="text-sm">{artist.price}</Text>
-              <View className="flex-row items-center">
-                <Ionicons name="star" size={14} color="#FFB400" />
-                <Text className="ml-1 text-sm">{artist.rating}</Text>
+      </ScrollView> */}
+      <FlatList
+        data={flatSkuList}
+        keyExtractor={(item) => item._id}
+        numColumns={2}
+        columnWrapperStyle={{ justifyContent: "space-between" }}
+        contentContainerStyle={{ padding: 16 }}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            onPress={() => router.push(`/detail/${item.productId}`)}
+            // style={{ flex: 1, marginBottom: 16 }}
+            className="flex-1 mb-4"
+          >
+            <View className="h-72 bg-white rounded-xl p-2 m-2 shadow-md">
+              <Image
+                source={{ uri: item.image }}
+                className="w-full h-40 rounded-lg mb-3"
+              />
+              <Text className="font-semibold text-pink-300 h-16">
+                {item.productName}
+              </Text>
+              <Text className="text-xs text-brown-500 mb-2">
+                {item.productBrand}
+              </Text>
+              <View className="flex-row items-center justify-between">
+                <Text className="text-sm">
+                  {item.price.toLocaleString()} VND
+                </Text>
+                <View className="flex-row items-center">
+                  <Ionicons name="star" size={14} color="#FFB400" />
+                  <Text className="ml-1 text-sm">{item.productRating}</Text>
+                </View>
               </View>
             </View>
-          </View>
-        ))}
-      </ScrollView>
+          </TouchableOpacity>
+        )}
+      />
     </ScrollView>
   );
 };

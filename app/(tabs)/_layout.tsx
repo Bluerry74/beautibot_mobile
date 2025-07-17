@@ -8,7 +8,7 @@ function TabLayout() {
       <Tabs.Screen 
         name="home"
         options={{
-          title: "Home",
+          title: "Trang chủ",
           tabBarIcon: () => (
             <Ionicons name="home-outline" size={24} color={"#ff9c86"} />
           ),
@@ -17,7 +17,7 @@ function TabLayout() {
       <Tabs.Screen
         name="products"
         options={{
-          title: "Products",
+          title: "Sản phẩm",
           tabBarIcon: () => (
             <Squirrel size={24} color={"#ff9c86"} />
           ),
@@ -35,7 +35,7 @@ function TabLayout() {
       <Tabs.Screen
         name="routine"
         options={{
-          title: "Routine",
+          title: "Liệu trình",
           tabBarIcon: () => (
             <SquareChartGantt size={24} color={"#ff9c86"} />
           ),
@@ -44,7 +44,7 @@ function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profile",
+          title: "Tài khoản",
           tabBarIcon: () => (
             <UserRound size={24} color={"#ff9c86"} />
           ),

@@ -15,14 +15,6 @@ export const post = async <T = unknown>(
     data: unknown = {},
     option: AxiosRequestConfig = {} 
 ): Promise<AxiosResponse<T>> => {
-    const fullUrl = http.defaults.baseURL
-        ? `${http.defaults.baseURL.replace(/\/$/, "")}/${url.replace(
-              /^\//,
-              ""
-          )}`
-        : url;
-
-    console.log("POST request to:", fullUrl, "with data:", data);
     try {
         const res: AxiosResponse<T> = await http.post(url, data, option);
         return res;
