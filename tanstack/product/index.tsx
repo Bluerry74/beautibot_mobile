@@ -1,10 +1,14 @@
 import {
     createProduct,
+    createSku,
     deleteSku,
+    deleteSkuImageByIndex,
     getAllProducts,
     getProductDetail,
+    replaceSkuImage,
     updateProduct,
     updateSku,
+    uploadSkuImages,
 } from "@/services/product";
 import { IProductCreatePayload } from "@/types/product";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -74,7 +78,28 @@ export const useUpdateProductMutation = () => {
         },
     });
 };
+export const useCreateSkuMutation = () => {
+    const queryClient = useQueryClient();
 
+    return useMutation({
+        mutationFn: createSku,
+        onSuccess: () => {
+            Toast.show({
+                type: "success",
+                text1: "Thành công",
+                text2: "Tạo SKU thành công",
+            });
+            queryClient.invalidateQueries({ queryKey: ["products"] });
+        },
+        onError: () => {
+            Toast.show({
+                type: "error",
+                text1: "Thất bại",
+                text2: "Tạo SKU thất bại",
+            });
+        },
+    });
+};
 export const useUpdateSkuMutation = () => {
     const queryClient = useQueryClient();
 
@@ -95,6 +120,34 @@ export const useUpdateSkuMutation = () => {
                 text2: "Cập nhật SKU thất bại",
             });
         },
+    });
+};
+
+export const useUploadSkuImagesMutation = () => {
+    return useMutation({
+        mutationFn: ({ skuId, files }: { skuId: string; files: any[] }) =>
+            uploadSkuImages(skuId, files),
+    });
+};
+
+export const useDeleteSkuImageMutation = () => {
+    return useMutation({
+        mutationFn: ({ skuId, index }: { skuId: string; index: number }) =>
+            deleteSkuImageByIndex(skuId, index),
+    });
+};
+
+export const useReplaceSkuImageMutation = () => {
+    return useMutation({
+        mutationFn: ({
+            skuId,
+            index,
+            file,
+        }: {
+            skuId: string;
+            index: number;
+            file: any;
+        }) => replaceSkuImage(skuId, index, file),
     });
 };
 

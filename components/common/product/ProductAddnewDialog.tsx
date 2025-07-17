@@ -9,8 +9,8 @@ import {
     TextInput,
     View,
 } from "react-native";
-import CheckboxBadge from "../common/CheckBoxBadge";
-import EditDetailList from "../common/EditDetailList";
+import CheckboxBadge from "../CheckBoxBadge";
+import EditDetailList from "../EditDetailList";
 
 const skinTypeOptions = [
     { label: "Da thường", value: "normal" },

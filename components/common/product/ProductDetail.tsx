@@ -1,4 +1,13 @@
-
+import {
+    useCreateSkuMutation,
+    useDeleteProductSkuMutation,
+    useDeleteSkuImageMutation,
+    useGetProductDetailMutation,
+    useReplaceSkuImageMutation,
+    useUpdateProductMutation,
+    useUpdateSkuMutation,
+    useUploadSkuImagesMutation,
+} from "@/tanstack/product";
 import { IProduct, ISku } from "@/types/product";
 import React, { useEffect, useState } from "react";
 import {
@@ -12,8 +21,7 @@ import {
     View,
 } from "react-native";
 import Toast from "react-native-toast-message";
-import SkuImagesUpload from "./UploadSku";
-import { useDeleteProductSkuMutation, useGetProductDetailMutation, useUpdateProductMutation, useUpdateSkuMutation } from "@/tanstack/product";
+import SkuImagesUpload from "../sku/SkuImagesUpload";
 
 interface Props {
     isOpen: boolean;
@@ -31,8 +39,12 @@ const ProductDetailDialog = ({ isOpen, onClose, product }: Props) => {
 
     const updateProductMutation = useUpdateProductMutation();
     const updateSkuMutation = useUpdateSkuMutation();
+    const createSkuMutation = useCreateSkuMutation();
     const deleteSkuMutation = useDeleteProductSkuMutation();
     const getProductDetailMutation = useGetProductDetailMutation();
+    const uploadSkuImagesMutation = useUploadSkuImagesMutation();
+    const deleteSkuImageMutation = useDeleteSkuImageMutation();
+    const replaceSkuImageMutation = useReplaceSkuImageMutation();
 
     useEffect(() => {
         if (product) {
@@ -58,8 +70,28 @@ const ProductDetailDialog = ({ isOpen, onClose, product }: Props) => {
         });
 
         for (let sku of form.skus) {
-            await updateSkuMutation.mutateAsync({ id: sku._id, payload: sku });
+            if (sku._id) {
+                await updateSkuMutation.mutateAsync({
+                    id: sku._id,
+                    payload: sku,
+                });
+            } else {
+                await createSkuMutation.mutateAsync({
+                    ...sku,
+                    productId: product._id,
+                });
+            }
         }
+
+        const refreshed = await getProductDetailMutation.mutateAsync(
+            product._id
+        );
+        setForm({
+            name: refreshed.name,
+            brand: refreshed.brand,
+            description: refreshed.description,
+            skus: refreshed.skus,
+        });
 
         Toast.show({ type: "success", text1: "Đã lưu thành công" });
         onClose();
@@ -67,10 +99,25 @@ const ProductDetailDialog = ({ isOpen, onClose, product }: Props) => {
 
     const handleDeleteSku = async (skuId: string) => {
         await deleteSkuMutation.mutateAsync(skuId);
+
+        if (!product?._id) return;
+
         const refreshed = await getProductDetailMutation.mutateAsync(
-            product?._id
+            product._id
         );
         setForm((f: any) => ({ ...f, skus: refreshed.skus }));
+    };
+
+    const handleAddSku = () => {
+        if (!product?._id) return;
+        const newSku: Partial<ISku> = {
+            variantName: `SKU ${form.skus.length + 1}`,
+            price: 0,
+            stock: 0,
+            productId: product._id,
+            images: [],
+        };
+        setForm((f: any) => ({ ...f, skus: [...f.skus, newSku] }));
     };
 
     const renderSkuItem = ({ item, index }: { item: ISku; index: number }) => (
@@ -79,7 +126,7 @@ const ProductDetailDialog = ({ isOpen, onClose, product }: Props) => {
             <TextInput
                 style={styles.input}
                 placeholder="Giá"
-                value={String(item.price)}
+                value={String(item.price ?? 0)}
                 keyboardType="numeric"
                 onChangeText={(val) => {
                     const skus = [...form.skus];
@@ -90,7 +137,7 @@ const ProductDetailDialog = ({ isOpen, onClose, product }: Props) => {
             <TextInput
                 style={styles.input}
                 placeholder="Tồn kho"
-                value={String(item.stock)}
+                value={String(item.stock ?? 0)}
                 keyboardType="numeric"
                 onChangeText={(val) => {
                     const skus = [...form.skus];
@@ -98,21 +145,53 @@ const ProductDetailDialog = ({ isOpen, onClose, product }: Props) => {
                     setForm((f: any) => ({ ...f, skus }));
                 }}
             />
-            {/* <SkuImagesUpload
-                images={sku.images}
-                onChange={(updatedImages) => {
-                    const skus = [...form.skus];
-                    skus[index].images = updatedImages;
-                    setForm((f: any) => ({ ...f, skus }));
-                }}
-            /> */}
-
             <TouchableOpacity
                 style={styles.deleteBtn}
-                onPress={() => handleDeleteSku(item._id)}
+                onPress={() => item._id && handleDeleteSku(item._id)}
             >
                 <Text style={{ color: "#fff", textAlign: "center" }}>Xoá</Text>
             </TouchableOpacity>
+            <SkuImagesUpload
+                skuId={item._id}
+                images={item.images ?? []}
+                onUpload={async (files) => {
+                    await uploadSkuImagesMutation.mutateAsync({
+                        skuId: item._id,
+                        files,
+                    });
+                    if (!product?._id) return;
+                    const refreshed =
+                        await getProductDetailMutation.mutateAsync(
+                            product?._id
+                        );
+                    setForm((f: any) => ({ ...f, skus: refreshed.skus }));
+                }}
+                onDelete={async (index) => {
+                    await deleteSkuImageMutation.mutateAsync({
+                        skuId: item._id,
+                        index,
+                    });
+                    if (!product?._id) return;
+                    const refreshed =
+                        await getProductDetailMutation.mutateAsync(
+                            product?._id
+                        );
+                    setForm((f: any) => ({ ...f, skus: refreshed.skus }));
+                }}
+                onReplace={async (index, file) => {
+                    await replaceSkuImageMutation.mutateAsync({
+                        skuId: item._id,
+                        index,
+                        file,
+                    });
+                    if (!product?._id) return;
+                    const refreshed =
+                        await getProductDetailMutation.mutateAsync(
+                            product?._id
+                        );
+                    setForm((f: any) => ({ ...f, skus: refreshed.skus }));
+                }}
+            />
         </View>
     );
 
@@ -148,12 +227,22 @@ const ProductDetailDialog = ({ isOpen, onClose, product }: Props) => {
                 />
 
                 <Text style={styles.sectionTitle}>Danh sách SKU</Text>
+
                 <FlatList
                     data={form.skus}
-                    keyExtractor={(sku) => sku._id}
+                    keyExtractor={(sku, idx) => sku._id ?? `temp-${idx}`}
                     renderItem={renderSkuItem}
                     scrollEnabled={false}
                 />
+
+                <TouchableOpacity
+                    style={styles.addSkuBtn}
+                    onPress={handleAddSku}
+                >
+                    <Text style={{ color: "#fff", textAlign: "center" }}>
+                        + Thêm SKU
+                    </Text>
+                </TouchableOpacity>
 
                 <View style={styles.footer}>
                     <TouchableOpacity
@@ -198,6 +287,12 @@ const styles = StyleSheet.create({
         marginTop: 10,
         backgroundColor: "#f44336",
         paddingVertical: 8,
+        borderRadius: 8,
+    },
+    addSkuBtn: {
+        marginTop: 10,
+        backgroundColor: "#2563eb",
+        paddingVertical: 10,
         borderRadius: 8,
     },
     footer: {
