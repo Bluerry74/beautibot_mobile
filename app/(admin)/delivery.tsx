@@ -1,21 +1,12 @@
 import color from '@/assets/Color';
 import CustomTable from '@/components/core/CustomTable';
-import { useDeliveryQuerry } from '@/tanstack/delivery';
+import { useDeliveryPersonnelQuery, useDeliveryQuerry } from '@/tanstack/delivery';
 import { IDelivery } from '@/types/delivery';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { ActivityIndicator, Platform, Text, View } from 'react-native';
 import { DataTable, SegmentedButtons } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-const DELIVERY_STATUS_LABELS: Record<string, string> = {
-  pending: "Đang chờ",
-  assigned: "Đã phân công",
-  out_for_delivery: "Đang giao",
-  delivered: "Đã giao hàng",
-  cancelled: "Đã hủy",
-  failed: "Thất bại",
-};
 
 const statusOptions = [
   { label: 'Đơn giao', value: 'pending' },
@@ -28,17 +19,25 @@ const Delivery = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [status, setStatus] = React.useState<string>('pending');
+  const { data: deliveryPersonnelData, isLoading: isLoadingPersonnel } = useDeliveryPersonnelQuery({
+    page: 1,
+    limit: 50
+  });
 
   const router = useRouter();
 
-  // Lấy danh sách delivery
-  const { data: deliveryResp = { meta: { totalItems: 0 }, data: [] }, isLoading, isError } = useDeliveryQuerry({ page: page + 1, limit: rowsPerPage }) as { data?: { meta: { totalItems: number }, data: IDelivery[] }, isLoading: boolean, isError: boolean };
+  // Lấy danh sách delivery với status filter
+  const { data: deliveryResp = { meta: { totalItems: 0 }, data: [] }, isLoading, isError } = useDeliveryQuerry({
+    page: page + 1,
+    limit: rowsPerPage,
+    status: status === 'pending' ? undefined : status // Gửi status filter lên API
+  }) as { data?: { meta: { totalItems: number }, data: IDelivery[] }, isLoading: boolean, isError: boolean };
 
   console.log(deliveryResp)
   const totalItems = deliveryResp.meta.totalItems || 0;
   const deliveries: IDelivery[] = Array.isArray(deliveryResp.data) ? deliveryResp.data : [];
 
-  // Lọc theo trạng thái
+  // Lọc theo trạng thái (nếu API không hỗ trợ filter, fallback về client-side filtering)
   const filteredDeliveries = React.useMemo(() => {
     if (status === 'pending') {
       // Hiển thị cả pending và assigned
@@ -59,7 +58,7 @@ const Delivery = () => {
       render: (delivery: IDelivery) => delivery.shippingAddress?.fullName || "",
     },
     {
-      colName: "Mã Nhân Viên Giao Hàng",
+      colName: "Shipper",
       render: (delivery: IDelivery) => {
         if (delivery.status === 'pending') {
           return (
@@ -68,21 +67,25 @@ const Delivery = () => {
             </View>
           );
         }
-        // Các trạng thái khác đều hiện badge mã nhân viên (nếu có)
+        const personnel = deliveryPersonnelData?.data?.find(p => p._id === delivery.deliveryPersonnelId);
+        const personnelEmail = personnel?.email || delivery.deliveryPersonnelId || 'Không có';
+
         return (
           <View style={{ backgroundColor: '#1976d2', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 2, alignSelf: 'center' }}>
             <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 12 }}>
-              {delivery.deliveryPersonnelId || 'Không có'}
+              {personnelEmail}
             </Text>
           </View>
         );
       },
+      cellStyle: { justifyContent: 'center' as const },
+      textStyle: { textAlign: 'center' as const },
     },
   ];
 
   const handleStatusChange = (value: string) => {
     setStatus(value);
-    setPage(0);
+    setPage(0); // Reset về trang đầu tiên khi đổi status
   };
 
   const handleRowClick = (delivery: IDelivery) => {
@@ -110,8 +113,8 @@ const Delivery = () => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ flex: 1, padding: 16 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+      <View style={{ flex: 1, padding: 16, paddingTop: Platform.OS === 'ios' ? 0 : 16 }}>
         <Text style={{ fontSize: 22, fontWeight: 'bold', textAlign: 'center', marginBottom: 20 }}>
           Quản lý giao hàng
         </Text>

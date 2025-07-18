@@ -42,4 +42,34 @@ export interface ICreateDelivery {
   trackingNumber: string;
   estimatedDeliveryDate: string;
   requiresSignature: boolean;
-} 
+}
+
+// Delivery personnel interface
+export interface IDeliveryPersonnel {
+  _id: string;
+  email: string;
+  password: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  coupons: any[];
+  deviceTokens: any[];
+  emailVerifiedAt: string;
+  isBanned: boolean;
+  isDeleted: boolean;
+  isVerified: boolean;
+  points: number;
+  wishlist: any[];
+}
+
+// Delivery personnel response interface
+export interface IDeliveryPersonnelResponse {
+  data: IDeliveryPersonnel[];
+  meta: {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    limit: number;
+  };
+}

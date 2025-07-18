@@ -1,5 +1,5 @@
 import { get, patch, post } from "@/httpservices/httpService";
-import { ICreateDelivery } from "@/types/delivery";
+import { ICreateDelivery, IDeliveryPersonnelResponse } from "@/types/delivery";
 import { IDelivery } from "@/types/order";
 export const uploadProof = async (imageUri: string, deliveryId: string) => {
   const formData = new FormData();
@@ -23,7 +23,7 @@ export const updateDeliveryStatus = async (deliveryId: string, status: string) =
   return res.data;
 }
 
-export const getDeliveries = async (params: { page: number; limit: number }) => {
+export const getDeliveries = async (params: { page: number; limit: number; status?: string }) => {
   const res = await get("delivery", { params });
   return res.data;
 };
@@ -45,4 +45,16 @@ export const getDeliveryDetail = async (deliveryId: string) => {
 export const getDeliveriesByCustomer = async (): Promise<IDelivery[]> => {
   const res = await get("/delivery/customer");
   return res.data as IDelivery[];
+};
+
+// Get all delivery personnel (admin only)
+export const getDeliveryPersonnel = async (params?: {
+  page?: number;
+  limit?: number;
+  email?: string;
+  name?: string;
+  phone?: string;
+}): Promise<IDeliveryPersonnelResponse> => {
+  const res = await get("delivery/admin/delivery-personnel", { params });
+  return res.data as IDeliveryPersonnelResponse;
 };
