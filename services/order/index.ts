@@ -16,13 +16,7 @@ export const getMyOrders = async (): Promise<IOrder[]> => {
   export const cancelOrder = async (orderId: string): Promise<void> => {
     await put<void>(`/order/${orderId}/cancel`);
   };
-  // Cập nhật trạng thái đơn (nếu cần)
-  export const updateOrderStatus = async (
-    orderId: string,
-    status: string
-  ): Promise<void> => {
-    await get<void>(`/order/${orderId}/status`, {
-      method: "PUT",
-      data: { status },
-    });
-  };
+
+export const updateOrderStatus = async (orderId: string, orderStatus: string) => {
+    await put(`/order/${orderId}/status`, { orderStatus });
+};
