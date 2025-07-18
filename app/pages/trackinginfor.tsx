@@ -94,7 +94,7 @@ const Tracking = () => {
             </Text>
           </View>
           <Text className="text-sm text-gray-600 mt-1">
-            {item.address.fullName} - {item.address.city}
+            {item.address.fullName} - {item.address.city} - {item.address.country} - {item.address.postalCode}
           </Text>
         </TouchableOpacity>
       ))}
@@ -235,7 +235,7 @@ const Tracking = () => {
               <View>
                 <Text className="font-medium">Địa chỉ giao hàng</Text>
                 <Text className="text-sm text-gray-600">
-                  {`${selected.address.street}, ${selected.address.city}`}
+                  {`${selected.address.street}, ${selected.address.city}, ${selected.address.country},, ${selected.address.postalCode}`}
                 </Text>
               </View>
             </View>
