@@ -22,25 +22,26 @@ export interface ISku {
   returnCount: number;
   status: string;
   discount: number;
-  images: string;
+  images: any[];
   weight: number;
   dimensions: IDimensions;
   internalNotes?: string;
   createdAt: string;
+  returnedStock?: any;
   updatedAt: string;
   __v?: number;
 }
 
 // Basic product (used for list, form, etc.)
 export interface IProduct {
-  _id?: string;
-  name?: string;
-  code?: string;
+  _id?: string | undefined;
+  name?: string | any;
+  code?: string | undefined;
   rating?: number;
   isActive?: boolean;
   isDeleted?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt?: string | undefined;
+  updatedAt?: string | undefined;
   suitableForSkinTypes?: string[];
   skinConcerns?: string[];
   ingredients?: string[];

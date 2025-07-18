@@ -38,10 +38,10 @@ const Profile = () => {
     profile?.email || "user"
   )}&background=random&size=128`;
 
-  const logout = () => {
-    useAuthStore.getState().logout();
-    router.push("/");
-  };
+    const logout = () => {
+        useAuthStore.getState().logout();
+        router.push("/");
+    };
 
   return (
     <ScrollView className="flex-1 bg-white px-6 pt-10">
@@ -164,4 +164,5 @@ const Profile = () => {
   );
 };
 
+export default Profile;
 export default Profile;
