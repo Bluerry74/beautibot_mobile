@@ -1,4 +1,4 @@
-import { translateSkinType } from '@/app/utils/translate';
+import translateSkinType from '@/app/utils/translate';
 import EditProfileModal from '@/components/Modal/EditProfileModal'; // đường dẫn tuỳ bạn
 import { routesConfig } from '@/config/route';
 import { useProfileActions } from '@/hooks/useProfileActions';

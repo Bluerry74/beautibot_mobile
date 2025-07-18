@@ -94,7 +94,7 @@ const Tracking = () => {
             </Text>
           </View>
           <Text className="text-sm text-gray-600 mt-1">
-            {item.address.fullName} - {item.address.city}
+            {item.address.fullName} - {item.address.city} - {item.address.country} - {item.address.postalCode}
           </Text>
         </TouchableOpacity>
       ))}
@@ -107,44 +107,64 @@ const Tracking = () => {
           </TouchableOpacity>
 
           <View className="bg-white p-4 rounded-lg mb-4 shadow">
-            <View className="flex-row justify-between items-center mb-3">
-              <Text className="text-lg font-semibold">Thông tin đơn hàng</Text>
-              <Text className="text-green-700 bg-green-100 px-2 py-1 rounded-full text-xs">
-                {selected.delivery.status}
-              </Text>
-            </View>
+  <View className="flex-row justify-between items-center mb-3">
+    <Text className="text-lg font-semibold">Thông tin đơn hàng</Text>
+    <Text className="text-green-700 bg-green-100 px-2 py-1 rounded-full text-xs">
+      {selected.delivery.status}
+    </Text>
+  </View>
 
-            <View className="flex-row justify-between items-center mb-2">
-              <Text className="text-sm text-gray-600">Mã vận đơn:</Text>
-              <View className="flex-row items-center gap-2">
-                <Text className="font-mono text-sm">{selected.delivery.trackingNumber}</Text>
-                <TouchableOpacity onPress={() => copyTrackingNumber(selected.delivery.trackingNumber)}>
-                  {copied ? <Check size={16} color="green" /> : <Copy size={16} />}
-                </TouchableOpacity>
-              </View>
-            </View>
+  <View className="flex-row justify-between items-center mb-2">
+    <Text className="text-sm text-gray-600">Mã đơn hàng:</Text>
+    <Text className="font-mono text-sm">{selected.order._id}</Text>
+  </View>
 
-            <View className="border-t my-2" />
+  <View className="flex-row justify-between items-center mb-2">
+    <Text className="text-sm text-gray-600">Mã vận đơn:</Text>
+    <View className="flex-row items-center gap-2">
+      <Text className="font-mono text-sm">{selected.delivery.trackingNumber}</Text>
+      <TouchableOpacity onPress={() => copyTrackingNumber(selected.delivery.trackingNumber)}>
+        {copied ? <Check size={16} color="green" /> : <Copy size={16} />}
+      </TouchableOpacity>
+    </View>
+  </View>
 
-            <View className="flex-row justify-between mb-1">
-              <Text className="text-gray-600">Người gửi:</Text>
-              <Text className="font-medium">{selected.order.userId}</Text>
-            </View>
-            <View className="flex-row justify-between mb-1">
-              <Text className="text-gray-600">Người nhận:</Text>
-              <Text className="font-medium">{selected.address.fullName}</Text>
-            </View>
-            <View className="flex-row justify-between mb-1">
-              <Text className="text-gray-600">Dịch vụ:</Text>
-              <Text className="font-medium">{selected.order.paymentMethod}</Text>
-            </View>
-            <View className="flex-row justify-between">
-              <Text className="text-gray-600">Sản phẩm:</Text>
-              <Text className="font-medium">
-                {selected.order.items.length} sản phẩm
-              </Text>
-            </View>
-          </View>
+  <View className="border-t my-2" />
+
+  <View className="flex-row justify-between mb-1">
+    <Text className="text-gray-600">Người gửi:</Text>
+    <Text className="font-medium">{selected.order.userId}</Text>
+  </View>
+  <View className="flex-row justify-between mb-1">
+    <Text className="text-gray-600">Người nhận:</Text>
+    <Text className="font-medium">{selected.address.fullName}</Text>
+  </View>
+  <View className="flex-row justify-between mb-1">
+    <Text className="text-gray-600">Số lượng sản phẩm:</Text>
+    <Text className="font-medium">{selected.order.items.length}</Text>
+  </View>
+  <View className="flex-row justify-between mb-1">
+    <Text className="text-gray-600">Tổng tiền:</Text>
+    <Text className="font-medium text-red-500">
+      {selected.order.totalAmount.toLocaleString()}₫
+    </Text>
+  </View>
+  <View className="flex-row justify-between mb-1">
+    <Text className="text-gray-600">Thanh toán:</Text>
+    <Text className="font-medium">{selected.order.paymentMethod}</Text>
+  </View>
+  <View className="flex-row justify-between mb-1">
+    <Text className="text-gray-600">Trạng thái thanh toán:</Text>
+    <Text className="font-medium">{selected.order.paymentStatus}</Text>
+  </View>
+  <View className="flex-row justify-between">
+    <Text className="text-gray-600">Thời gian đặt:</Text>
+    <Text className="text-sm text-gray-600">
+      {new Date(selected.order.createdAt).toLocaleString('vi-VN')}
+    </Text>
+  </View>
+</View>
+
           <View className="bg-white p-4 rounded-lg mb-4 shadow">
             <View className="flex-row items-center gap-2 mb-3">
               <Truck size={20} color="blue" />
@@ -215,7 +235,7 @@ const Tracking = () => {
               <View>
                 <Text className="font-medium">Địa chỉ giao hàng</Text>
                 <Text className="text-sm text-gray-600">
-                  {`${selected.address.street}, ${selected.address.city}`}
+                  {`${selected.address.street}, ${selected.address.city}, ${selected.address.country},, ${selected.address.postalCode}`}
                 </Text>
               </View>
             </View>

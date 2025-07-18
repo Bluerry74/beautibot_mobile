@@ -1,5 +1,5 @@
 // components/EditProfileModal.tsx
-import { translateSkinType } from '@/app/utils/translate';
+import translateSkinType from '@/app/utils/translate';
 import { getAllSkinTypesFromProducts } from '@/services/product'; // Hàm fetch skin types từ product API
 import { IUserProfile } from '@/types/profile';
 import { Picker } from '@react-native-picker/picker'; // npm install @react-native-picker/picker
