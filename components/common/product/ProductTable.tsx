@@ -2,6 +2,7 @@ import { IProduct } from "@/types/product";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   StyleSheet,
   Text,
@@ -9,29 +10,66 @@ import {
   View,
 } from "react-native";
 import ProductDetailDialog from "./ProductDetail";
+import { useDeleteProductMutation } from "@/tanstack/product";
 
 interface ProductTableProps {
   data: IProduct[];
   onPressProduct: (product: IProduct) => void;
+  onRefetchProducts?: () => void;
 }
 
-const ProductTable = ({ data, onPressProduct }: ProductTableProps) => {
+const ProductTable = ({
+  data,
+  onPressProduct,
+  onRefetchProducts,
+}: ProductTableProps) => {
   const [selectedProduct, setSelectedProduct] = useState<IProduct | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-
+  const deleteProductMutation = useDeleteProductMutation();
   const handlePressProduct = (product: IProduct) => {
     setSelectedProduct(product);
     setDialogOpen(true);
     onPressProduct(product);
   };
+  const handleLongPressProduct = (product: IProduct | any) => {
+    if (product.skus && product.skus.length > 0) {
+      Alert.alert(
+        "Không thể xoá",
+        "Sản phẩm này vẫn còn SKU. Hãy xoá hết các SKU trước khi xoá sản phẩm."
+      );
+      return;
+    }
 
+    Alert.alert(
+      "Xác nhận xoá",
+      `Bạn có chắc chắn muốn xoá sản phẩm "${product.name}"?`,
+      [
+        { text: "Huỷ", style: "cancel" },
+        {
+          text: "Xoá",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await deleteProductMutation.mutateAsync(product._id);
+              onRefetchProducts?.();
+              Alert.alert("Thành công", "Đã xoá sản phẩm");
+            } catch (err: any) {
+              Alert.alert("Lỗi", err?.message ?? "Xoá sản phẩm thất bại");
+            }
+          },
+        },
+      ]
+    );
+  };
   const renderItem = ({ item }: { item: IProduct }) => {
-    const totalStock = item.skus?.reduce((sum: any, sku: any) => sum + sku.stock, 0) || 0;
+    const totalStock =
+      item.skus?.reduce((sum: any, sku: any) => sum + sku.stock, 0) || 0;
 
     return (
       <TouchableOpacity
         style={styles.itemContainer}
         onPress={() => handlePressProduct(item)}
+        onLongPress={() => handleLongPressProduct(item)}
       >
         <View style={styles.left}>
           <Text style={styles.name}>{item.name}</Text>
