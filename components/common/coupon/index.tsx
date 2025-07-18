@@ -39,7 +39,7 @@ export default function CouponEditDialog({
                 code: coupon.code,
                 value: coupon.value,
                 isUsed: coupon.isUsed,
-                expiresAt: coupon.expiresAt || "", // ensure valid string or empty
+                expiresAt: coupon.expiresAt || "",
                 description: coupon.description || "",
             });
         }
