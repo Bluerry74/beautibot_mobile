@@ -6,20 +6,21 @@ import { useAllUser } from '@/tanstack/user/regis';
 import { IOrder, OrderStatus } from '@/types/order';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { ActivityIndicator, SafeAreaView, Text, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 import { DataTable, SegmentedButtons } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const statusOptions: { label: string; value: OrderStatus }[] = [
   { label: 'Chờ xử lý', value: 'Pending' },
+  { label: 'Đã gửi', value: 'Shipped' },
   { label: 'Đã hủy', value: 'Cancelled' },
   { label: 'Đã giao', value: 'Delivered' },
-  { label: 'Đã gửi', value: 'Shipped' },
 ];
 
 const Order = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [status, setStatus] = React.useState<OrderStatus | ''>('');
+  const [status, setStatus] = React.useState<OrderStatus | ''>('Pending');
 
   const router = useRouter();
 
@@ -28,6 +29,7 @@ const Order = () => {
 
   // Lấy danh sách user
   const { data: userData } = useAllUser();
+  console.log(data)
   const userMap = React.useMemo(() => {
     const map: Record<string, string> = {};
     if (Array.isArray(userData?.data)) {

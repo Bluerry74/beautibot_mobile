@@ -1,8 +1,6 @@
-import { routesConfig } from '@/config/route'
 import { useAuthStore } from '@/store/auth'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import { useRouter, } from 'expo-router'
-import { History } from 'lucide-react-native'
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 
 const Profile = () => {
@@ -28,7 +26,7 @@ const Profile = () => {
       </View>
       <View className="border-t border-gray-200 mt-2">
   {[
-    { label: 'History', icon: 'refresh-outline', route: routesConfig.tracking },
+    // { label: 'History', icon: 'refresh-outline', route: routesConfig.tracking },
     { label: 'Settings', icon: 'settings-outline' },
   ].map((item, i) => (
     <TouchableOpacity
