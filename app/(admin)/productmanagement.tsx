@@ -12,7 +12,7 @@ const ProductManagement = () => {
         null
     );
     const [isDialogOpen, setDialogOpen] = useState(false);
-    const { data: productList } = useProductsQuery();
+    const { data: productList, refetch } = useProductsQuery();
 
     const productsData = productList?.data ?? [];
     return (
@@ -34,6 +34,7 @@ const ProductManagement = () => {
                     setSelectedProduct(product);
                     setDialogOpen(true);
                 }}
+                onRefetchProducts={refetch}
             />
 
             <ProductAddnewDialog
