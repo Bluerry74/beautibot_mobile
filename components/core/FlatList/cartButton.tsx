@@ -1,7 +1,6 @@
 import { Sku } from "@/app/types/product";
 import { useCartActions } from "@/hooks/useCartActions";
 import { useAuthStore } from "@/store/auth";
-import { ISku } from "@/types/product";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -12,7 +11,7 @@ import {
 import Toast from "react-native-toast-message";
 
 interface Props {
-  sku: ISku;
+  sku: Sku;
 }
 
 export default function CartButton({ sku }: Props) {
