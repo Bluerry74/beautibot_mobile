@@ -1,4 +1,4 @@
-export const translateSkinType = (type: string): string => {
+export default function translateSkinType(type: string): string {
     switch (type) {
       case "oily":
         return "Da dầu";

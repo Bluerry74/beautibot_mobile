@@ -104,3 +104,34 @@ export interface IProductCreatePayload {
   suitableForSkinType?: any;
   suitableForSkinTypes: string[];
 }
+
+// Cart item interface
+export interface CartItem {
+  skuId: string;
+  skuName: string;
+  quantity: number;
+  priceSnapshot: number;
+  selected: boolean;
+  image?: string;
+  productId?: string;
+}
+
+// Address interface
+export interface IAddress {
+  _id: string;
+  fullName: string;
+  phone: string;
+  street: string;
+  city: string;
+  postalCode: string;
+  country: string;
+  isDefault?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// Checkout response interface
+export interface CheckoutResponse {
+  url: string;
+  message?: string;
+}
