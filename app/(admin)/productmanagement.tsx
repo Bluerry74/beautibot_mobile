@@ -1,5 +1,5 @@
-import ProductAddnewDialog from "@/components/product/ProductAddnewDialog";
-import ProductTable from "@/components/product/ProductTable";
+import ProductAddnewDialog from "@/components/common/product/ProductAddnewDialog";
+import ProductTable from "@/components/common/product/ProductTable";
 import { useProductsQuery } from "@/tanstack/product";
 import { IProduct } from "@/types/product";
 import { Ionicons } from "@expo/vector-icons";
@@ -17,7 +17,7 @@ const ProductManagement = () => {
         null
     );
     const [isDialogOpen, setDialogOpen] = useState(false);
-    const { data: productList } = useProductsQuery();
+    const { data: productList, refetch } = useProductsQuery();
 
     const productsData = productList?.data ?? [];
     return (
@@ -35,10 +35,11 @@ const ProductManagement = () => {
 
             <ProductTable
                 data={productsData}
-                onPressProduct={(product) => {
+                onPressProduct={(product: IProduct) => {
                     setSelectedProduct(product);
                     setDialogOpen(true);
                 }}
+                onRefetchProducts={refetch}
             />
 
             <ProductAddnewDialog
@@ -51,8 +52,7 @@ const ProductManagement = () => {
 const styles = StyleSheet.create({
     container: {
         padding: 16,
-        paddingBottom: 40,
-        backgroundColor: "#f9fafb",
+        paddingBottom: 40,     
     },
     headerContainer: {
         flexDirection: "row",
