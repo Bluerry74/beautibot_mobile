@@ -4,8 +4,8 @@ import * as FileSystem from "expo-file-system";
 import * as ImageManipulator from 'expo-image-manipulator';
 
 const FACEPP_API_URL = "https://api-us.faceplusplus.com/facepp/v3/face/analyze";
-const FACEPP_API_KEY = "OIkqdC-nHNBn298gj5pdcFMbsjRKAMXm";
-const FACEPP_API_SECRET = "qICi6vhejl1Zt_dfW9qcl5qdGZBtqdu0";
+const FACEPP_API_KEY = "-4GnsDToFj3LBJaOpPLE9wdL2KbUB5K3";
+const FACEPP_API_SECRET = "_L1t1IrasKv0jGeWui-mTIO6fMIrHZ9v";
 const FACEPP_API_DETECT_URL = "https://api-us.faceplusplus.com/facepp/v3/detect";
 
 export const analyzeFace = async (image: string): Promise<FaceResult> => {
