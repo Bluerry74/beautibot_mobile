@@ -1,10 +1,12 @@
 import color from '@/assets/Color';
 import { formatDate } from '@/hooks/formatDate';
+import { useAddressesQuery } from '@/tanstack/address';
 import { useCreateDeliveryMutation } from '@/tanstack/delivery';
 import { useAllOrder, useCancelOrderMutation, useUpdateOrderStatusMutation } from '@/tanstack/order';
 import { useProductsQuery } from '@/tanstack/product';
 import { useAllUser } from '@/tanstack/user/regis';
 import { IOrder } from '@/types/order';
+import * as Linking from 'expo-linking';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { Image, Modal, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -17,6 +19,7 @@ export default function OrderDetailScreen() {
   const { data, refetch } = useAllOrder();
   const { data: userData } = useAllUser();
   const { data: productData } = useProductsQuery();
+  const { data: addressData } = useAddressesQuery();
 
   const [deliveryModalVisible, setDeliveryModalVisible] = useState(false);
   const [deliveryFee, setDeliveryFee] = useState("15000");
@@ -39,6 +42,11 @@ export default function OrderDetailScreen() {
     return user?.email || order.userId;
   }, [order, userData]);
 
+  const address = React.useMemo(() => {
+    if (!order || !Array.isArray(addressData)) return undefined;
+    return addressData.find((a: any) => a._id === order.addressId);
+  }, [order, addressData]);
+
   const getProductName = (productId: string) => {
     if (!Array.isArray(productData?.data)) return '';
     const product = productData.data.find((p: any) => p._id === productId);
@@ -47,35 +55,37 @@ export default function OrderDetailScreen() {
 
   const handleCreateDelivery = () => {
     if (!order) return;
-  
-    const fakeShippingAddress = {
-      fullName: "Nguyen Van A",
-      phone: "0912345678",
-      street: "456 Le Loi",
-      city: "Da Nang",
-      country: "Vietnam",
-      postalCode: "550000"
+
+    if (!address) {
+      alert('Không tìm thấy địa chỉ giao hàng cho đơn này!');
+      return;
+    }
+
+    const shippingAddress = {
+      fullName: address.fullName,
+      phone: address.phone,
+      street: address.street,
+      city: address.city,
+      country: address.country,
+      postalCode: address.postalCode
     };
-  
+
     const deliveryData = {
       orderId: order._id,
       customerId: order.userId,
-      shippingAddress: fakeShippingAddress,
+      shippingAddress,
       deliveryFee: parseInt(deliveryFee),
       trackingNumber: `VN${Math.floor(100000000 + Math.random() * 900000000)}`,
       requiresSignature: true,
       estimatedDeliveryDate: new Date(Date.now() + 3 * 86400000).toISOString()
     };
-  
-    console.log("🚚 Dữ liệu gửi đi khi tạo giao hàng:", deliveryData);
-  
+
     createDeliveryMutation.mutate(deliveryData, {
       onSuccess: async () => {
         await updateOrderStatusMutation.mutateAsync({
           orderId: order._id,
           orderStatus: "Shipped"
         });
-  
         setDeliveryModalVisible(false);
         refetch && refetch();
         router.push('/(admin)/order');
@@ -215,6 +225,19 @@ export default function OrderDetailScreen() {
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'center', alignItems: 'center' }}>
           <View style={{ backgroundColor: '#fff', borderRadius: 12, padding: 24, minWidth: 280 }}>
             <Text style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 16 }}>Tạo đơn giao hàng</Text>
+            {address && (
+              <View style={{ marginBottom: 12 }}>
+                <Text style={{ fontWeight: 'bold' }}>Địa chỉ giao hàng:</Text>
+                <Text>{address.fullName} - {address.phone}</Text>
+                <Text>{address.street}, {address.city}, {address.country}</Text>
+                <Text style={{ color: '#007AFF', marginTop: 4 }}
+                  onPress={() => {
+                    const query = encodeURIComponent(`${address.street}, ${address.city}, ${address.country}`);
+                    Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${query}`);
+                  }}
+                >Xem trên bản đồ</Text>
+              </View>
+            )}
             <Text>Phí giao hàng (VNĐ):</Text>
             <View style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 8, marginTop: 8, marginBottom: 16 }}>
               <TextInput
