@@ -15,7 +15,6 @@ const resizeAndConvertToBase64 = async (uri: string) => {
   const base64 = await FileSystem.readAsStringAsync(manipulated.uri, {
     encoding: FileSystem.EncodingType.Base64,
   });
-  console.log("Base64 length:", base64.length);
   return base64;
 };
 
