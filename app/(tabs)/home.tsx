@@ -51,7 +51,7 @@ const Home = () => {
     }))
   );
   return (
-    <ScrollView className="bg-[#FFF3EC] flex-1 px-4 pt-8 ">
+    <View className="bg-[#FFF3EC] flex-1 px-4 pt-8 ">
       <View className="flex-row justify-between items-center mb-6 mt-8">
         <AlignLeft />
         <Text className="text-xl font-semibold" style={{ color: "#ff9c86" }}>
@@ -159,7 +159,7 @@ const Home = () => {
           </TouchableOpacity>
         )}
       />
-    </ScrollView>
+    </View>
   );
 };
 
