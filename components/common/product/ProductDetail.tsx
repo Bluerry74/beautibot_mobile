@@ -150,14 +150,34 @@ const ProductDetailDialog = ({ isOpen, onClose, product }: Props) => {
                     <TouchableOpacity
                         style={styles.updateBtn}
                         onPress={async () => {
-                            await updateSkuMutation.mutateAsync({
-                                id: item._id!,
-                                payload: item,
-                            });
-                            Toast.show({
-                                type: "success",
-                                text1: `Cập nhật SKU ${item.variantName} thành công`,
-                            });
+                            try {
+                                await updateSkuMutation.mutateAsync({
+                                    id: item._id!,
+                                    payload: item,
+                                });
+
+                                if (!product?._id) return;
+
+                                const refreshed =
+                                    await getProductDetailMutation.mutateAsync(
+                                        product._id
+                                    );
+                                setForm((f: any) => ({
+                                    ...f,
+                                    skus: refreshed.skus,
+                                }));
+
+                                Toast.show({
+                                    type: "success",
+                                    text1: `Cập nhật SKU ${item.variantName} thành công`,
+                                });
+                            } catch (err: any) {
+                                Toast.show({
+                                    type: "error",
+                                    text1: "Lỗi cập nhật SKU",
+                                    text2: err?.message,
+                                });
+                            }
                         }}
                     >
                         <Text style={{ color: "#fff", textAlign: "center" }}>
@@ -170,7 +190,13 @@ const ProductDetailDialog = ({ isOpen, onClose, product }: Props) => {
                         style={styles.deleteBtn}
                         onPress={() => handleDeleteSku(item._id!)}
                     >
-                        <Text style={{ color: "#fff", textAlign: "center" }}>
+                        <Text
+                            style={{
+                                color: "#fff",
+                                textAlign: "center",
+                                flex: 1,
+                            }}
+                        >
                             Xoá
                         </Text>
                     </TouchableOpacity>

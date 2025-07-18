@@ -113,7 +113,10 @@ export const useUpdateSkuMutation = () => {
             });
             queryClient.invalidateQueries({ queryKey: ["products"] });
         },
-        onError: () => {
+        onError: (error: any) => {
+            console.error("🔴 Error updating SKU:", error);
+            console.log("📦 Error response:", error?.response?.data);
+
             Toast.show({
                 type: "error",
                 text1: "Thất bại",
