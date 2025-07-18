@@ -34,7 +34,7 @@ export interface ISku {
 // Basic product (used for list, form, etc.)
 export interface IProduct {
   _id?: string;
-  name?: string;
+  name?: string | any;
   code?: string;
   rating?: number;
   isActive?: boolean;

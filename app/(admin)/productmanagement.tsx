@@ -46,8 +46,7 @@ const ProductManagement = () => {
 const styles = StyleSheet.create({
     container: {
         padding: 16,
-        paddingBottom: 40,
-        backgroundColor: "#f9fafb",
+        paddingBottom: 40,     
     },
     headerContainer: {
         flexDirection: "row",
