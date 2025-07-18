@@ -41,12 +41,12 @@ export const updateSku = async ({
     id: string;
     payload: any;
 }) => {
-    const res = await patch(`/skus/${id}`, payload);
+    const res = await patch(`/sku/${id}`, payload);
     return res.data;
 };
 
 export const deleteSku = async (id: string) => {
-    const res = await remove(`/skus/${id}`);
+    const res = await remove(`/sku/${id}`);
     return res.data;
 };
 
