@@ -1,3 +1,4 @@
+import { put, remove } from "@/httpservices/httpService";
 import { useAuthStore } from "@/store/auth";
 import axios from "axios";
 
@@ -20,11 +21,11 @@ export const getAllCoupons = (filters?: any) => {
 };
 
 export const updateCoupon = ({ id, payload }: { id: string; payload: any }) => {
-    return axios.put(`/coupon/admin/${id}`, payload).then((res) => res.data);
+    return put(`/coupon/admin/${id}`, payload).then((res) => res.data);
 };
 
 export const deleteCoupon = (id: string) => {
-    return axios.delete(`/coupon/admin/${id}`).then((res) => res.data);
+    return remove(`/coupon/admin/${id}`).then((res) => res.data);
 };
 // User APIs
 export const getMyCoupons = async () =>

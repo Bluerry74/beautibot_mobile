@@ -3,7 +3,7 @@ import { routesConfig } from "@/config/route";
 import { useProfileActions } from "@/hooks/useProfileActions";
 import { useAuthStore } from "@/store/auth";
 import { IUserProfile } from "@/types/profile";
-import { translateSkinType } from "@/utils/translate";
+import translateSkinType from "@/utils/translate";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";

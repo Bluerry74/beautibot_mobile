@@ -1,7 +1,7 @@
 import {
   useCreateSkuMutation,
+  useDeletedSkuImages,
   useDeleteProductSkuMutation,
-  useDeleteSkuImageMutation,
   useGetProductDetailMutation,
   useReplaceSkuImageMutation,
   useUpdateProductMutation,
@@ -57,8 +57,9 @@ const ProductDetailDialog = ({ isOpen, onClose, product }: Props) => {
   const createSkuMutation = useCreateSkuMutation();
   const deleteSkuMutation = useDeleteProductSkuMutation();
   const getProductDetailMutation = useGetProductDetailMutation();
+  
   const uploadSkuImagesMutation = useUploadSkuImagesMutation();
-  const deleteSkuImageMutation = useDeleteSkuImageMutation();
+  const deleteSkuImageMutation = useDeletedSkuImages();
   const replaceSkuImageMutation = useReplaceSkuImageMutation();
 
   useEffect(() => {
@@ -197,7 +198,7 @@ const ProductDetailDialog = ({ isOpen, onClose, product }: Props) => {
           setSelectedSku((s) => s && { ...s, stock: Number(val) });
         }}
       />
-
+    
       {/* Upload Ảnh */}
       <SkuImagesUpload
         skuId={sku._id}
@@ -210,7 +211,7 @@ const ProductDetailDialog = ({ isOpen, onClose, product }: Props) => {
           setForm((f: any) => ({ ...f, skus: refreshed.skus }));
         }}
         onDelete={async (index) => {
-          await deleteSkuImageMutation.mutateAsync({ skuId: sku._id, index });
+          await deleteSkuImageMutation.mutateAsync({ skuId: sku._id, imageIndex: index });
           const refreshed = await getProductDetailMutation.mutateAsync(
             product!._id
           );

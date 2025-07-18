@@ -25,7 +25,6 @@ const Products = () => {
     const fetchProducts = async () => {
       try {
         const response = await get<IProductResponse>("/product");
-        console.log("Products fetched successfully:", response);
         setProducts(response.data.data as unknown as IProduct[]);
         setLoading(false);
       } catch (error) {
