@@ -4,7 +4,12 @@ import { useProductsQuery } from "@/tanstack/product";
 import { IProduct } from "@/types/product";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from "react-native";
 
 const ProductManagement = () => {
     const [openAdd, setOpenAdd] = useState(false);
