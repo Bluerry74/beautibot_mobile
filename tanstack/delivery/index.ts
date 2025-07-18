@@ -1,4 +1,4 @@
-import { assignDeliveryPersonnel, createDelivery, getDeliveries, getDeliveryDetail, updateDeliveryStatus, uploadProof } from "@/services/delivery";
+import { assignDeliveryPersonnel, createDelivery, getDeliveries, getDeliveryDetail, getDeliveryPersonnel, updateDeliveryStatus, uploadProof } from "@/services/delivery";
 import { ICreateDelivery } from "@/types/delivery";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
@@ -37,10 +37,10 @@ export const useUpdateDeliveryStatusMutation = () => {
         text2: 'Trạng thái giao hàng đã được cập nhật.',
       });
     },
-    onError: () => {
+    onError: (err) => {
       Toast.show({
         type: 'error',
-        text1: 'Lỗi cập nhật trạng thái',
+        text1: err.message,
         text2: 'Vui lòng thử lại sau.',
       });
     }
@@ -69,7 +69,7 @@ export const useAssignDeliveryPersonnelMutation = () => {
   });
 }
 
-export const useDeliveryQuerry = (params: { page: number; limit: number }) => {
+export const useDeliveryQuerry = (params: { page: number; limit: number; status?: string }) => {
   return useQuery({
     queryKey: ['deliveries', params],
     queryFn: async () => {
@@ -110,6 +110,21 @@ export const getDeliveryDetailQuery = (deliveryId: string) => {
     queryKey: ['delivery', deliveryId],
     queryFn: async () => {
       return await getDeliveryDetail(deliveryId);
+    },
+  });
+};
+
+export const useDeliveryPersonnelQuery = (params?: {
+  page?: number;
+  limit?: number;
+  email?: string;
+  name?: string;
+  phone?: string;
+}) => {
+  return useQuery({
+    queryKey: ['delivery-personnel', params],
+    queryFn: async () => {
+      return await getDeliveryPersonnel(params);
     },
   });
 };

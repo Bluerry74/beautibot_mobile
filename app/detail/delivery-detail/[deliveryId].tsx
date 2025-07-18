@@ -1,33 +1,33 @@
-import { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  RefreshControl,
-  Linking,
-  Alert,
-  Image,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import * as Haptics from "expo-haptics";
-import { Ionicons } from "@expo/vector-icons";
-import { router, useLocalSearchParams } from "expo-router";
 import { get } from "@/httpservices/httpService";
 import {
   useUpdateDeliveryStatusMutation,
   useUploadProofMutation,
 } from "@/tanstack/delivery";
+import { Ionicons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import * as ImagePicker from "expo-image-picker";
+import { router, useLocalSearchParams } from "expo-router";
 import { ImageUp, Navigation, Phone } from "lucide-react-native";
+import { useEffect, useState } from "react";
+import {
+  Alert,
+  Image,
+  Linking,
+  RefreshControl,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TrackingDetail() {
   const { deliveryId } = useLocalSearchParams();
   const [delivery, setDelivery] = useState<any>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedImage, setSelectedImage] = useState<any>(null);
-  const { mutate: uploadProof, isLoading } = useUploadProofMutation();
-  const { mutate: updateStatus, isLoading: isUpdatingStatus } =
+  const { mutate: uploadProof, isPending: isUploading } = useUploadProofMutation();
+  const { mutate: updateStatus, isPending: isUpdatingStatus } =
     useUpdateDeliveryStatusMutation();
 
   const pickImage = async () => {
@@ -284,18 +284,18 @@ export default function TrackingDetail() {
                 </Text>
                 <TouchableOpacity
                   className={`mx-32 py-3 rounded-lg items-center flex-row gap-2 justify-center ${
-                    isLoading
+                    isUploading
                       ? "bg-gray-400"
                       : selectedImage
                       ? "bg-green-500"
                       : "bg-blue-500"
                   }`}
                   onPress={selectedImage ? handleUpload : pickImage}
-                  disabled={isLoading}
+                  disabled={isUploading}
                 >
                   <ImageUp size={20} color="white" />
                   <Text className="text-white font-semibold">
-                    {isLoading
+                    {isUploading
                       ? "Đang gửi..."
                       : selectedImage
                       ? "Tải ảnh lên"
@@ -315,12 +315,12 @@ export default function TrackingDetail() {
                     isUpdatingStatus ? "bg-gray-400" : "bg-red-600"
                   }`}
                   onPress={() => handleStatusChange("failed")}
-                  disabled={!selectedImage || isUpdatingStatus}
+                  disabled={isUpdatingStatus}
                 >
                   <Text className="text-white">
                     {isUpdatingStatus
                       ? "Đang cập nhật..."
-                      : "Giao hàng hất bại"}
+                      : "Giao hàng thất bại"}
                   </Text>
                 </TouchableOpacity>
 
@@ -387,13 +387,13 @@ export default function TrackingDetail() {
               )}
               <TouchableOpacity
                 className={`flex-1 px-3 py-2 rounded items-center mr-3 ${
-                  isUpdatingStatus ? "bg-gray-400" : "bg-red-600"
+                  isUpdatingStatus ? "bg-gray-400" : "bg-gray-400"
                 }`}
                 onPress={() => handleStatusChange("cancelled")}
-                disabled={!selectedImage || isUpdatingStatus}
+                disabled={true}
               >
                 <Text className="text-white">
-                  {isUpdatingStatus ? "Đang cập nhật..." : "Hủy bỏ đơn hàng"}
+                  Gửi 
                 </Text>
               </TouchableOpacity>
             </View>
