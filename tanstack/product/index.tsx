@@ -119,12 +119,23 @@ export const useUpdateSkuMutation = () => {
         },
         onError: (error: any) => {
             console.error("🔴 Error updating SKU:", error);
-            console.log("📦 Error response:", error?.response?.data);
+            console.log("🧱 AxiosError name:", error?.name);
+            console.log("📡 Status code:", error?.response?.status);
+            console.log(
+                "📦 Full error response:",
+                JSON.stringify(error?.response?.data, null, 2)
+            );
+            console.log("🔗 Request URL:", error?.config?.url);
+            console.log(
+                "📤 Payload:",
+                JSON.stringify(error?.config?.data, null, 2)
+            );
+            console.log("📥 Headers:", error?.config?.headers);
 
             Toast.show({
                 type: "error",
                 text1: "Thất bại",
-                text2: "Cập nhật SKU thất bại",
+                text2: error?.response?.data?.message || "Lỗi máy chủ (500)",
             });
         },
     });

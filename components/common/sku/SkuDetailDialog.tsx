@@ -1,5 +1,6 @@
 // components/sku/SkuDetailDialog.tsx
 import {
+    useCreateSkuMutation,
     useDeletedSkuImages,
     useDeleteProductSkuMutation,
     useGetProductDetailMutation,
@@ -35,12 +36,15 @@ export default function SkuDetailDialog({ sku, onClose, onUpdated }: Props) {
     const [showManufacturedPicker, setShowManufacturedPicker] = useState(false);
     const [showExpiredPicker, setShowExpiredPicker] = useState(false);
 
+    const isNew = !sku._id;
+
     const getProductDetailMutation = useGetProductDetailMutation();
     const updateSkuMutation = useUpdateSkuMutation();
     const deleteSkuMutation = useDeleteProductSkuMutation();
     const uploadSkuImagesMutation = useUploadSkuImagesMutation();
     const deleteSkuImageMutation = useDeletedSkuImages();
     const replaceSkuImageMutation = useReplaceSkuImageMutation();
+    const createSkuMutation = useCreateSkuMutation();
 
     const sanitizeSkuPayload = (sku: ISku) => {
         const {
@@ -61,14 +65,20 @@ export default function SkuDetailDialog({ sku, onClose, onUpdated }: Props) {
             },
         };
     };
-
-    const handleUpdate = async () => {
+    const handleSubmit = async () => {
         try {
-            await updateSkuMutation.mutateAsync({
-                id: sku._id,
-                payload: sanitizeSkuPayload(form),
-            });
-            Toast.show({ type: "success", text1: "Đã cập nhật SKU" });
+            const payload = sanitizeSkuPayload(form);
+            console.log("📤 Payload:", payload);
+            if (isNew) {
+                await createSkuMutation.mutateAsync({
+                    ...payload,
+                    productId: sku.productId,
+                });
+                Toast.show({ type: "success", text1: "Đã tạo SKU" });
+            } else {
+                await updateSkuMutation.mutateAsync({ id: sku._id, payload });
+                Toast.show({ type: "success", text1: "Đã cập nhật SKU" });
+            }
             const refreshed = await getProductDetailMutation.mutateAsync(
                 sku.productId
             );
@@ -77,7 +87,7 @@ export default function SkuDetailDialog({ sku, onClose, onUpdated }: Props) {
         } catch (err: any) {
             Toast.show({
                 type: "error",
-                text1: "Lỗi cập nhật SKU",
+                text1: isNew ? "Lỗi tạo SKU" : "Lỗi cập nhật SKU",
                 text2: err.message,
             });
         }
@@ -303,16 +313,21 @@ export default function SkuDetailDialog({ sku, onClose, onUpdated }: Props) {
                 <View style={styles.actionsRow}>
                     <TouchableOpacity
                         style={styles.updateBtn}
-                        onPress={handleUpdate}
+                        onPress={handleSubmit}
                     >
-                        <Text style={styles.btnText}>Cập nhật</Text>
+                        <Text style={styles.btnText}>
+                            {isNew ? "Tạo SKU" : "Cập nhật"}
+                        </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.deleteBtn}
-                        onPress={handleDelete}
-                    >
-                        <Text style={styles.btnText}>Xoá</Text>
-                    </TouchableOpacity>
+
+                    {!isNew && (
+                        <TouchableOpacity
+                            style={styles.deleteBtn}
+                            onPress={handleDelete}
+                        >
+                            <Text style={styles.btnText}>Xoá</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
 
                 <TouchableOpacity style={styles.backBtn} onPress={onClose}>
@@ -363,6 +378,7 @@ const styles = StyleSheet.create({
         padding: 12,
         borderRadius: 8,
         marginTop: 10,
+        marginBottom: 20,
     },
     btnText: {
         color: "#fff",
