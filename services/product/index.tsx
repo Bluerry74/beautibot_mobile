@@ -41,7 +41,7 @@ export const updateProduct = async ({
     id: string;
     payload: any;
 }) => {
-    const res = await patch(`/products/${id}`, payload);
+    const res = await patch(`/product/${id}`, payload);
     return res.data;
 };
 export const createSku = (payload: any) => {
