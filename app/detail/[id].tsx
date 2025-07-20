@@ -36,8 +36,6 @@ const Detail = () => {
       .then((res) => {
         const data = res.data;
         setProduct(data);
-  
-        // Gán selectedSku mặc định là SKU đầu tiên
         if (data?.skus?.length > 0) {
           setSelectedSku(data.skus[0]);
         }
@@ -66,20 +64,26 @@ const Detail = () => {
 
 
   const discountPrice = selectedSku.price * (1 - (selectedSku.discount || 0) / 100);
-  console.log("Ảnh của SKU:", selectedSku.images);
 
   return (
     <SafeAreaView className="flex-1 bg-[#fbf1eb]">
       {/* Header */}
       <View className="flex-row items-center justify-between px-4 py-3">
         <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="black" />
+          <Ionicons name="arrow-back" size={24} color="#ff9c86" />
         </TouchableOpacity>
-        <View style={{ width: 24 }} />
+        <Text className="text-xl font-bold text-center ">Chi tiết sản phẩm</Text>
+        <TouchableOpacity>
+          <Ionicons
+            name="information-circle-outline"
+            size={24}
+            color="#ff9c86"
+          />
+        </TouchableOpacity>
       </View>
   
       {/* Ảnh sản phẩm */}
-      <View className="items-center mt-4">
+      <View className="items-center my-4">
         <View
           style={{
             borderWidth: 2,
@@ -155,17 +159,17 @@ const Detail = () => {
       </View>
   
       {/* Tên tranh, tác giả, mô tả ngắn */}
-      <View className="items-baseline mt-2 space-y-2 px-4">
-        <Text className="text-xl font-bold text-black text-center">
+      <View className="items-baseline mt-2 space-y-2 px-4 bg-white rounded-lg p-4">
+        <Text className="text-3xl font-bold text-black text-center">
           {product.name}
         </Text>
-        <Text className="text-base text-gray-600 text-center uppercase tracking-wider">
+        <Text className="text-xl text-gray-600 text-center uppercase tracking-wider">
           {product.brand}
         </Text>
-        <Text className="text-sm text-gray-500 text-center uppercase tracking-wider">
+        <Text className="text-lg text-gray-500 tracking-wider">
           {product.description}
         </Text>
-        <Text className="text-sm text-gray-500 text-center uppercase tracking-wider">
+        <Text className="text-lg text-gray-500 text-center  tracking-wider">
         {String(product.ingredients || 'Đang cập nhật...')}
         </Text>
       </View>
@@ -174,10 +178,10 @@ const Detail = () => {
       <View className="items-baseline px-4 mt-1">
         <View className="flex-row items-end space-x-3">
           <Text className="text-2xl font-bold text-red-600">
-            {discountPrice.toLocaleString()} VND
+           Price: {discountPrice.toLocaleString()} VND
           </Text>
           {selectedSku.discount > 0 && (
-            <Text className="text-base text-gray-400 line-through">
+            <Text className="text-base text-gray-400 line-through ml-3">
               {selectedSku.price.toLocaleString()} VND
             </Text>
           )}

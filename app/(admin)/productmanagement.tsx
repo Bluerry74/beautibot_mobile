@@ -5,6 +5,7 @@ import { IProduct } from "@/types/product";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
+    SafeAreaView,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -21,7 +22,7 @@ const ProductManagement = () => {
 
     const productsData = productList?.data ?? [];
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <View style={styles.headerContainer}>
                 <Text style={styles.headerText}>Danh sách sản phẩm</Text>
                 <TouchableOpacity
@@ -46,7 +47,7 @@ const ProductManagement = () => {
                 visible={openAdd}
                 onClose={() => setOpenAdd(false)}
             />
-        </View>
+        </SafeAreaView>
     );
 };
 const styles = StyleSheet.create({
