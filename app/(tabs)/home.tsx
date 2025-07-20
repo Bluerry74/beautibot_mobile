@@ -23,7 +23,6 @@ const Home = () => {
     const fetchProducts = async () => {
       try {
         const response = await get<IProductResponse>("/product");
-
         setProducts(response.data.data as unknown as IProduct[]);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -96,8 +95,8 @@ const Home = () => {
               >
                 <Image
                   source={
-                    product.skus?.[0]?.image
-                      ? { uri: product.skus[0].image }
+                    product.skus?.[0]?.image?.[0]
+                      ? { uri: product.skus[0].image[0] }
                       : require("@/assets/images/large.png")
                   }
                   className="w-16 h-16 rounded-full"
@@ -134,8 +133,8 @@ const Home = () => {
             <View className="h-72 bg-white rounded-xl p-2 m-2 shadow-md">
               <Image
                 source={
-                  item?.image?.trim()
-                    ? { uri: item.image }
+                  item?.images?.[0]?.trim()
+                    ? { uri: item.images[0] }
                     : require("@/assets/images/large.png")
                 }
                 className="w-full h-40 rounded-lg mb-3"

@@ -26,6 +26,7 @@ const Products = () => {
       try {
         const response = await get<IProductResponse>("/product");
         setProducts(response.data.data as unknown as IProduct[]);
+
         setLoading(false);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -74,7 +75,7 @@ const Products = () => {
           <Picker
             selectedValue={selectedIngredient}
             onValueChange={(value) => setSelectedIngredient(value)}
-            style={{ height: 50, fontSize: 12}} 
+            style={{ height: 50, fontSize: 12 }}
           >
             <Picker.Item label="Thành phần" value="" />
             <Picker.Item label="Niacinamide" value="Niacinamide" />
@@ -118,7 +119,11 @@ const Products = () => {
           >
             <View className="bg-white rounded-lg p-4 shadow-md m-2 h-80">
               <Image
-                source={{ uri: item.skus?.[0]?.image || item.image }}
+                source={
+                  item?.skus?.[0]?.images?.[0]
+                    ? { uri: item.skus[0].images[0] }
+                    : require("@/assets/images/large.png")
+                }
                 className="w-full h-40 rounded-lg mb-3"
               />
               <Text className="text-pink-300 text-lg font-semibold">
