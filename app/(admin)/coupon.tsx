@@ -1,4 +1,8 @@
-import React, { use, useEffect, useState } from "react";
+import CouponEditDialog from "@/components/common/coupon";
+import { useCouponsQuery } from "@/tanstack/coupon";
+import { useAllUser } from "@/tanstack/user/regis";
+import { TicketPlus } from "lucide-react-native";
+import React, { useState } from "react";
 import {
     FlatList,
     SafeAreaView,
@@ -7,34 +11,65 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import CouponEditDialog from "@/components/common/coupon";
-import { get } from "@/httpservices/httpService";
-import { TicketPlus } from "lucide-react-native";
 
 export default function CouponListScreen() {
     const [selectedCoupon, setSelectedCoupon] = useState(null);
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [coupon, setCoupon] = useState(null);
+    const { data: allUsers } = useAllUser();
 
-    useEffect(() => {
-        const fetchCoupons = async () => {
-            try {
-                const res = await get<any>("/coupon/admin/all");
-                console.log(res.data);
-                
-                setCoupon(res?.data.data);
-            } catch (error) {
-                console.error("❌ Failed to fetch coupons:", error);
-            }
-        };
-        fetchCoupons();
-    }, []);
+    const { data: coupon = [], refetch } = useCouponsQuery();
 
     const handleEdit = (coupon: any) => {
         setSelectedCoupon(coupon);
         setDialogOpen(true);
     };
 
+    const renderItem = ({ item }: { item: any }) => {
+        const user = allUsers?.data?.find((u) => u._id === item.userId);
+
+        return (
+            <TouchableOpacity
+                onPress={() => handleEdit(item)}
+                style={styles.card}
+            >
+                <View style={styles.row}>
+                    <Text style={styles.code}>{item.code}</Text>
+                    <Text
+                        style={[
+                            styles.badge,
+                            {
+                                backgroundColor: item.isUsed
+                                    ? "#ffe0e0"
+                                    : "#e0ffe0",
+                                color: item.isUsed ? "#c62828" : "#2e7d32",
+                            },
+                        ]}
+                    >
+                        {item.isUsed ? "Đã dùng" : "Chưa dùng"}
+                    </Text>
+                </View>
+                <Text style={styles.valueText}>🎁 Giá trị: {item.value}K</Text>
+                {item.description ? (
+                    <Text style={styles.descriptionText}>
+                        📝 {item.description}
+                    </Text>
+                ) : null}
+                <Text style={styles.userText}>
+                    👤 Người dùng: {user?.email ?? "Không rõ"}
+                </Text>
+                <Text style={styles.dateText}>
+                    🕒 Ngày tạo:{" "}
+                    {new Date(item.createdAt).toLocaleString("vi-VN", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    })}
+                </Text>
+            </TouchableOpacity>
+        );
+    };
     return (
         <SafeAreaView className=" flex-1 p-4">
             <View className="mt-6">
@@ -53,35 +88,28 @@ export default function CouponListScreen() {
                     Thêm mã giảm giá
                 </Text>
             </TouchableOpacity>
+
             <FlatList
-                className="mt-6"
-                data={coupon}
+                data={coupon?.data || []}
                 keyExtractor={(item) => item._id}
-                renderItem={({ item }) => (
-                    <TouchableOpacity
-                        onPress={() => handleEdit(item)}
-                        style={styles.card}
-                    >
-                        <View className="mb-2 flex-row justify-between">
-                            <Text style={styles.code}>{item.code}</Text>
-                            <Text style={styles.badge}>
-                                {item.isUsed ? "Đã dùng" : "Chưa dùng"}
-                            </Text>
-                        </View>
-                        <Text style={styles.valueText}>
-                            🎁 Giá trị: {item.value}
-                        </Text>
-                        <Text style={styles.expired}>
-                            📅 HSD: {item.expiresAt}
-                        </Text>
-                    </TouchableOpacity>
-                )}
+                renderItem={renderItem}
                 contentContainerStyle={{ paddingBottom: 100 }}
             />
+
             <CouponEditDialog
                 visible={dialogOpen}
                 coupon={selectedCoupon}
                 onClose={() => setDialogOpen(false)}
+                onSaved={() => {
+                    refetch();
+                    setSelectedCoupon(null);
+                    setDialogOpen(false);
+                }}
+                onDeleted={() => {
+                    refetch();
+                    setDialogOpen(false);
+                    setSelectedCoupon(null);
+                }}
             />
         </SafeAreaView>
     );
@@ -99,26 +127,45 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         elevation: 4,
     },
+    expired: {
+        fontSize: 13,
+        color: "#999",
+    },
+    row: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 6,
+    },
     code: {
         fontSize: 16,
         fontWeight: "bold",
         color: "#2f80ed",
     },
     badge: {
-        backgroundColor: "#e0e0e0",
         paddingHorizontal: 10,
         paddingVertical: 4,
         borderRadius: 10,
         fontSize: 12,
-        color: "#333",
+        overflow: "hidden",
     },
     valueText: {
         fontSize: 14,
         color: "#555",
         marginBottom: 4,
     },
-    expired: {
+    dateText: {
         fontSize: 13,
-        color: "#999",
+        color: "#888",
+    },
+    userText: {
+        fontSize: 13,
+        color: "#444",
+        marginBottom: 4,
+    },
+    descriptionText: {
+        fontSize: 13,
+        color: "#666",
+        marginBottom: 4,
+        fontStyle: "italic",
     },
 });

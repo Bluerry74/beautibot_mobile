@@ -5,6 +5,7 @@ import {
 import { CircleX } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
+    Alert,
     Modal,
     ScrollView,
     StyleSheet,
@@ -14,8 +15,14 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-
-export default function CouponEditDialog({ visible, coupon, onClose }: any) {
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+export default function CouponEditDialog({
+    visible,
+    coupon,
+    onClose,
+    onSaved,
+    onDeleted,
+}: any) {
     const [form, setForm] = useState({
         code: "",
         value: 0,
@@ -23,27 +30,85 @@ export default function CouponEditDialog({ visible, coupon, onClose }: any) {
         expiresAt: "",
         description: "",
     });
-
     const updateMutation = useUpdateCouponMutation();
     const deleteMutation = useDeleteCouponMutation();
-
+    const [isDateModalVisible, setDateModalVisible] = useState(false);
     useEffect(() => {
         if (coupon) {
-            setForm(coupon);
+            setForm({
+                code: coupon.code,
+                value: coupon.value,
+                isUsed: coupon.isUsed,
+                expiresAt: coupon.expiresAt || "",
+                description: coupon.description || "",
+            });
         }
     }, [coupon]);
 
     const handleSave = async () => {
-        await updateMutation.mutateAsync({
-            id: coupon._id,
-            payload: form,
-        });
-        onClose();
+        try {
+            const { expiresAt, ...restForm } = form;
+
+            const payload: any = {
+                ...restForm,
+            };
+
+            if (expiresAt) {
+                payload.expiresAt = new Date(expiresAt).toISOString(); // ensure ISO format
+            }
+
+            await updateMutation.mutateAsync({
+                id: coupon._id,
+                payload,
+            });
+
+            onSaved?.();
+        } catch (err) {
+            console.error("❌ Error updating coupon:", err);
+        }
     };
 
-    const handleDelete = async () => {
-        await deleteMutation.mutateAsync(coupon._id);
-        onClose();
+    const handleDelete = () => {
+        Alert.alert(
+            "Xác nhận xoá",
+            "Bạn có chắc chắn muốn xoá mã giảm giá này?",
+            [
+                {
+                    text: "Huỷ",
+                    style: "cancel",
+                },
+                {
+                    text: "Xoá",
+                    style: "destructive",
+                    onPress: async () => {
+                        try {
+                            await deleteMutation.mutateAsync(coupon._id);
+                            onDeleted?.();
+                        } catch (err: any) {
+                            if (err.response) {
+                                console.error(
+                                    "📦 Server responded with error:",
+                                    {
+                                        status: err.response.status,
+                                        data: err.response.data,
+                                    }
+                                );
+                            } else if (err.request) {
+                                console.error(
+                                    "📡 No response received:",
+                                    err.request
+                                );
+                            } else {
+                                console.error(
+                                    "❌ Unexpected error:",
+                                    err.message
+                                );
+                            }
+                        }
+                    },
+                },
+            ]
+        );
     };
 
     return (
@@ -73,11 +138,30 @@ export default function CouponEditDialog({ visible, coupon, onClose }: any) {
                         setForm({ ...form, value: Number(val) })
                     }
                 />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Hạn dùng (ISO)"
-                    value={form.expiresAt}
-                    onChangeText={(val) => setForm({ ...form, expiresAt: val })}
+                <TouchableOpacity
+                    style={styles.dateInput}
+                    onPress={() => setDateModalVisible(true)}
+                >
+                    <Text style={{ color: form.expiresAt ? "#000" : "#aaa" }}>
+                        {form.expiresAt
+                            ? new Date(form.expiresAt).toLocaleDateString(
+                                  "vi-VN"
+                              )
+                            : "Chọn ngày hết hạn"}
+                    </Text>
+                </TouchableOpacity>
+
+                <DateTimePickerModal
+                    isVisible={isDateModalVisible}
+                    mode="datetime"
+                    date={
+                        form.expiresAt ? new Date(form.expiresAt) : new Date()
+                    }
+                    onConfirm={(date) => {
+                        setDateModalVisible(false);
+                        setForm({ ...form, expiresAt: date.toISOString() });
+                    }}
+                    onCancel={() => setDateModalVisible(false)}
                 />
                 <TextInput
                     style={styles.input}
@@ -157,5 +241,13 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         marginLeft: 8,
     },
+    dateInput: {
+        borderWidth: 1,
+        borderColor: "#ccc",
+        borderRadius: 8,
+        padding: 10,
+        marginBottom: 10,
+    },
+
     footerText: { color: "#fff", textAlign: "center", fontWeight: "bold" },
 });
