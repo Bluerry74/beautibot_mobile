@@ -1,9 +1,9 @@
-import { translateSkinType } from "@/app/utils/translate";
 import EditProfileModal from "@/components/Modal/EditProfileModal"; // đường dẫn tuỳ bạn
 import { routesConfig } from "@/config/route";
 import { useProfileActions } from "@/hooks/useProfileActions";
 import { useAuthStore } from "@/store/auth";
 import { IUserProfile } from "@/types/profile";
+import translateSkinType from "@/utils/translate";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -24,7 +24,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await getProfile(); 
+        const res = await getProfile();
         setProfile(res);
       } catch (error) {
         console.error("❌ Failed to fetch profile:", error);
@@ -38,10 +38,10 @@ const Profile = () => {
     profile?.email || "user"
   )}&background=random&size=128`;
 
-    const logout = () => {
-        useAuthStore.getState().logout();
-        router.push("/");
-    };
+  const logout = () => {
+    useAuthStore.getState().logout();
+    router.push("/");
+  };
 
   return (
     <ScrollView className="flex-1 bg-white px-6 pt-10">
@@ -60,7 +60,11 @@ const Profile = () => {
             )
           }
         >
-          <Ionicons name="information-circle-outline" size={24} color="#ff9c86" />
+          <Ionicons
+            name="information-circle-outline"
+            size={24}
+            color="#ff9c86"
+          />
         </TouchableOpacity>
       </View>
 
@@ -163,6 +167,4 @@ const Profile = () => {
     </ScrollView>
   );
 };
-
-export default Profile;
 export default Profile;
