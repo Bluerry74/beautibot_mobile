@@ -1,4 +1,4 @@
-import { post } from "@/httpservices/httpService";
+import { get, post } from "@/httpservices/httpService";
 import { useAuthStore } from "@/store/auth";
 import { User } from "@/types/auth";
 import Toast from "react-native-toast-message";
@@ -41,5 +41,13 @@ export const loginSystem = async (
 };
 
 
+export const sendVerifyEmail = async () => {
+    const response = await post("/user/verify-email");
+    return response.data;
+};
 
 
+export const sendVerifiedToken = async (token: string) => {
+    const response = await get(`/user/verify-email/confirm?token=${encodeURIComponent(token)}`);
+    return response.data;
+};
