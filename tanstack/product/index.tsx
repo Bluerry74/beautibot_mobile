@@ -159,13 +159,21 @@ export const useUploadSkuImagesMutation = () => {
             return res.data as ISku;
         },
         onSuccess: (data, variables) => {
-            toast.success("Tải ảnh thành công");
+            Toast.show({
+                type: "success",
+                text1: "Thành công",
+                text2: "Tải ảnh thành công",
+            });
             queryClient.invalidateQueries({
                 queryKey: ["sku", variables.skuId],
             });
         },
         onError: () => {
-            toast.error("Tải ảnh thất bại");
+            Toast.show({
+                type: "error",
+                text1: "Thất bại",
+                text2: "Tải ảnh thất bại",
+            });
         },
     });
 };
@@ -178,7 +186,11 @@ export const useDeletedSkuImages = () => {
             return result as ISku;
         },
         onSuccess: (data, variables) => {
-            toast.success("Xóa ảnh thành công");
+            Toast.show({
+                type: "success",
+                text1: "Thành công",
+                text2: "Xóa ảnh thành công",
+            });
             queryClient.invalidateQueries({
                 queryKey: ["sku", variables.skuId],
             });
@@ -199,13 +211,21 @@ export const useReplaceSkuImageMutation = () => {
             return res as ISku;
         },
         onSuccess: (data, variables) => {
-            toast.success("Cập nhật ảnh SKU thành công");
+            Toast.show({
+                type: "success",
+                text1: "Thành công",
+                text2: "Cập nhật ảnh SKU thành công",
+            });
             queryClient.invalidateQueries({
                 queryKey: ["sku", variables.skuId],
             });
         },
         onError: () => {
-            toast.error("Cập nhật ảnh thất bại");
+            Toast.show({
+                type: "error",
+                text1: "Thất bại",
+                text2: "Cập nhật ảnh thất bại",
+            });
         },
     });
 };
@@ -249,7 +269,11 @@ export const useDeleteProductMutation = () => {
             return res.data;
         },
         onSuccess: () => {
-            toast.success("Đã xoá sản phẩm");
+            Toast.show({
+                type: "success",
+                text1: "Thành công",
+                text2: "Đã xoá sản phẩm",
+            });
             queryClient.invalidateQueries({
                 queryKey: ["products"],
             });

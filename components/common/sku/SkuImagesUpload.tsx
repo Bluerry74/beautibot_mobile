@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import React, { useState } from "react";
+import React from "react";
 import {
     Alert,
     Image,
@@ -21,15 +21,17 @@ interface SkuImagesUploadProps {
 }
 export default function SkuImagesUploadMobile({
     skuId,
-    images: initialImages,
+    images,
     onUpload,
     onDelete,
 }: SkuImagesUploadProps) {
-    const [images, setImages] = useState<string[]>(initialImages || []);
+    // Bỏ useState cho images
+    // const [images, setImages] = useState<string[]>(initialImages || []);
 
     const pickImage = async () => {
         const permission =
             await ImagePicker.requestMediaLibraryPermissionsAsync();
+        console.log('Permission granted:', permission.granted);
         if (!permission.granted) {
             Alert.alert(
                 "Permission required",
@@ -39,10 +41,11 @@ export default function SkuImagesUploadMobile({
         }
 
         const pickerResult = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            mediaTypes: 'images',
             quality: 0.8,
             allowsMultipleSelection: false,
         });
+        console.log('Picker result:', pickerResult);
 
         if (!pickerResult.canceled && pickerResult.assets?.length) {
             const file = {
@@ -52,7 +55,7 @@ export default function SkuImagesUploadMobile({
             } as any;
 
             await onUpload([file]);
-            setImages((prev) => [...prev, file.uri]);
+            // setImages((prev) => [...prev, file.uri]); // Bỏ setImages
         }
     };
     const handleDelete = async (index: number) => {
@@ -64,7 +67,7 @@ export default function SkuImagesUploadMobile({
                 onPress: async () => {
                     try {
                         await onDelete(index);
-                        setImages((prev) => prev.filter((_, i) => i !== index));
+                        // setImages((prev) => prev.filter((_, i) => i !== index)); // Bỏ setImages
                     } catch (err) {
                         Toast.show({
                             type: "error",

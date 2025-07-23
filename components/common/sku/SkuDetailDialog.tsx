@@ -111,6 +111,14 @@ export default function SkuDetailDialog({ sku, onClose, onUpdated }: Props) {
         }
     };
 
+    const handleImagesUpdated = (newSkus: ISku[]) => {
+        // Find the updated SKU by id
+        const updatedSku = newSkus.find(s => s._id === form._id);
+        if (updatedSku) {
+            setForm(prev => ({ ...prev, images: updatedSku.images }));
+        }
+    };
+
     useEffect(() => {
         setForm(sku);
     }, [sku]);
@@ -275,26 +283,28 @@ export default function SkuDetailDialog({ sku, onClose, onUpdated }: Props) {
                     skuId={sku._id}
                     images={form.images || []}
                     onUpload={async (files) => {
-                        await uploadSkuImagesMutation.mutateAsync({
-                            skuId: sku._id,
-                            files,
-                        });
-                        const refreshed =
-                            await getProductDetailMutation.mutateAsync(
-                                sku.productId
-                            );
-                        onUpdated?.(refreshed.skus);
+                        try {
+                            await uploadSkuImagesMutation.mutateAsync({
+                                skuId: sku._id,
+                                files,
+                            });
+                            const refreshed = await getProductDetailMutation.mutateAsync(sku.productId);
+                            handleImagesUpdated(refreshed.skus);
+                        } catch (err: any) {
+                            console.error('[DEBUG] Lỗi upload ảnh:', err);
+                            if (err?.response) {
+                                console.error('[DEBUG] Response status:', err.response.status);
+                                console.error('[DEBUG] Response data:', err.response.data);
+                            }
+                        }
                     }}
                     onDelete={async (index) => {
                         await deleteSkuImageMutation.mutateAsync({
                             skuId: sku._id,
                             imageIndex: index,
                         });
-                        const refreshed =
-                            await getProductDetailMutation.mutateAsync(
-                                sku.productId
-                            );
-                        onUpdated?.(refreshed.skus);
+                        const refreshed = await getProductDetailMutation.mutateAsync(sku.productId);
+                        handleImagesUpdated(refreshed.skus);
                     }}
                     onReplace={async (index, file) => {
                         await replaceSkuImageMutation.mutateAsync({
@@ -302,11 +312,8 @@ export default function SkuDetailDialog({ sku, onClose, onUpdated }: Props) {
                             index,
                             file,
                         });
-                        const refreshed =
-                            await getProductDetailMutation.mutateAsync(
-                                sku.productId
-                            );
-                        onUpdated?.(refreshed.skus);
+                        const refreshed = await getProductDetailMutation.mutateAsync(sku.productId);
+                        handleImagesUpdated(refreshed.skus);
                     }}
                 />
 
