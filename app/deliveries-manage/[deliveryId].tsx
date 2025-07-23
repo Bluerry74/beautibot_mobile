@@ -1,7 +1,7 @@
 import color from '@/assets/Color';
 import { formatDate } from '@/hooks/formatDate';
 import { getDeliveryDetailQuery, useAssignDeliveryPersonnelMutation, useDeliveryPersonnelQuery } from '@/tanstack/delivery';
-import { useUpdateOrderStatusMutation } from '@/tanstack/order';
+import { useAllOrder, useUpdateOrderStatusMutation } from '@/tanstack/order';
 import { IDelivery } from '@/types/delivery';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
@@ -23,6 +23,8 @@ export default function DeliveryDetailScreen() {
     const { data, isLoading, isError } = getDeliveryDetailQuery(deliveryId as string);
     const assignMutation = useAssignDeliveryPersonnelMutation();
     const updateStatusMutation = useUpdateOrderStatusMutation();
+    const { data: allOrders } = useAllOrder();
+    console.log(allOrders)
 
     const { data: deliveryPersonnelData, isLoading: isLoadingPersonnel } = useDeliveryPersonnelQuery({
         page: 1,
@@ -92,6 +94,10 @@ export default function DeliveryDetailScreen() {
 
     const personnel = deliveryPersonnelData?.data?.find(p => p._id === delivery.deliveryPersonnelId);
     const personnelEmail = personnel?.email || delivery.deliveryPersonnelId || 'Không có';
+
+    // Lấy trạng thái order hiện tại
+    const order = allOrders?.data?.find((o: any) => o._id === delivery.orderId);
+    const isOrderDelivered = order?.orderStatus === 'Delivered';
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -210,6 +216,41 @@ export default function DeliveryDetailScreen() {
                             <Image source={{ uri: delivery.proofOfDeliveryUrl }} style={{ width: 200, height: 200, borderRadius: 12 }} />
                         </View>
                     )}
+                    {delivery.status === 'delivered' && (
+                        isOrderDelivered ? (
+                            <Text style={{ color: 'green', fontWeight: 'bold', fontSize: 18, textAlign: 'center', marginTop: 12 }}>
+                                Đơn hàng đã hoàn thành
+                            </Text>
+                        ) : (
+                            <TouchableOpacity
+                                onPress={() => updateStatusMutation.mutate(
+                                    { orderId: delivery.orderId, orderStatus: 'Delivered' },
+                                    {
+                                        onError: (error) => {
+                                            console.error('[DEBUG] Lỗi xác nhận hoàn thành đơn hàng:', error);
+                                            if (error?.response) {
+                                                console.error('[DEBUG] Response status:', error.response.status);
+                                                console.error('[DEBUG] Response data:', error.response.data);
+                                            }
+                                        }
+                                    }
+                                )}
+                                style={{
+                                    backgroundColor: 'green',
+                                    borderRadius: 8,
+                                    paddingVertical: 12,
+                                    paddingHorizontal: 32,
+                                    alignSelf: 'center',
+                                    marginTop: 8,
+                                }}
+                                disabled={updateStatusMutation.isPending}
+                            >
+                                <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 18 }}>
+                                    {updateStatusMutation.isPending ? 'Đang xác nhận...' : 'Xác nhận hoàn thành đơn hàng'}
+                                </Text>
+                            </TouchableOpacity>
+                        )
+                    )}
 
                 </View>
                 {delivery.status === 'pending' && (
@@ -320,7 +361,7 @@ export default function DeliveryDetailScreen() {
                                     <Text style={{ color: '#666', marginBottom: 20, textAlign: 'center' }}>
                                         Bạn có chắc chắn muốn hủy đơn hàng này? Hành động này không thể hoàn tác.
                                     </Text>
-                                    
+
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                         <TouchableOpacity
                                             onPress={() => setCancelModalVisible(false)}
@@ -336,7 +377,7 @@ export default function DeliveryDetailScreen() {
                                                 Hủy
                                             </Text>
                                         </TouchableOpacity>
-                                        
+
                                         <TouchableOpacity
                                             onPress={handleCancelOrder}
                                             disabled={updateStatusMutation.isPending}
