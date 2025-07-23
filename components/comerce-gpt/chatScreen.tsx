@@ -55,7 +55,7 @@ export default function ChatScreen({ faceResult, onGoToScanface }: { faceResult?
         if (data.type === "product-list" && Array.isArray(data.products)) {
           setMessages(prev => [
             ...prev,
-            { role: "assistant", content: JSON.stringify(data) }
+            { role: "assistant", content: data } // Lưu object trực tiếp
           ]);
         } else if (data.message) {
           setMessages(prev => [
@@ -78,7 +78,7 @@ export default function ChatScreen({ faceResult, onGoToScanface }: { faceResult?
         if (productJson && productJson.products) {
           setMessages(prev => [
             ...prev,
-            { role: "assistant", content: JSON.stringify(productJson) }
+            { role: "assistant", content: productJson } // Lưu object trực tiếp
           ]);
         } else {
           setMessages(prev => [
@@ -182,9 +182,13 @@ export default function ChatScreen({ faceResult, onGoToScanface }: { faceResult?
           showsVerticalScrollIndicator={false}
         >
           {messages.map((msg, idx) => {
-            let parsed;
-            try { parsed = JSON.parse(msg.content ?? ""); } catch { }
-            if (parsed && parsed.type === "product-list" && Array.isArray(parsed.products)) {
+            console.log('DEBUG render:', { idx, msg, typeofContent: typeof msg.content, content: msg.content });
+            let parsed: any = msg.content;
+            // Nếu content là string, thử parse (tương thích tin nhắn cũ)
+            if (typeof msg.content === "string") {
+              try { parsed = JSON.parse(msg.content); } catch { parsed = msg.content; }
+            }
+            if (parsed && typeof parsed === "object" && parsed.type === "product-list" && Array.isArray(parsed.products)) {
               return (
                 <View
                   key={idx}
@@ -257,7 +261,7 @@ export default function ChatScreen({ faceResult, onGoToScanface }: { faceResult?
                   }}
                 >
                   <Text style={{ color: msg.role === "user" ? "black" : "black" }}>
-                    {(msg.content ?? '').replace(/\\n/g, '\n')}
+                    {(typeof msg.content === "string" ? msg.content : "")?.replace(/\\n/g, '\n')}
                   </Text>
                 </View>
               </View>
