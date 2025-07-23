@@ -188,13 +188,10 @@ export default function OrderDetailScreen() {
 
         {/* Nút giao đơn và hủy đơn */}
         {(order.orderStatus === 'Shipped') ? (
-          <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 24, gap: 16 }}>
-            <TouchableOpacity
-              onPress={() => setConfirmCancelVisible(true)}
-              style={{ backgroundColor: '#e53935', borderRadius: 8, paddingVertical: 12, paddingHorizontal: 32 }}
-            >
-              <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 18 }}>Hủy đơn</Text>
-            </TouchableOpacity>
+          <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 24 }}>
+            <Text style={{ color: color.white, fontWeight: 'bold', fontSize: 20, backgroundColor: 'green', padding: 12, borderRadius: 8 }}>
+              Đơn hàng đang được giao
+            </Text>
           </View>
         ) : (order.orderStatus !== 'Delivered' && order.orderStatus !== 'Cancelled') ? (
           <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 24, gap: 16 }}>
