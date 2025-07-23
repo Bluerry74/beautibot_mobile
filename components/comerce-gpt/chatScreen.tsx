@@ -182,6 +182,14 @@ export default function ChatScreen({ faceResult, onGoToScanface }: { faceResult?
           showsVerticalScrollIndicator={false}
         >
           {messages.map((msg, idx) => {
+            if (msg.role === "assistant" && typeof msg.content === "object") {
+              console.log('DEBUG object:', JSON.stringify(msg.content, null, 2));
+              if (Array.isArray(msg.content.products)) {
+                msg.content.products.forEach((product, i) => {
+                  console.log(`Product ${i}:`, JSON.stringify(product, null, 2));
+                });
+              }
+            }
             console.log('DEBUG render:', { idx, msg, typeofContent: typeof msg.content, content: msg.content });
             let parsed: any = msg.content;
             // Nếu content là string, thử parse (tương thích tin nhắn cũ)
