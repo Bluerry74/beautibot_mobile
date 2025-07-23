@@ -6,7 +6,6 @@ export const useProfileQuery = () => {
     queryKey: ['profile'],
     queryFn: async () => {
       const res = await axios.get('/profile');
-      console.log("📥 /profile response:", res.data); // cái này đúng rồi
       return res.data; // phải return res.data
     },
   });

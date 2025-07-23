@@ -13,4 +13,10 @@ export const getAllUserPagination = async (params: GetAllUserPagiParams = {}) =>
   return response.data;
 };
 
+export const sendVerifyEmail = async () => {
+    // Không cần truyền data, chỉ cần gọi POST
+    const response = await import("@/httpservices/httpService").then(m => m.post("/user/verify-email"));
+    return response.data;
+};
+
 

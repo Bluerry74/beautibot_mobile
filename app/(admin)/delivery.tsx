@@ -33,7 +33,6 @@ const Delivery = () => {
     status: status === 'pending' ? undefined : status // Gửi status filter lên API
   }) as { data?: { meta: { totalItems: number }, data: IDelivery[] }, isLoading: boolean, isError: boolean };
 
-  console.log(deliveryResp)
   const totalItems = deliveryResp.meta.totalItems || 0;
   const deliveries: IDelivery[] = Array.isArray(deliveryResp.data) ? deliveryResp.data : [];
 

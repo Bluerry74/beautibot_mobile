@@ -29,7 +29,6 @@ const Order = () => {
 
   // Lấy danh sách user
   const { data: userData } = useAllUser();
-  console.log(data)
   const userMap = React.useMemo(() => {
     const map: Record<string, string> = {};
     if (Array.isArray(userData?.data)) {

@@ -9,8 +9,8 @@ import {
     TextInput,
     View,
 } from "react-native";
-import CheckboxBadge from "../common/CheckBoxBadge";
-import EditDetailList from "../common/EditDetailList";
+import CheckboxBadge from "../CheckBoxBadge";
+import EditDetailList from "../EditDetailList";
 
 const skinTypeOptions = [
     { label: "Da thường", value: "normal" },
@@ -46,7 +46,6 @@ export default function ProductAddnewDialog({
     const createProduct = useCreateProductMutation();
 
     const handleSave = () => {
-        console.log("form = ", form);
         createProduct.mutate({ ...form });
         onClose();
     };

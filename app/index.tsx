@@ -40,6 +40,10 @@ export default function Index() {
         role: me.role || "",
         avatar: me.avatar || "",
       });
+      if (!me.isVerified) {
+        router.push("/pages/verify");
+        return;
+      }
       if (me.role === "admin") {
         router.push(routesConfig.admin.dashboard);
         return

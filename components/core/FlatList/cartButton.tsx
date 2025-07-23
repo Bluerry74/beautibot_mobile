@@ -1,6 +1,7 @@
-import { Sku } from "@/app/types/product";
+// import { Sku } from "@/app/types/product";
 import { useCartActions } from "@/hooks/useCartActions";
 import { useAuthStore } from "@/store/auth";
+import { ISku } from "@/types/product";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -11,7 +12,7 @@ import {
 import Toast from "react-native-toast-message";
 
 interface Props {
-  sku: Sku;
+  sku: ISku;
 }
 
 export default function CartButton({ sku }: Props) {
@@ -54,7 +55,7 @@ export default function CartButton({ sku }: Props) {
       style={[styles.button, loading && styles.buttonDisabled]}
     >
       {loading ? (
-        <ActivityIndicator color="#000" />
+        <ActivityIndicator color="#ff9c86" />
       ) : (
         <Text style={styles.text}>Add to cart</Text>
       )}
@@ -70,14 +71,14 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 16,
     marginTop: 16,
-    backgroundColor: "#fff",
+    backgroundColor: "#ff9c86",
     alignItems: "center",
   },
   buttonDisabled: {
     opacity: 0.6,
   },
   text: {
-    color: "#000",
+    color: "#fff",
     fontSize: 16,
     fontWeight: "600",
   },

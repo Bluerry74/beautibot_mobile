@@ -1,18 +1,23 @@
+import { post, remove } from "@/httpservices/httpService";
 import {
     createProduct,
+    createSku,
+    deletedSkuImages,
     deleteSku,
     getAllProducts,
     getProductDetail,
+    replaceSkuImage,
     updateProduct,
     updateSku,
 } from "@/services/product";
-import { IProductCreatePayload } from "@/types/product";
+import { IProductCreatePayload, ISku } from "@/types/product";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
-export function useProductsQuery(filters = {}) {
+export function useProductsQuery(filters?: Record<string, any>) {
+    const hasFilters = !!filters && Object.keys(filters).length > 0;
     return useQuery({
-        queryKey: ["products", filters],
-        queryFn: () => getAllProducts(filters),
+        queryKey: hasFilters ? ["products", filters] : ["products"],
+        queryFn: () => getAllProducts(filters ?? {}),
     });
 }
 
@@ -74,7 +79,30 @@ export const useUpdateProductMutation = () => {
         },
     });
 };
+export const useCreateSkuMutation = () => {
+    const queryClient = useQueryClient();
 
+    return useMutation({
+        mutationFn: createSku,
+        onSuccess: () => {
+            Toast.show({
+                type: "success",
+                text1: "Thành công",
+                text2: "Tạo SKU thành công",
+            });
+            queryClient.invalidateQueries({ queryKey: ["products"] });
+        },
+        onError: (error: any) => {
+            console.error("🔴 Error create SKU:", error);
+            console.log("📦 Error response:", error?.response?.data);
+            Toast.show({
+                type: "error",
+                text1: "Thất bại",
+                text2: "Tạo SKU thất bại",
+            });
+        },
+    });
+};
 export const useUpdateSkuMutation = () => {
     const queryClient = useQueryClient();
 
@@ -88,12 +116,96 @@ export const useUpdateSkuMutation = () => {
             });
             queryClient.invalidateQueries({ queryKey: ["products"] });
         },
-        onError: () => {
+        onError: (error: any) => {
+            console.error("🔴 Error updating SKU:", error);
+            console.log("🧱 AxiosError name:", error?.name);
+            console.log("📡 Status code:", error?.response?.status);
+            console.log(
+                "📦 Full error response:",
+                JSON.stringify(error?.response?.data, null, 2)
+            );
+            console.log("🔗 Request URL:", error?.config?.url);
+            console.log(
+                "📤 Payload:",
+                JSON.stringify(error?.config?.data, null, 2)
+            );
+            console.log("📥 Headers:", error?.config?.headers);
+
             Toast.show({
                 type: "error",
                 text1: "Thất bại",
-                text2: "Cập nhật SKU thất bại",
+                text2: error?.response?.data?.message || "Lỗi máy chủ (500)",
             });
+        },
+    });
+};
+
+export const useUploadSkuImagesMutation = () => {
+    const queryClient = useQueryClient();
+    return useMutation<ISku, Error, { skuId: string; files: any[] }>({
+        mutationFn: async ({ skuId, files }) => {
+            const formData = new FormData();
+            files.forEach((file) => {
+                formData.append("files", file);
+            });
+
+            const res = await post(`/sku/${skuId}/images/add`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Accept: "*/*",
+                },
+            });
+
+            return res.data as ISku;
+        },
+        onSuccess: (data, variables) => {
+            toast.success("Tải ảnh thành công");
+            queryClient.invalidateQueries({
+                queryKey: ["sku", variables.skuId],
+            });
+        },
+        onError: () => {
+            toast.error("Tải ảnh thất bại");
+        },
+    });
+};
+
+export const useDeletedSkuImages = () => {
+    const queryClient = useQueryClient();
+    return useMutation<ISku, Error, { skuId: string; imageIndex: number }>({
+        mutationFn: async ({ skuId, imageIndex }) => {
+            const result = await deletedSkuImages(skuId, imageIndex);
+            return result as ISku;
+        },
+        onSuccess: (data, variables) => {
+            toast.success("Xóa ảnh thành công");
+            queryClient.invalidateQueries({
+                queryKey: ["sku", variables.skuId],
+            });
+        },
+    });
+};
+
+export const useReplaceSkuImageMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation<
+        ISku,
+        Error,
+        { skuId: string; index: number; file: File }
+    >({
+        mutationFn: async ({ skuId, index, file }) => {
+            const res = await replaceSkuImage(skuId, index, file);
+            return res as ISku;
+        },
+        onSuccess: (data, variables) => {
+            toast.success("Cập nhật ảnh SKU thành công");
+            queryClient.invalidateQueries({
+                queryKey: ["sku", variables.skuId],
+            });
+        },
+        onError: () => {
+            toast.error("Cập nhật ảnh thất bại");
         },
     });
 };
@@ -111,7 +223,9 @@ export const useDeleteProductSkuMutation = () => {
             });
             queryClient.invalidateQueries({ queryKey: ["products"] });
         },
-        onError: () => {
+        onError: (error: any) => {
+            console.error("🔴 Error delete SKU:", error);
+            console.log("📦 Error response:", error?.response?.data);
             Toast.show({
                 type: "error",
                 text1: "Lỗi",
@@ -124,5 +238,21 @@ export const useDeleteProductSkuMutation = () => {
 export const useGetProductDetailMutation = () => {
     return useMutation({
         mutationFn: getProductDetail,
+    });
+};
+export const useDeleteProductMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (id: string) => {
+            const res = await remove(`/product/${id}`);
+            return res.data;
+        },
+        onSuccess: () => {
+            toast.success("Đã xoá sản phẩm");
+            queryClient.invalidateQueries({
+                queryKey: ["products"],
+            });
+        },
     });
 };
