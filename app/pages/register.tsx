@@ -7,10 +7,19 @@ import { Eye, EyeOff } from "lucide-react-native";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { Button, Provider as PaperProvider } from "react-native-paper";
+import { Button, DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 import * as yup from "yup";
 
 const { width } = Dimensions.get("window");
+
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    onSurface: '#000', 
+    text: '#000',      
+  },
+};
 
 const schema = yup.object().shape({
   email: yup.string().email("Email không hợp lệ!").required("Vui lòng nhập email!"),
@@ -36,7 +45,7 @@ export default function Register() {
   };
 
   return (
-    <PaperProvider>
+    <PaperProvider theme={theme}>
       <View style={{ flex: 1, backgroundColor: "#fbf1eb" }}>
         <Image
           source={require("../../assets/images/OIP.jpg")}

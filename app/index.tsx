@@ -5,13 +5,22 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { Button, Provider as PaperProvider } from "react-native-paper";
+import { Button, DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 import * as yup from "yup";
 import { getMe } from "../services/auth/getMe";
 import { loginSystem } from "../services/auth/login";
 import { useAuthStore } from "../store/auth";
 
 const { width } = Dimensions.get("window");
+
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    onSurface: '#000', 
+    text: '#000',      
+  },
+};  
 
 const schema = yup.object().shape({
   email: yup.string().email("Email không hợp lệ!").required("Vui lòng nhập email!"),
@@ -63,7 +72,7 @@ export default function Index() {
   };
 
   return (
-    <PaperProvider>
+    <PaperProvider theme={theme}>
       <View style={{ flex: 1, backgroundColor: "#fbf1eb" }}>
         <Image
           source={require("../assets/images/banner_login.jpg")}

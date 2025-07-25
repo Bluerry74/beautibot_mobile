@@ -1,10 +1,19 @@
-import { Tabs } from 'expo-router'
-import { Package, PackagePlus, ShoppingBag, Truck, User } from 'lucide-react-native'
-import { PaperProvider } from 'react-native-paper'
+import { Tabs } from 'expo-router';
+import { Package, PackagePlus, ShoppingBag, Truck, User } from 'lucide-react-native';
+import { DefaultTheme, PaperProvider } from 'react-native-paper';
+
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    onSurface: '#000', 
+    text: '#000',      
+  },
+};
 
 export default function AdminLayout() {
     return (
-        <PaperProvider>
+        <PaperProvider theme={theme}>
             <Tabs screenOptions={{ headerShown: false, tabBarActiveTintColor: "#ff9c86" }}>
                 <Tabs.Screen
                     name="dashboard"
