@@ -9,17 +9,21 @@ import {
 } from "@/tanstack/order";
 import { useAllUser } from "@/tanstack/user/regis";
 import { IOrder, OrderStatus } from "@/types/order";
+import { Picker } from "@react-native-picker/picker";
 import { useRouter } from "expo-router";
 import React from "react";
 import {
   ActivityIndicator,
+  Modal,
   ScrollView,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import { DataTable, SegmentedButtons } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 const statusOptions: { label: string; value: OrderStatus }[] = [
   { label: "Chờ xử lý", value: "Pending" },
@@ -35,15 +39,92 @@ const Order = () => {
   const [status, setStatus] = React.useState<OrderStatus | "">("Pending");
   const [returnPage, setReturnPage] = React.useState(0);
   const [returnRowsPerPage, setReturnRowsPerPage] = React.useState(5);
-  const { mutate: approveReturn, isPending: isApproving } =
-    useApproveReturnMutation();
-  const { mutate: rejectReturn, isPending: isRejecting } =
-    useRejectReturnMutation();
-  const { data: returnData, isLoading: returnLoading } = useAllReturnRequests({
+  const [rejectModalVisible, setRejectModalVisible] = React.useState(false);
+  const [rejectReason, setRejectReason] = React.useState("");
+  const [currentRejectItem, setCurrentRejectItem] = React.useState<any | null>(
+    null
+  );
+  const [customReason, setCustomReason] = React.useState("");
+
+  const openRejectModal = (item) => {
+    setCurrentRejectItem(item);
+    setRejectModalVisible(true);
+  };
+
+  const confirmReject = () => {
+    const finalReason =
+      rejectReason === "other" ? customReason.trim() : rejectReason;
+
+    if (!finalReason) {
+      Toast.show({ type: "error", text1: "Vui lòng nhập lý do từ chối." });
+      return;
+    }
+
+    handleReject({ ...currentRejectItem, reason: finalReason });
+    setRejectReason("");
+    setCustomReason("");
+    setRejectModalVisible(false);
+  };
+
+  const approve = useApproveReturnMutation();
+  const reject = useRejectReturnMutation();
+
+  const {
+    data: returnData,
+    isLoading: returnLoading,
+    refetch,
+  } = useAllReturnRequests({
     page: returnPage + 1,
     limit: returnRowsPerPage,
   });
   const totalReturnItems = returnData?.meta?.totalItems || 0;
+
+  const handleApprove = (item: any) => {
+    const { _id, orderId, reason, images } = item;
+
+    approve.mutate(
+      {
+        id: _id,
+        body: { orderId, reason, images },
+      },
+      {
+        onSuccess: () => {
+          Toast.show({
+            type: "success",
+            text1: "Yêu cầu trả hàng đã được duyệt.",
+          });
+          refetch();
+        },
+        onError: () => {
+          Toast.show({ type: "error", text1: "Duyệt yêu cầu thất bại." });
+        },
+      }
+    );
+  };
+
+  const handleReject = (item: any) => {
+    const { _id, reason } = item;
+
+    reject.mutate(
+      {
+        id: _id,
+        body: { reason },
+      },
+      {
+        onSuccess: () => {
+          Toast.show({
+            type: "success",
+            text1: "Đã từ chối yêu cầu trả hàng.",
+          });
+          refetch();
+        },
+        onError: () => {
+          Toast.show({ type: "error", text1: "Từ chối yêu cầu thất bại." });
+        },
+      }
+    );
+  };
+
   const ITEMS_PER_PAGE = 5; // Số đơn hàng trên mỗi trang
 
   const router = useRouter();
@@ -196,53 +277,50 @@ const Order = () => {
                     Người dùng: {item.userId?.email}
                   </Text>
                   <Text className="text-base text-gray-500">
-                    <Text className="font-semibold">Đơn hàng:</Text>{" "}
+                    <Text className="font-semibold">Mã đơn:</Text>{" "}
                     {item.orderId}
                   </Text>
                   <Text className="text-base text-gray-500">
-                    Lý do:{" "}
-                    <Text className="font-semibold">
-                      {item.reason || "Không có"}
-                    </Text>
+                    <Text className="font-semibold">Lý do:</Text>{" "}
+                    {item.reason || "Không có"}
                   </Text>
                   <Text className="text-base text-gray-500">
-                    Số lượng:{" "}
-                    <Text className="font-semibold">{item.quantity}</Text>
+                    <Text className="font-semibold">Số lượng:</Text>{" "}
+                    {item.quantity}
                   </Text>
-                  <View className="mt-2">
-                    {item.status === "approved" ? (
-                      <Text className="text-xl font-semibold">
-                        Trạng thái:
-                        <Text className="text-green-600">Đã chấp nhận</Text>
-                      </Text>
-                    ) : item.status === "rejected" ? (
-                      <Text className="text-xl font-semibold">
-                        Trạng thái:
-                        <Text className="text-red-600">Đã từ chối</Text>
-                      </Text>
-                    ) : (
-                      <View className="flex-row">
-                        <TouchableOpacity
-                          className="bg-green-500 py-2 rounded-full flex-1 mr-2"
-                          onPress={() => approveReturn(item._id)}
-                          disabled={isApproving}
-                        >
-                          <Text className="text-white font-semibold text-center">
-                            Duyệt
-                          </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          className="bg-red-500 py-2 rounded-full flex-1"
-                          onPress={() => rejectReturn(item._id)}
-                          disabled={isRejecting}
-                        >
-                          <Text className="text-white font-semibold text-center">
-                            Từ chối
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    )}
-                  </View>
+
+                  {item.status === "approved" && (
+                    <Text className="text-green-600 font-semibold">
+                      Trạng thái: Đã chấp nhận
+                    </Text>
+                  )}
+
+                  {item.status === "rejected" && (
+                    <Text className="text-red-600 font-semibold">
+                      Trạng thái: Đã từ chối
+                    </Text>
+                  )}
+
+                  {!item.status && (
+                    <View className="flex-row space-x-2">
+                      <TouchableOpacity
+                        className="bg-green-600 py-2 px-4 rounded-full flex-1"
+                        onPress={() => handleApprove(item)}
+                      >
+                        <Text className="text-white font-semibold text-center">
+                          Duyệt
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        className="bg-red-600 py-2 px-4 rounded-full flex-1"
+                        onPress={() => openRejectModal(item)}
+                      >
+                        <Text className="text-white font-semibold text-center">
+                          Từ chối
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
                 </TouchableOpacity>
               ))}
 
@@ -279,6 +357,69 @@ const Order = () => {
           </>
         )}
       </View>
+      <Modal visible={rejectModalVisible} transparent animationType="slide">
+        <View className="flex-1 justify-center items-center bg-black/40 px-4">
+          <View className="bg-white w-full p-6 rounded-lg">
+            <Text className="text-lg font-bold mb-3">Chọn lý do từ chối</Text>
+
+            <View className="border border-gray-300 rounded mb-4">
+              <Picker
+                selectedValue={rejectReason}
+                onValueChange={(itemValue) => setRejectReason(itemValue)}
+              >
+                <Picker.Item label="Chọn lý do" value="" />
+                <Picker.Item
+                  label="Không đủ điều kiện"
+                  value="Không đủ điều kiện"
+                />
+                <Picker.Item
+                  label="Ngoài thời hạn cho phép"
+                  value="Ngoài thời hạn cho phép"
+                />
+                <Picker.Item
+                  label="Thiếu bằng chứng"
+                  value="Thiếu bằng chứng"
+                />
+                <Picker.Item
+                  label="Nghi ngờ gian lận"
+                  value="Nghi ngờ gian lận"
+                />
+                <Picker.Item label="Lý do khác" value="other" />
+              </Picker>
+            </View>
+
+            {rejectReason === "other" && (
+              <TextInput
+                className="border border-gray-300 rounded p-2 mb-4"
+                multiline
+                placeholder="Nhập lý do khác..."
+                value={customReason}
+                onChangeText={setCustomReason}
+              />
+            )}
+
+            <View className="flex-row justify-end space-x-3 mt-2">
+              <TouchableOpacity
+                className="px-4 py-2 bg-gray-300 rounded"
+                onPress={() => {
+                  setRejectModalVisible(false);
+                  setRejectReason("");
+                  setCustomReason("");
+                  setCurrentRejectItem(null);
+                }}
+              >
+                <Text>Hủy</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="px-4 py-2 bg-red-600 rounded"
+                onPress={confirmReject}
+              >
+                <Text className="text-white font-semibold">Từ chối</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };

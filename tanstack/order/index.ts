@@ -96,12 +96,13 @@ export const useAllReturnRequests = (params: { page: number; limit: number; emai
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => approveReturnRequest(id),
+    mutationFn: ({ id, body }: { id: string; body: any }) =>
+      approveReturnRequest(id, body),
     onSuccess: () => {
-        Toast.show({
-            type: "success",
-            text1: "Yêu cầu trả hàng đã được chấp nhận",
-        });
+      Toast.show({
+        type: "success",
+        text1: "Yêu cầu trả hàng đã được chấp nhận",
+      });
       queryClient.invalidateQueries({ queryKey: ['returnRequests'] });
     },
   });
@@ -111,12 +112,13 @@ export const useRejectReturnMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => rejectReturnRequest(id),
+    mutationFn: ({ id, body }: { id: string; body: any }) =>
+      rejectReturnRequest(id, body),
     onSuccess: () => {
-        Toast.show({
-            type: "success",
-            text1: "Yêu cầu trả hàng đã bị từ chối",
-        });
+      Toast.show({
+        type: "success",
+        text1: "Yêu cầu trả hàng đã bị từ chối",
+      });
       queryClient.invalidateQueries({ queryKey: ['returnRequests'] });
     },
   });
