@@ -17,8 +17,9 @@ const statusOptions = [
 
 const Delivery = () => {
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [status, setStatus] = React.useState<string>('pending');
+  const ITEMS_PER_PAGE = 5; // Số đơn giao hàng trên mỗi trang
+
   const { data: deliveryPersonnelData, isLoading: isLoadingPersonnel } = useDeliveryPersonnelQuery({
     page: 1,
     limit: 50
@@ -26,28 +27,53 @@ const Delivery = () => {
 
   const router = useRouter();
 
-  // Lấy danh sách delivery với status filter
+  // Lấy tất cả delivery với limit 1000
   const { data: deliveryResp = { meta: { totalItems: 0 }, data: [] }, isLoading, isError } = useDeliveryQuerry({
-    page: page + 1,
-    limit: rowsPerPage,
-    status: status === 'pending' ? undefined : status // Gửi status filter lên API
+    page: 1,
+    limit: 1000
   }) as { data?: { meta: { totalItems: number }, data: IDelivery[] }, isLoading: boolean, isError: boolean };
 
-  const totalItems = deliveryResp.meta.totalItems || 0;
-  const deliveries: IDelivery[] = Array.isArray(deliveryResp.data) ? deliveryResp.data : [];
+  const allDeliveries: IDelivery[] = Array.isArray(deliveryResp.data) ? deliveryResp.data : [];
 
-  // Lọc theo trạng thái (nếu API không hỗ trợ filter, fallback về client-side filtering)
-  const filteredDeliveries = React.useMemo(() => {
+  // Lọc delivery theo status và phân trang
+  const { filteredDeliveries, totalItems, totalPages } = React.useMemo(() => {
+    let statusFiltered: IDelivery[];
+    
     if (status === 'pending') {
       // Hiển thị cả pending và assigned
-      return deliveries.filter((delivery: IDelivery) =>
+      statusFiltered = allDeliveries.filter((delivery: IDelivery) =>
         delivery.status === 'pending' || delivery.status === 'assigned'
       );
+    } else {
+      statusFiltered = allDeliveries.filter((delivery: IDelivery) => delivery.status === status);
     }
-    return deliveries.filter((delivery: IDelivery) => delivery.status === status);
-  }, [deliveries, status]);
+    
+    // Tính toán pagination
+    const totalItems = statusFiltered.length;
+    const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+    
+    // Lấy delivery cho trang hiện tại
+    const startIndex = page * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const paginatedDeliveries = statusFiltered.slice(startIndex, endIndex);
+    
+    return {
+      filteredDeliveries: paginatedDeliveries,
+      totalItems,
+      totalPages
+    };
+  }, [allDeliveries, status, page]);
 
   const columns = [
+    {
+      colName: "#",
+      render: (delivery: IDelivery) => {
+        const index = filteredDeliveries.findIndex(d => d._id === delivery._id);
+        return page * ITEMS_PER_PAGE + index + 1;
+      },
+      cellStyle: { justifyContent: 'center' as const, flex: 0.3 },
+      textStyle: { textAlign: 'center' as const, fontSize: 12 },
+    },
     {
       colName: "Mã Giao Hàng",
       render: (delivery: IDelivery) => delivery._id,
@@ -133,16 +159,18 @@ const Delivery = () => {
           records={filteredDeliveries}
           onRowClick={handleRowClick}
         />
-        <DataTable.Pagination
-          page={page}
-          numberOfPages={Math.ceil(totalItems / rowsPerPage)}
-          onPageChange={setPage}
-          label={`${page * rowsPerPage + 1}-${Math.min((page + 1) * rowsPerPage, totalItems)} trong ${totalItems}`}
-          numberOfItemsPerPage={rowsPerPage}
-          onItemsPerPageChange={setRowsPerPage}
-          showFastPaginationControls
-          selectPageDropdownLabel={'Số dòng/trang'}
-        />
+        {totalPages > 1 && (
+          <DataTable.Pagination
+            page={page}
+            numberOfPages={totalPages}
+            onPageChange={setPage}
+            label={`${page * ITEMS_PER_PAGE + 1}-${Math.min((page + 1) * ITEMS_PER_PAGE, totalItems)} trong ${totalItems}`}
+            numberOfItemsPerPage={ITEMS_PER_PAGE}
+            onItemsPerPageChange={() => {}} // Không cho phép thay đổi items per page
+            showFastPaginationControls
+            selectPageDropdownLabel={'Số dòng/trang'}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
