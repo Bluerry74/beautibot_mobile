@@ -9,8 +9,9 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
-    View
+    View,
 } from "react-native";
+import CouponManagementModal from "./../../components/common/coupon/CouponManagementModal";
 
 const ProductManagement = () => {
     const [openAdd, setOpenAdd] = useState(false);
@@ -19,7 +20,7 @@ const ProductManagement = () => {
     );
     const [isDialogOpen, setDialogOpen] = useState(false);
     const { data: productList, refetch } = useProductsQuery();
-
+    const [openCoupon, setOpenCoupon] = useState(false);
     const productsData = productList?.data ?? [];
     return (
         <SafeAreaView style={styles.container}>
@@ -31,6 +32,17 @@ const ProductManagement = () => {
                 >
                     <Ionicons name="add" size={20} color="white" />
                     <Text style={styles.addButtonText}>Thêm sản phẩm</Text>
+                </TouchableOpacity>
+            </View>
+
+            <View style={styles.headerCoupon}>
+                <Text style={styles.headerText}>Quản lí Coupon</Text>
+                <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={() => setOpenCoupon(true)}
+                >
+                    <Ionicons name="eye" size={20} color="white" />
+                    <Text style={styles.addButtonText}>Xem Coupon</Text>
                 </TouchableOpacity>
             </View>
 
@@ -47,13 +59,17 @@ const ProductManagement = () => {
                 visible={openAdd}
                 onClose={() => setOpenAdd(false)}
             />
+            <CouponManagementModal
+                visible={openCoupon}
+                onClose={() => setOpenCoupon(false)}
+            />
         </SafeAreaView>
     );
 };
 const styles = StyleSheet.create({
     container: {
         padding: 16,
-        paddingBottom: 40,     
+        paddingBottom: 40,
     },
     headerContainer: {
         flexDirection: "row",
@@ -69,6 +85,20 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 2,
         marginTop: 50,
+    },
+    headerCoupon: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 16,
+        backgroundColor: "#ffffff",
+        padding: 12,
+        borderRadius: 12,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
     },
     headerText: {
         fontSize: 20,
