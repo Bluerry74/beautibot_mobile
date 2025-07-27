@@ -26,7 +26,14 @@ const OrderActive = () => {
     useEffect(() => {
         const fetchDeliveryData = async () => {
             try {
-                const response = await get<any>("/delivery/personnel");
+                const response = await get<any>("/delivery/personnel",
+                    {
+                        params: {
+                            page: 1,
+                            limit: 100,
+                        },
+                    }
+                );
                 setDeliveryList(response.data.data);
             } catch (error) {
                 console.error("Error fetching delivery data:", error);
