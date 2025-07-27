@@ -95,7 +95,7 @@ const OrderActive = () => {
     return (
         <SafeAreaView className="bg-gray-50 flex-1">
             <ScrollView>
-                <View className="px-4 py-4 bg-orange-400">
+                <View className="px-4 py-4" style={{ backgroundColor: "#ff9c86" }}>
                     <Text className="text-white text-2xl font-semibold mt-8">
                         ĐƠN HÀNG CỦA BẠN GIAO
                     </Text>
@@ -126,7 +126,7 @@ const OrderActive = () => {
                     {filteredList.map((item: any) => (
                         <View
                             key={item._id}
-                            className="p-4 bg-white rounded-lg shadow border space-y-2"
+                            className="p-4 bg-white rounded-lg shadow border space-y-2 mt-4"
                         >
                             <Text className="text-base font-semibold">
                                 {item.shippingAddress?.fullName ||
