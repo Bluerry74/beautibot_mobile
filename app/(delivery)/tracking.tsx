@@ -9,10 +9,15 @@ export default function ShipperDashboard() {
   useEffect(() => {
     const fetchDeliveryData = async () => {
       try {
-        const response = await get<any>("/delivery/personnel"); 
+       const response = await get<any>("/delivery/personnel", {
+      params: {
+        page: 1,
+        limit: 100, 
+      },
+    });
         const data = response.data.data;
         setDeliveryList(data);
-        // console.log("Delivery data fetched successfully:", data);
+        console.log("Delivery data fetched successfully:", data);
       } catch (error) {
         console.error("Error fetching delivery data:", error);
       }

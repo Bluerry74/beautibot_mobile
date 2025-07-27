@@ -44,6 +44,7 @@ const Tracking = () => {
       setLoading(true);
       const deliveries = await getAllTrackingData(user.email);
       setTrackingList(deliveries);
+      console.log("Danh sách tracking:", deliveries);
     } catch (error) {
       console.error("Lỗi khi lấy danh sách tracking:", error);
     } finally {
