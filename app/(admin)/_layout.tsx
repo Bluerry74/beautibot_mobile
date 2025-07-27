@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Package, PackagePlus, ShoppingBag, Truck, User } from 'lucide-react-native';
+import { Gift, Package, PackagePlus, ShoppingBag, Truck, User } from 'lucide-react-native';
 import { DefaultTheme, PaperProvider } from 'react-native-paper';
 
 const theme = {
@@ -43,6 +43,13 @@ export default function AdminLayout() {
                         tabBarIcon: ({ color, size }) => <Truck color={color} size={size} />,
                     }}
                 />
+                 <Tabs.Screen
+                    name="coupon"
+                    options={{
+                        title: "Coupon",
+                        tabBarIcon: ({ color, size }) => <Gift color={color} size={size} />,
+                    }}
+                />
                 <Tabs.Screen
                     name="user"
                     options={{
@@ -50,6 +57,7 @@ export default function AdminLayout() {
                         tabBarIcon: ({ color, size }) => <User color={color} size={size} />,
                     }}
                 />
+               
             </Tabs>
         </PaperProvider>
     )
