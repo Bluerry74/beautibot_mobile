@@ -19,27 +19,61 @@ const statusOptions: { label: string; value: OrderStatus }[] = [
 
 const Order = () => {
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [status, setStatus] = React.useState<OrderStatus | ''>('Pending');
+  const ITEMS_PER_PAGE = 5; // Số đơn hàng trên mỗi trang
 
   const router = useRouter();
 
-  const { data, isLoading, isError } = useAllOrder({ page: page + 1, limit: rowsPerPage, status: status || undefined });
-  const totalItems = data?.meta?.totalItems || 0;
-
+  // Lấy tất cả đơn hàng với limit 1000
+  const { data, isLoading, isError } = useAllOrder({ page: 1, limit: 1000 });
+  
   // Lấy danh sách user
-  const { data: userData } = useAllUser();
+  const { data: userData, isLoading: isLoadingUsers } = useAllUser();
   const userMap = React.useMemo(() => {
     const map: Record<string, string> = {};
     if (Array.isArray(userData?.data)) {
       userData.data.forEach((user: any) => {
-        map[user._id] = user.email;
+        map[user._id] = user.email || user.username || 'N/A';
       });
     }
     return map;
   }, [userData]);
 
+  // Lọc đơn hàng theo status và phân trang
+  const { filteredOrders, totalItems, totalPages } = React.useMemo(() => {
+    const allOrders = Array.isArray(data?.data) ? data.data : [];
+    
+    // Lọc theo status
+    const statusFiltered = status 
+      ? allOrders.filter((order: IOrder) => order.orderStatus === status)
+      : allOrders;
+    
+    // Tính toán pagination
+    const totalItems = statusFiltered.length;
+    const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+    
+    // Lấy đơn hàng cho trang hiện tại
+    const startIndex = page * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const paginatedOrders = statusFiltered.slice(startIndex, endIndex);
+    
+    return {
+      filteredOrders: paginatedOrders,
+      totalItems,
+      totalPages
+    };
+  }, [data?.data, status, page]);
+
   const columns = [
+    {
+      colName: '#',
+      render: (order: IOrder) => {
+        const index = filteredOrders.findIndex(o => o._id === order._id);
+        return page * ITEMS_PER_PAGE + index + 1;
+      },
+      cellStyle: { justifyContent: 'center' as const, flex: 0.3 },
+      textStyle: { textAlign: 'center' as const, fontSize: 12 },
+    },
     {
       colName: 'Khách hàng',
       render: (order: IOrder) => userMap[order.userId] || order.userId || '',
@@ -67,11 +101,11 @@ const Order = () => {
     router.push(`/order-detail/${order._id}`);
   };
 
-  if (isLoading) {
+  if (isLoading || isLoadingUsers) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color="#c2185b" />
-        <Text>Đang tải đơn hàng...</Text>
+        <Text>Đang tải dữ liệu...</Text>
       </View>
     );
   }
@@ -103,19 +137,21 @@ const Order = () => {
         />
         <CustomTable
           columns={columns}
-          records={Array.isArray(data?.data) ? data.data : []}
+          records={filteredOrders}
           onRowClick={handleRowClick}
         />
-        <DataTable.Pagination
-          page={page}
-          numberOfPages={Math.ceil(totalItems / rowsPerPage)}
-          onPageChange={setPage}
-          label={`${page * rowsPerPage + 1}-${Math.min((page + 1) * rowsPerPage, totalItems)} trong ${totalItems}`}
-          numberOfItemsPerPage={rowsPerPage}
-          onItemsPerPageChange={setRowsPerPage}
-          showFastPaginationControls
-          selectPageDropdownLabel={'Số dòng/trang'}
-        />
+        {totalPages > 1 && (
+          <DataTable.Pagination
+            page={page}
+            numberOfPages={totalPages}
+            onPageChange={setPage}
+            label={`${page * ITEMS_PER_PAGE + 1}-${Math.min((page + 1) * ITEMS_PER_PAGE, totalItems)} trong ${totalItems}`}
+            numberOfItemsPerPage={ITEMS_PER_PAGE}
+            onItemsPerPageChange={() => {}} // Không cho phép thay đổi items per page
+            showFastPaginationControls
+            selectPageDropdownLabel={'Số dòng/trang'}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
