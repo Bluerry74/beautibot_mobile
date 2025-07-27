@@ -1,12 +1,14 @@
 import { deliverySteps } from "@/components/deliveryStatusMap";
+import { post } from "@/httpservices/httpService";
 import { getAllTrackingData } from "@/services/tracking";
 import { useAuthStore } from "@/store/auth";
+import { useRequestReturnMutation } from "@/tanstack/order";
 import { ITrackingData } from "@/types/tracking";
 import { Ionicons } from "@expo/vector-icons";
 import * as Clipboard from "expo-clipboard";
+import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import {
-  ArrowLeft,
   Check,
   CheckCircle,
   Clock,
@@ -15,13 +17,26 @@ import {
   Truck,
 } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Image,
+  Modal,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 const Tracking = () => {
   const user = useAuthStore((state) => state.user);
   const [trackingList, setTrackingList] = useState<ITrackingData[]>([]);
   const [selected, setSelected] = useState<ITrackingData | null>(null);
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [reason, setReason] = useState("");
+  const [images, setImages] = useState<string[]>([]);
+  const requestReturnMutation = useRequestReturnMutation();
 
   const fetchTrackingList = async () => {
     if (!user?.email) return;
@@ -70,6 +85,27 @@ const Tracking = () => {
   };
   const trackingSteps = selected ? getTrackingSteps() : [];
 
+  const openImagePicker = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0.7,
+    });
+    if (!result.canceled) {
+      setImages([...images, result.assets[0].uri]);
+    }
+  };
+
+  const handleSubmit = () => {
+    if (!selected) return;
+    const payload = {
+      orderId: selected.order._id,
+      reason: reason.trim() || "Sản phẩm bị hỏng khi vận chuyển",
+      images: images || [],
+    };
+    console.log("Payload gửi đi:", payload);
+    requestReturnMutation.mutate(payload);
+  };
+
   return (
     <ScrollView className="bg-gray-100 flex-1 p-4">
       <View className="flex-row items-center justify-between mt-10 mb-4">
@@ -111,7 +147,6 @@ const Tracking = () => {
           </TouchableOpacity>
         ))}
 
-      {/* Chi tiết đơn đã chọn */}
       {selected && (
         <>
           <TouchableOpacity onPress={() => setSelected(null)} className="mb-4">
@@ -253,7 +288,7 @@ const Tracking = () => {
               </View>
             ))}
           </View>
-          {/* Thông tin giao hàng */}
+
           <View className="bg-white p-4 rounded-lg mb-4 shadow">
             <Text className="text-lg font-semibold mb-2">
               Thông tin giao hàng
@@ -281,6 +316,91 @@ const Tracking = () => {
               </View>
             </View>
           </View>
+
+          {selected?.delivery?.status === "delivered" && (
+            <>
+              <View>
+                <TouchableOpacity
+                  disabled={loading || requestReturnMutation.isSuccess}
+                  onPress={() => setVisible(true)}
+                  className={`rounded-lg p-3 ${
+                    requestReturnMutation.isSuccess
+                      ? "bg-gray-500"
+                      : "bg-red-500"
+                  }`}
+                >
+                  <Text className="text-lg font-semibold text-white text-center">
+                    {requestReturnMutation.isSuccess
+                      ? "Đã gửi yêu cầu trả hàng"
+                      : "Yêu cầu trả hàng"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <Modal visible={visible} animationType="slide" transparent>
+                <View className="flex-1 bg-black/50 justify-center">
+                  <View className="bg-white mx-6 p-4 rounded-lg">
+                    <Text className="text-lg font-semibold mb-3">
+                      Lý do trả hàng
+                    </Text>
+                    <TextInput
+                      value={reason}
+                      onChangeText={setReason}
+                      placeholder="Nhập lý do..."
+                      className="border border-gray-300 rounded p-2 mb-3"
+                      multiline
+                    />
+
+                    <Text className="text-lg font-semibold mb-2">
+                      Ảnh minh họa
+                    </Text>
+                    <ScrollView horizontal className="mb-3">
+                      {images.map((uri, idx) => (
+                        <View key={idx} className="relative mr-2">
+                          <Image
+                            source={{ uri }}
+                            className="w-20 h-20 rounded"
+                          />
+                          <TouchableOpacity
+                            onPress={() =>
+                              setImages(images.filter((_, i) => i !== idx))
+                            }
+                            className="absolute -top-2 -right-2 bg-gray-500 w-6 h-6 rounded-full items-center justify-center"
+                          >
+                            <Text className="text-white text-xs">✕</Text>
+                          </TouchableOpacity>
+                        </View>
+                      ))}
+                      <TouchableOpacity
+                        onPress={openImagePicker}
+                        className="w-20 h-20 bg-gray-200 items-center justify-center rounded"
+                      >
+                        <Text className="text-gray-600 text-sm">+ Thêm</Text>
+                      </TouchableOpacity>
+                    </ScrollView>
+
+                    <View className="flex-row justify-between">
+                      <TouchableOpacity
+                        onPress={() => setVisible(false)}
+                        className="bg-gray-300 rounded p-3 flex-1 mr-2"
+                      >
+                        <Text className="text-center">Hủy</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        disabled={loading}
+                        onPress={handleSubmit}
+                        className="bg-red-500 rounded p-3 flex-1 ml-2"
+                      >
+                        <Text className="text-white text-center">
+                          {loading ? "Đang gửi..." : "Gửi yêu cầu"}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              </Modal>
+            </>
+          )}
         </>
       )}
     </ScrollView>
