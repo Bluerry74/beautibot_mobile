@@ -26,7 +26,7 @@ export function useRegisterMutation() {
 }
 
 export const useAllUser = (params: Record<string, any> = {}) => {
-    return useQuery({
+    return useQuery<any>({
         queryKey: ["allUser", params],
         queryFn: () => getAllUser(params),
     });
