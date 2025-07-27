@@ -1,18 +1,24 @@
-import CouponEditDialog from "@/components/common/coupon";
+// components/common/coupon/CouponManagementModal.tsx
 import { useCouponsQuery } from "@/tanstack/coupon";
 import { useAllUser } from "@/tanstack/user/regis";
-import { TicketPlus } from "lucide-react-native";
 import React, { useState } from "react";
 import {
     FlatList,
-    SafeAreaView,
+    Modal,
     StyleSheet,
     Text,
     TouchableOpacity,
     View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import CouponEditDialog from "./index";
 
-export default function CouponListScreen() {
+interface Props {
+    visible: boolean;
+    onClose: () => void;
+}
+
+const CouponManagementModal: React.FC<Props> = ({ visible, onClose }) => {
     const [selectedCoupon, setSelectedCoupon] = useState(null);
     const [dialogOpen, setDialogOpen] = useState(false);
     const { data: allUsers } = useAllUser();
@@ -25,7 +31,7 @@ export default function CouponListScreen() {
     };
 
     const renderItem = ({ item }: { item: any }) => {
-        const user = allUsers?.data?.find((u) => u._id === item.userId);
+        const user = allUsers?.data?.find((u: any) => u._id === item.userId);
 
         return (
             <TouchableOpacity
@@ -71,51 +77,69 @@ export default function CouponListScreen() {
         );
     };
     return (
-        <SafeAreaView className=" flex-1 p-4">
-            <View className="mt-6">
-                <Text className="text-2xl font-bold">Mã giảm giá</Text>
-                <Text className="text-gray-600 mb-3 text-lg">
-                    Quản lý và chỉnh sửa mã giảm giá tại đây.
-                </Text>
-            </View>
-            <TouchableOpacity
-                className="p-3 rounded-lg mb-4 flex-row items-center justify-center"
-                style={{ backgroundColor: "#ff9c86" }}
-                onPress={() => setDialogOpen(true)}
-            >
-                <TicketPlus size={20} color="white" />
-                <Text className=" ml-2 text-white text-center">
-                    Thêm mã giảm giá
-                </Text>
-            </TouchableOpacity>
+        <Modal animationType="slide" visible={visible} onRequestClose={onClose}>
+            <SafeAreaView style={{ flex: 1 }}>
+                <View style={styles.header}>
+                    <Text style={styles.headerText}>Quản lí Coupon</Text>
+                    <TouchableOpacity onPress={onClose}>
+                        <Text style={styles.closeText}>Đóng</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ flex: 1 }}>
+                    <View className="mt-6">
+                        <Text className="text-2xl font-bold">Mã giảm giá</Text>
+                        <Text className="text-gray-600 mb-3 text-lg">
+                            Quản lý và chỉnh sửa mã giảm giá tại đây.
+                        </Text>
+                    </View>
 
-            <FlatList
-                data={coupon?.data || []}
-                keyExtractor={(item) => item._id}
-                renderItem={renderItem}
-                contentContainerStyle={{ paddingBottom: 100 }}
-            />
+                    <FlatList
+                        data={coupon?.data || []}
+                        keyExtractor={(item) => item._id}
+                        renderItem={renderItem}
+                        contentContainerStyle={{ paddingBottom: 100 }}
+                    />
 
-            <CouponEditDialog
-                visible={dialogOpen}
-                coupon={selectedCoupon}
-                onClose={() => setDialogOpen(false)}
-                onSaved={() => {
-                    refetch();
-                    setSelectedCoupon(null);
-                    setDialogOpen(false);
-                }}
-                onDeleted={() => {
-                    refetch();
-                    setDialogOpen(false);
-                    setSelectedCoupon(null);
-                }}
-            />
-        </SafeAreaView>
+                    <CouponEditDialog
+                        visible={dialogOpen}
+                        coupon={selectedCoupon}
+                        onClose={() => setDialogOpen(false)}
+                        onSaved={() => {
+                            refetch();
+                            setSelectedCoupon(null);
+                            setDialogOpen(false);
+                            onClose();
+                        }}
+                        onDeleted={() => {
+                            refetch();
+                            setDialogOpen(false);
+                            setSelectedCoupon(null);
+                        }}
+                    />
+                </View>
+            </SafeAreaView>
+        </Modal>
     );
-}
+};
 
 const styles = StyleSheet.create({
+    header: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: 16,
+        backgroundColor: "#f5f5f5",
+        borderBottomWidth: 1,
+        borderColor: "#ddd",
+    },
+    headerText: {
+        fontSize: 20,
+        fontWeight: "bold",
+    },
+    closeText: {
+        fontSize: 16,
+        color: "#EF4444",
+    },
     card: {
         backgroundColor: "#fff",
         borderRadius: 12,
@@ -169,3 +193,5 @@ const styles = StyleSheet.create({
         fontStyle: "italic",
     },
 });
+
+export default CouponManagementModal;
