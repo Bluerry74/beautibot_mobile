@@ -25,7 +25,7 @@ export default function ShipperDashboard() {
       case "processing":
         return "Đang xử lý đơn hàng";
       case "assigned":
-        return "Đã sắp xếp người giao hàng";
+        return "Xác nhận đơn hàng của bạn để giao";
       case "out_for_delivery":
         return "Đang trên đường giao hàng";
       case "delivered":
@@ -38,6 +38,22 @@ export default function ShipperDashboard() {
         return "Chờ xác nhận";
     }
   }
+  const sortedDeliveryList = [...deliveryList].sort((a, b) => {
+  const priority = (status: string) => {
+    switch (status) {
+      case "assigned": return 1;            
+      case "out_for_delivery": return 2;
+      case "processing": return 3;
+      case "pending": return 4;
+      case "failed": return 5;
+      case "cancelled": return 6;
+      case "delivered": return 7;           
+      default: return 8;
+    }
+  };
+  return priority(a.status) - priority(b.status);
+});
+
 
 
   return (
@@ -47,8 +63,7 @@ export default function ShipperDashboard() {
       </View>
 
       <View className="px-4 space-y-4">
-        {deliveryList
-        // .filter(item => item.status === "pending" || item.status === "delivering")
+        {sortedDeliveryList
         .map((item : any) => (
           <TouchableOpacity 
           key={item._id} 
