@@ -31,11 +31,17 @@ export const getAllReturnRequests = (params: { page: number; limit: number; emai
   get("/return/admin/all", { params });
 
 // approve return request
-export const approveReturnRequest = async (returnId: string) => {
-  await patch(`/return/approve/${returnId}`);
+export const approveReturnRequest = async (
+  returnId: string,
+  body: { orderId: string; reason: string; images: string[] }
+) => {
+  await patch(`/return/approve/${returnId}`, body);
 };
 
 // reject return request
-export const rejectReturnRequest = async (returnId: string) => {
-  await patch(`/return/reject/${returnId}`);
-}
+export const rejectReturnRequest = async (
+  returnId: string,
+  body: { reason: string }
+) => {
+  await patch(`/return/reject/${returnId}`, body);
+};
